@@ -95,4 +95,6 @@
     <string name="title_activity_binary_edit_screen">BinaryEditScreen</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <integer name="casl2_max_memory">66536</integer>
+    <integer name="casl2_word">16</integer>
 </resources>
