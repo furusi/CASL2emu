@@ -1,8 +1,23 @@
 package com.example.furusho.casl2sim;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+import android.text.Layout;
+
 /**
  * Created by furusho on 2016/07/07.
  */
-public class InputText {
-    public String inputText = new String("aaaaaa");
+public class InputText extends BaseObservable{
+    public String inputText = new String("abcdefghijklmn");
+
+    public void setInputText(String inputText) {
+        this.inputText = inputText;
+        notifyPropertyChanged(BR.inputText);
+    }
+
+    @Bindable
+    public String getInputText() {
+        return inputText;
+    }
+
 }
