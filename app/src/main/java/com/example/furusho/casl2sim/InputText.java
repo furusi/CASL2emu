@@ -8,7 +8,7 @@ import android.text.Layout;
  * Created by furusho on 2016/07/07.
  */
 public class InputText extends BaseObservable{
-    public String inputText = new String("abcdefghijklmn");
+    public String inputText = new String("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
     public void setInputText(String inputText) {
         this.inputText = inputText;
