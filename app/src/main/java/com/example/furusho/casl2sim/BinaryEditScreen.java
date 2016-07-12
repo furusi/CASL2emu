@@ -42,18 +42,34 @@ public class BinaryEditScreen extends AppCompatActivity {
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_DOWN) {
                 Layout layout = ((TextView) v).getLayout();
+                String selectedWord="";
                 int x = (int) event.getX();
                 int y = (int) event.getY();
                 if (layout != null) {
-                    int line = layout.getLineForVertical(y);
-                    int offset = layout.getOffsetForHorizontal(line, x);
-                    showToast(offset);
+                    int lineNo = layout.getLineForVertical(y);
+                    int offset = layout.getOffsetForHorizontal(lineNo, x);
+                    CharSequence line = layout.getText();
+                    if(offset%3!=0){//選択したところが空白で無ければ
+                        selectedWord = getWord(offset, line);
+                        showToast(selectedWord);
+                    }
+
                 }
             }
             return true;
         }
     };
 
+    private String getWord(int offset, CharSequence line) {
+        String ret="";
+        if(offset%3==1){//一桁目ならoffset-1をとる
+            ret= String.valueOf(line.charAt(offset-1))+String.valueOf(line.charAt(offset));
+        }else if(offset%3==2){
+            ret= String.valueOf(line.charAt(offset-1))+String.valueOf(line.charAt(offset));
+
+        }
+        return ret;
+    }
 
 
     @Override
@@ -75,7 +91,7 @@ public class BinaryEditScreen extends AppCompatActivity {
     //private void showToast() {
     //    Toast.makeText(BinaryEditScreen.this,"is touched!!",Toast.LENGTH_SHORT).show();
     //}
-    private void showToast(int offset) {
+    private void showToast(String offset) {
         Toast.makeText(BinaryEditScreen.this,offset+" is touched!!",Toast.LENGTH_SHORT).show();
     }
 }
