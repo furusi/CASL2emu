@@ -42,14 +42,14 @@ public class BinaryEditScreen extends AppCompatActivity {
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_DOWN) {
                 Layout layout = ((TextView) v).getLayout();
-                String selectedWord="";
+                String selectedWord;
                 int x = (int) event.getX();
                 int y = (int) event.getY();
                 if (layout != null) {
                     int lineNo = layout.getLineForVertical(y);
                     int offset = layout.getOffsetForHorizontal(lineNo, x);
                     CharSequence line = layout.getText();
-                    if(offset%3!=0){//選択したところが空白で無ければ
+                    if((offset+1)%3!=0){//選択したところが空白で無ければ
                         selectedWord = getWord(offset, line);
                         showToast(selectedWord);
                     }
@@ -62,9 +62,9 @@ public class BinaryEditScreen extends AppCompatActivity {
 
     private String getWord(int offset, CharSequence line) {
         String ret="";
-        if(offset%3==1){//一桁目ならoffset-1をとる
-            ret= String.valueOf(line.charAt(offset-1))+String.valueOf(line.charAt(offset));
-        }else if(offset%3==2){
+        if((offset+1)%3==1){//一桁目ならoffset-1をとる
+            ret= String.valueOf(line.charAt(offset))+String.valueOf(line.charAt(offset+1));
+        }else if((offset+1)%3==2){
             ret= String.valueOf(line.charAt(offset-1))+String.valueOf(line.charAt(offset));
 
         }
