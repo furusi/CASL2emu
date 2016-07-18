@@ -79,8 +79,14 @@ public class BinaryEditScreen extends AppCompatActivity {
         binding.setBinaryEditScreen(this);
 
         it = new InputText();
-        String bintext = Pattern.compile("(..)").matcher(it.getInputText()).replaceAll("$0 ");
+        String bintext = "";
+        String rowNum="";
+        for(int i = 0; i < 8192; i++){
+            rowNum= rowNum + String.format("0x%04x\n",i*8);
+            bintext = bintext + "00 00 00 00 00 00 00 00\n";
+        }
         it.setInputText(bintext);
+        it.setRowNum(rowNum);
         binding.setInputText(it);
     }
 
