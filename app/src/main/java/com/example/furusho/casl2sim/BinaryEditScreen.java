@@ -1,7 +1,9 @@
 package com.example.furusho.casl2sim;
 
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.renderscript.ScriptGroup;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
@@ -49,9 +51,26 @@ public class BinaryEditScreen extends AppCompatActivity {
                     int lineNo = layout.getLineForVertical(y);
                     int offset = layout.getOffsetForHorizontal(lineNo, x);
                     CharSequence line = layout.getText();
-                    if(offset%3!=0){//選択したところが空白で無ければ
-                        selectedWord = getWord(offset, line);
-                        showToast(selectedWord);
+                    if((offset+1)%3!=0){//選択したところが空白で無ければ
+                        //selectedWord = getWord(offset, line);
+                        //showToast(selectedWord);
+                        final EditText editView = new EditText(BinaryEditScreen.this);
+                        new AlertDialog.Builder(BinaryEditScreen.this)
+                                .setIcon(android.R.drawable.ic_dialog_info)
+                                .setTitle("テキスト入力ダイアログ")
+                                //setViewにてビューを設定します。
+                                .setView(editView)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        //入力した文字をトースト出力する
+                                        //Toast.makeText(BinaryEditScreen.this, editView.getText().toString(), Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                    }
+                                })
+                                .show();
                     }
 
                 }
@@ -62,9 +81,9 @@ public class BinaryEditScreen extends AppCompatActivity {
 
     private String getWord(int offset, CharSequence line) {
         String ret="";
-        if(offset%3==1){//一桁目ならoffset-1をとる
-            ret= String.valueOf(line.charAt(offset-1))+String.valueOf(line.charAt(offset));
-        }else if(offset%3==2){
+        if((offset+1)%3==1){//一桁目ならoffset-1をとる
+            ret= String.valueOf(line.charAt(offset))+String.valueOf(line.charAt(offset+1));
+        }else if((offset+1)%3==2){
             ret= String.valueOf(line.charAt(offset-1))+String.valueOf(line.charAt(offset));
 
         }
