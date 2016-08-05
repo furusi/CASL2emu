@@ -38,7 +38,7 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="GR0"
+                android:text="@string/gr0"
                 android:id="@+id/GR0"
                 android:textColor="@color/material_grey_900"
                 android:textAppearance="@android:style/TextAppearance.Small"
@@ -49,37 +49,39 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GR1"
+                android:text="@string/gr1"
                 android:id="@+id/GR1"
                 android:textColor="@color/material_grey_900"
                 android:textAppearance="@android:style/TextAppearance.Small"
                 android:background="@color/material_grey_50"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="1dp"
-                android:layout_marginBottom="1dp"
-                android:layout_weight="0.2"/>
+                android:layout_marginTop="@dimen/table_line"
+                android:layout_marginRight="@dimen/table_line"
+                android:layout_marginEnd="@dimen/table_line"
+                android:layout_marginBottom="@dimen/table_line"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GR2"
+                android:text="@string/gr2"
                 android:id="@+id/GR2"
                 android:textAppearance="@android:style/TextAppearance.Small"
                 android:background="@color/material_grey_50"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="1dp"
-                android:layout_marginBottom="1dp"/>
+                android:layout_marginTop="@dimen/table_line"
+                android:layout_marginEnd="@dimen/table_line"
+                android:layout_marginRight="@dimen/table_line"
+                android:layout_marginBottom="@dimen/table_line"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GR3"
+                android:text="@string/gr3"
                 android:id="@+id/GR3"
                 android:textAppearance="@android:style/TextAppearance.Small"
                 android:background="@color/material_grey_50"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp"
-                android:layout_marginRight="1dp"/>
+                android:layout_marginTop="@dimen/table_line"
+                android:layout_marginBottom="@dimen/table_line"
+                android:layout_marginEnd="@dimen/table_line"
+                android:layout_marginRight="@dimen/table_line"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -88,7 +90,7 @@
                 android:textAppearance="@android:style/TextAppearance.Small"
                 android:background="@color/material_grey_50"
                 android:layout_span="1"
-                android:text="GR0-7"/>
+                android:text="@string/first_row"/>
 
         </TableRow>
 
@@ -100,7 +102,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GR4"
+                android:text="@string/gr4"
                 android:id="@+id/GR4"
                 android:textColor="@color/material_grey_900"
                 android:textAppearance="@android:style/TextAppearance.Small"
@@ -112,34 +114,37 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GR5"
+                android:text="@string/gr5"
                 android:id="@+id/GR5"
                 android:textColor="@color/material_grey_900"
                 android:textAppearance="@android:style/TextAppearance.Small"
                 android:background="@color/material_grey_50"
-                android:layout_marginRight="1dp"
-                android:layout_marginBottom="1dp"/>
+                android:layout_marginRight="@dimen/table_line"
+                android:layout_marginEnd="@dimen/table_line"
+                android:layout_marginBottom="@dimen/table_line"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GR6"
+                android:text="@string/gr6"
                 android:id="@+id/GR6"
                 android:textAppearance="@android:style/TextAppearance.Small"
                 android:background="@color/material_grey_50"
-                android:layout_marginRight="1dp"
-                android:layout_marginBottom="1dp"
-                android:phoneNumber="true"/>
+                android:layout_marginRight="@dimen/table_line"
+                android:layout_marginEnd="@dimen/table_line"
+                android:layout_marginBottom="@dimen/table_line"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GR7"
+                android:text="@string/gr7"
                 android:id="@+id/GR7"
                 android:textAppearance="@android:style/TextAppearance.Small"
                 android:background="@color/material_grey_50"
-                android:layout_marginRight="1dp"
-                android:layout_marginBottom="1dp"/>
+                android:layout_marginRight="@dimen/table_line"
+                android:layout_marginEnd="@dimen/table_line"
+                android:layout_marginBottom="@dimen/table_line"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -184,8 +189,7 @@
                 android:id="@+id/textView"
                 android:clickable="true"
                 app:onTouchListener="@{binaryEditScreen.showToastListener}"
-                android:typeface="monospace"
-                android:editable="true"/>
+                android:typeface="monospace"/>
         </LinearLayout>
     </ScrollView>
 
@@ -201,8 +205,17 @@
             android:layout_height="wrap_content"
             android:text="@string/text_step_over_button"
             android:id="@+id/button"
-            android:layout_alignParentBottom="true"/>
+            />
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_run_button"
+        android:id="@+id/button2"
+        android:layout_below="@+id/inputTextView"
+        android:layout_alignRight="@+id/inputTextView"
+        android:layout_alignEnd="@+id/inputTextView" />
 
 </RelativeLayout>
 </layout>
