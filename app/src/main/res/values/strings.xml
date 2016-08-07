@@ -105,9 +105,14 @@
     <string name="gr1">GR1</string>
     <string name="gr2">GR2</string>
     <string name="gr3">GR3</string>
-    <string name="first_row">GR0–7</string>
+    <string name="first_row">GR0–3</string>
+    <string name="second_row">GR4–7</string>
     <string name="gr4">GR4</string>
     <string name="gr5">GR5</string>
     <string name="gr6">GR6</string>
     <string name="gr7">GR7</string>
+    <string name="registerview_space" />
+    <string name="pc">PC</string>
+    <string name="hex_2bit_space">0x0000</string>
+    <string name="sp">SP</string>
 </resources>
