@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
-    <data>
-        <variable
-            name="inputText"
-            type="com.example.furusho.casl2sim.InputText">
-        </variable>
-        <variable
-            name="binaryEditScreen"
-            type="com.example.furusho.casl2sim.BinaryEditScreen">
-        </variable>
-    </data>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -152,21 +142,9 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@{inputText.rowNum}"
-                android:id="@+id/textView2"
-                android:typeface="monospace" />
+                android:layout_height="wrap_content"
+                android:text="asdfsadf"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@{inputText.inputText}"
-                android:id="@+id/textView"
-                android:clickable="true"
-                app:onTouchListener="@{binaryEditScreen.showToastListener}"
-                android:typeface="monospace"/>
         </LinearLayout>
     </ScrollView>
 

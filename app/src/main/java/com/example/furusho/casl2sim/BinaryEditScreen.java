@@ -94,15 +94,7 @@ public class BinaryEditScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        binding.setBinaryEditScreen(this);
-
-        it = new InputText();
-        String bintext = getString(R.string.zerofill);
-        String rowNum=getString(R.string.rownumber);
-        it.setInputText(bintext);
-        it.setRowNum(rowNum);
-        binding.setInputText(it);
+        setContentView(R.layout.activity_binary_edit_screen);
     }
 
     public View.OnTouchListener getShowToastListener(){
