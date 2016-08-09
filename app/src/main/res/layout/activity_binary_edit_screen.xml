@@ -15,6 +15,7 @@
     <GridLayout
         android:columnCount="11"
         android:rowCount="2"
+        android:layout_alignParentTop="true"
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -123,37 +124,11 @@
             android:text="0"/>
 
     </GridLayout>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/inputTextView"
-        android:background="@color/material_grey_100"
-        android:layout_marginTop="@dimen/text_margin"
-        android:layout_below="@+id/gridLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/linearLayout"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="asdfsadf"/>
-
-        </LinearLayout>
-    </ScrollView>
-
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/linearLayout">
+        android:id="@+id/ButtonLayout">
 
         <Button
             android:layout_width="wrap_content"
@@ -161,16 +136,41 @@
             android:text="@string/text_step_over_button"
             android:id="@+id/button"
             />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_run_button"
+            android:id="@+id/button2"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:background="@color/material_grey_100"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_below="@id/gridLayout"
+        android:layout_above="@id/ButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:isScrollContainer="true"
+            android:id="@+id/memory_list"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            >
+
+        </ListView>
     </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_run_button"
-        android:id="@+id/button2"
-        android:layout_below="@+id/inputTextView"
-        android:layout_alignRight="@+id/inputTextView"
-        android:layout_alignEnd="@+id/inputTextView" />
+
+
 
 </RelativeLayout>
 </layout>

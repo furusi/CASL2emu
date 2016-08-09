@@ -10,32 +10,27 @@ import android.text.Layout;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputBinding;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.furusho.casl2sim.databinding.ActivityBinaryEditScreenBinding;
 import com.google.common.base.Strings;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnTouch;
+
+import static android.R.layout.simple_list_item_1;
 
 public class BinaryEditScreen extends AppCompatActivity {
 
     InputText it;
+    ListView listView;
 
-    private final View.OnClickListener showToastListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            //showToast();
-        }
-
-
-    };
 
     private final View.OnTouchListener showTouchListener = new View.OnTouchListener(){
 
@@ -95,6 +90,17 @@ public class BinaryEditScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_binary_edit_screen);
+
+        listView = (ListView)findViewById(R.id.memory_list);
+        ArrayList<String> listItems=new ArrayList<String>();
+        listItems.add("testetst");
+        listItems.add("asdfsadf");
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(this,
+                simple_list_item_1,
+                listItems);
+        arrayAdapter.addAll(getString(R.string.zerofill).split("\\n"));
+        listView.setAdapter(arrayAdapter);
+
     }
 
     public View.OnTouchListener getShowToastListener(){

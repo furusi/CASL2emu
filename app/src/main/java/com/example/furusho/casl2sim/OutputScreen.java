@@ -10,12 +10,9 @@ import android.widget.TextView;
 
 import com.google.common.base.Joiner;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class OutputScreen extends AppCompatActivity {
 
-    @BindView(R.id.output) TextView textView;
 
     String[] code;
     Commetii cm;
@@ -24,7 +21,6 @@ public class OutputScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_output_screen);
         code = this.getIntent().getStringArrayExtra(new String("sourcecode"));
-        ButterKnife.bind(this);
         OutputReceiver myReceiver = new OutputReceiver();
 
         IntentFilter mIF = new IntentFilter();
@@ -37,18 +33,13 @@ public class OutputScreen extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         //textView.setText(Joiner.on("\n").skipNulls().join(code));
-        cm.cm2OUT(1,1,textView);
     }
 
-    public void updateText(String t){
-        textView.setText(t);
-    }
 
     public class OutputReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            textView.setText(intent.getStringExtra("output"));
         }
     }
 }
