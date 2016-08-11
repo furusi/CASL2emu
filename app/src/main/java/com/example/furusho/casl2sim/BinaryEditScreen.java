@@ -1,39 +1,36 @@
 package com.example.furusho.casl2sim;
 
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.renderscript.ScriptGroup;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputBinding;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.furusho.casl2sim.databinding.ActivityBinaryEditScreenBinding;
 import com.google.common.base.Strings;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnTouch;
+
+import static android.R.layout.simple_list_item_1;
 
 public class BinaryEditScreen extends AppCompatActivity {
 
     InputText it;
+    ListView listView;
 
-    private final View.OnClickListener showToastListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            //showToast();
-        }
-
-
-    };
 
     private final View.OnTouchListener showTouchListener = new View.OnTouchListener(){
 
@@ -50,8 +47,25 @@ public class BinaryEditScreen extends AppCompatActivity {
                     int offset = layout.getOffsetForHorizontal(lineNo, x);
                     CharSequence line = layout.getText();
                     if((offset+1)%3!=0){//選択したところが空白で無ければ
-                        selectedWord = getWord(offset, line);
-                        showToast(selectedWord);
+                        //selectedWord = getWord(offset, line);
+                        //showToast(selectedWord);
+                        final EditText editView = new EditText(BinaryEditScreen.this);
+                        new AlertDialog.Builder(BinaryEditScreen.this)
+                                .setIcon(android.R.drawable.ic_dialog_info)
+                                .setTitle("テキスト入力ダイアログ")
+                                //setViewにてビューを設定します。
+                                .setView(editView)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        //入力した文字をトースト出力する
+                                        //Toast.makeText(BinaryEditScreen.this, editView.getText().toString(), Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                    }
+                                })
+                                .show();
                     }
 
                 }
@@ -75,13 +89,18 @@ public class BinaryEditScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        binding.setBinaryEditScreen(this);
+        setContentView(R.layout.activity_binary_edit_screen);
 
-        it = new InputText();
-        String bintext = Pattern.compile("(..)").matcher(it.getInputText()).replaceAll("$0 ");
-        it.setInputText(bintext);
-        binding.setInputText(it);
+        listView = (ListView)findViewById(R.id.memory_list);
+        ArrayList<String> listItems=new ArrayList<String>();
+        listItems.add("testetst");
+        listItems.add("asdfsadf");
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(this,
+                simple_list_item_1,
+                listItems);
+        arrayAdapter.addAll(getString(R.string.zerofill).split("\\n"));
+        listView.setAdapter(arrayAdapter);
+
     }
 
     public View.OnTouchListener getShowToastListener(){

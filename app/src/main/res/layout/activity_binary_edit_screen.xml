@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
-    <data>
-        <variable
-            name="inputText"
-            type="com.example.furusho.casl2sim.InputText">
-        </variable>
-        <variable
-            name="binaryEditScreen"
-            type="com.example.furusho.casl2sim.BinaryEditScreen">
-        </variable>
-    </data>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -22,35 +12,165 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.furusho.casl2sim.BinaryEditScreen">
-
-    <ScrollView
+    <GridLayout
+        android:columnCount="11"
+        android:rowCount="2"
+        android:layout_alignParentTop="true"
+        android:id="@+id/gridLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView3"
-        android:background="@color/material_grey_100">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <TextView
+            android:layout_column="0"
+            android:text="GR0-3"/>
+        <TextView
+            android:layout_column="1"
+            android:gravity="center"
+            android:layout_width="34dp"
+            android:text="GR0"/>
+        <TextView
+            android:layout_column="2"
+            android:gravity="center"
+            android:layout_width="34dp"
+            android:text="GR1"/>
+        <TextView
+            android:layout_column="3"
+            android:gravity="center"
+            android:layout_width="34dp"
+            android:text="GR2"/>
+        <TextView
+            android:layout_column="4"
+            android:gravity="center"
+            android:layout_width="34dp"
+            android:text="GR3"/>
+        <TextView
+            android:layout_column="5"
+            android:text="PC"
+            android:gravity="center"
+            android:layout_width="34dp"
+            />
+        <TextView
+            android:layout_column="6"
+            android:gravity="right"
+            android:text="0x0003"/>
+        <TextView
+            android:text="SP"
+            android:layout_width="34dp"
+            android:gravity="center"
+            android:layout_column="7"
+            android:layout_columnSpan="1"
+            />
+        <TextView
+            android:layout_column="8"
+            android:gravity="right"
+            android:layout_width="49dp"
+            android:text="0x0016"/>
+        <TextView
+            android:layout_column="0"
+            android:layout_row="1"
+            android:text="GR4-7"/>
+        <TextView
+            android:layout_column="1"
+            android:layout_gravity="center"
+            android:layout_row="1"
+            android:text="GR4"/>
+        <TextView
+            android:layout_column="2"
+            android:layout_gravity="center"
+            android:layout_row="1"
+            android:text="GR5"/>
+        <TextView
+            android:layout_column="3"
+            android:layout_row="1"
+            android:layout_gravity="center"
+            android:text="GR6"/>
+        <TextView
+            android:layout_column="4"
+            android:layout_gravity="center"
+            android:layout_row="1"
+            android:text="GR7"/>
+        <TextView
+            android:layout_column="5"
+            android:layout_gravity="center"
+            android:layout_row="1"
+            android:text="OF"/>
+        <TextView
+            android:layout_column="6"
+            android:layout_row="1"
+            android:gravity="center"
+            android:layout_width="19dp"
+            android:text="0"/>
+        <TextView
+            android:layout_column="7"
+            android:layout_row="1"
+            android:layout_gravity="center"
+            android:text="SF"/>
+        <TextView
+            android:layout_column="8"
+            android:layout_width="19dp"
+            android:gravity="center"
+            android:layout_row="1"
+            android:text="0"/>
+        <TextView
+            android:layout_column="9"
+            android:layout_row="1"
+            android:layout_width="18dp"
+            android:text="ZF"/>
+        <TextView
+            android:layout_column="10"
+            android:gravity="right"
+            android:layout_row="1"
+            android:layout_width="25dp"
+            android:text="0"/>
+
+    </GridLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/ButtonLayout">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_step_over_button"
+            android:id="@+id/button"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_run_button"
+            android:id="@+id/button2"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:background="@color/material_grey_100"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_below="@id/gridLayout"
+        android:layout_above="@id/ButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+            android:isScrollContainer="true"
+            android:id="@+id/memory_list"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="New Text"
-                android:id="@+id/textView2"
-                android:typeface="monospace" />
+        </ListView>
+    </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="@{inputText.inputText}"
-                android:id="@+id/textView"
-                android:clickable="true"
-                app:onTouchListener="@{binaryEditScreen.showToastListener}"
-                android:typeface="monospace" />
-        </LinearLayout>
-    </ScrollView>
+
+
 
 </RelativeLayout>
 </layout>

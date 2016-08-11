@@ -11,16 +11,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by furusho on 2016/07/05.
  */
 public class Commetii {
 
-    @BindView(R.id.output) TextView textView;
-    Application app;
 
     int address;
 
@@ -81,8 +77,6 @@ public class Commetii {
         Intent outputIntent = new Intent();
         outputIntent.putExtra("output", output);
         outputIntent.setAction("com.example.furusho.casl2sim.output");
-        app = application;
-        app.getApplicationContext().sendBroadcast(outputIntent);
     }
 
 
