@@ -93,8 +93,6 @@ public class BinaryEditScreen extends AppCompatActivity {
 
         listView = (ListView)findViewById(R.id.memory_list);
         ArrayList<String> listItems=new ArrayList<String>();
-        listItems.add("testetst");
-        listItems.add("asdfsadf");
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(this,
                 simple_list_item_1,
                 listItems);
