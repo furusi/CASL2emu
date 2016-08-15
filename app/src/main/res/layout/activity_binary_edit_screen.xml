@@ -46,7 +46,8 @@
             android:textSize="18sp"
             android:layout_gravity="center"
             android:layout_row="0"
-            android:text="@{String.valueOf(register.gr[0])}" />
+            android:textColor="#ff000000"
+            android:text="@{register.gr[0]}" />
 
         <TextView
             android:layout_column="2"

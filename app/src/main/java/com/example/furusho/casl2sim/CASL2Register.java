@@ -1,6 +1,7 @@
 package com.example.furusho.casl2sim;
 
 import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 
 import java.util.ArrayList;
 
@@ -10,7 +11,8 @@ import java.util.ArrayList;
 
 public class CASL2Register extends BaseObservable{
     static CASL2Register instance = new CASL2Register();
-    private char gr[] = new char[8];
+    @Bindable
+    public String gr[] = new String[8];
     private char pc;
     private char sp;
     private char fr[] = new char[3];
@@ -20,11 +22,13 @@ public class CASL2Register extends BaseObservable{
         return instance;
     }
 
-    public char[] getGr() {
+
+    @Bindable
+    public String[] getGr() {
         return gr;
     }
 
-    public void setGr(char[] gr) {
+    public void setGr(String[] gr) {
         this.gr = gr;
         notifyPropertyChanged(BR.register);
     }

@@ -123,12 +123,9 @@ public class ContextDisplayScreen extends BaseActivity {
         listView = (ListView)findViewById(R.id.memory_list);
         ActivityBinaryEditScreenBinding binding = ActivityBinaryEditScreenBinding.inflate(getLayoutInflater());
         CASL2Register register = CASL2Register.getInstance();
-        char[] test = new char[]{78, 0, 9, 8, 78, 7, 5,23};
-        String aa= String.valueOf(test[0]);
+        String[] test = new String[]{"78","0", "9", "8", "78", "7", "5","23"};
         register.setGr(test);
         binding.setRegister(register);
-        char kakunin[] = register.getGr();
-        Log.d("dbg",String.valueOf(kakunin[0]));
         arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
                 listItems.getMemory(),
