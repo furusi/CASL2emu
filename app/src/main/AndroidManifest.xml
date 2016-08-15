@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.example.furusho.casl2sim">
+    package="com.example.furusho.casl2sim">
 
     <application
         android:allowBackup="true"
@@ -10,19 +10,20 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".InputActivity"
-            android:windowSoftInputMode="adjustNothing">
-        </activity>
+            android:windowSoftInputMode="adjustNothing"></activity>
         <activity android:name=".OutputScreen">
             <intent-filter>
-                <action android:name="com.example.furusho.casl2sim.output"/>
+                <action android:name="com.example.furusho.casl2sim.output" />
             </intent-filter>
         </activity>
-        <activity android:name=".BinaryEditScreen">
+        <activity android:name=".ContextDisplayScreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>

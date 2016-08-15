@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
+    <data>
+        <variable
+            name="inputText"
+            type="com.example.furusho.casl2sim.InputText">
+        </variable>
+        <variable
+            name="contextDisplayScreen"
+            type="com.example.furusho.casl2sim.ContextDisplayScreen">
+        </variable>
+    </data>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,7 +21,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.furusho.casl2sim.BinaryEditScreen">
+    tools:context="com.example.furusho.casl2sim.ContextDisplayScreen">
     <GridLayout
         android:columnCount="11"
         android:rowCount="3"
