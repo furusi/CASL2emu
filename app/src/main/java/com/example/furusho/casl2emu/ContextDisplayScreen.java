@@ -115,6 +115,8 @@ public class ContextDisplayScreen extends BaseActivity {
         binding.gr5.setOnClickListener(showWordDialog(binding,5));
         binding.gr6.setOnClickListener(showWordDialog(binding,6));
         binding.gr7.setOnClickListener(showWordDialog(binding,7));
+        binding.pc.setOnClickListener(showWordDialog(binding,8));
+        binding.sp.setOnClickListener(showWordDialog(binding,9));
         arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
                 listItems.getMemory(),
@@ -183,6 +185,12 @@ public class ContextDisplayScreen extends BaseActivity {
                                             break;
                                         case 7:
                                             binding.gr7.setText(upperedString);
+                                            break;
+                                        case 8:
+                                            binding.pc.setText(upperedString);
+                                            break;
+                                        case 9:
+                                            binding.sp.setText(upperedString);
                                             break;
                                     }
                                 } else {
