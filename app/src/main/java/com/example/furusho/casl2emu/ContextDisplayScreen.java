@@ -108,7 +108,7 @@ public class ContextDisplayScreen extends BaseActivity {
         char[] test = new char[]{78,0,9,8,78,7,5,23};
         register.setGr(test);
         binding.setCasl2Register(register);
-        binding.gr0.setOnClickListener((View.OnClickListener) showTextEditDialog);
+        //binding.gr0.setOnClickListener((View.OnClickListener) showTextEditDialog);
         arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
                 listItems.getMemory(),
