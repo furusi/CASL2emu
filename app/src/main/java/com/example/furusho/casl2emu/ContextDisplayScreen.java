@@ -1,5 +1,6 @@
 package com.example.furusho.casl2emu;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 
 import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
+
+import org.apache.commons.codec.binary.Hex;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,11 +48,8 @@ public class ContextDisplayScreen extends BaseActivity {
     };
 
     private void showTextDialog(String text, final int position) {
-        final EditText editView = new EditText(ContextDisplayScreen.this);
-        editView.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        editView.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefABCDEF"));
+        final HexEditText editView = new HexEditText(ContextDisplayScreen.this);
         editView.setText(text);
-        editView.setTypeface(Typeface.MONOSPACE);
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(R.layout.input_text_dialog)
@@ -70,10 +70,6 @@ public class ContextDisplayScreen extends BaseActivity {
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
                         }
-
-
-                        //InputMethodManager inputMethodManager= (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                        //inputMethodManager.hideSoftInputFromWindow(editView.getWindowToken(),InputMethodManager.HIDE_IMPLICIT_ONLY);
 
                     }
                 })
@@ -104,11 +100,45 @@ public class ContextDisplayScreen extends BaseActivity {
         listItems = Casl2Memory.getInstance();
         register = Casl2Register.getInstance();
 
-        ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
+        final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
         char[] test = new char[]{78,0,9,8,78,7,5,23};
         register.setGr(test);
         binding.setCasl2Register(register);
-        //binding.gr0.setOnClickListener((View.OnClickListener) showTextEditDialog);
+        binding.gr0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final HexEditText hexEditText = new HexEditText(ContextDisplayScreen.this);
+                TextView textview = (TextView)v;
+                hexEditText.setText(textview.getText());
+                new AlertDialog.Builder(ContextDisplayScreen.this)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setView(R.layout.input_text_dialog)
+                        .setTitle("テキスト入力ダイアログ")
+                        //setViewにてビューを設定します。
+                        .setView(hexEditText)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //入力した文字をトースト出力する
+                                String upperedString =hexEditText.getText().toString().toUpperCase();
+                                Pattern pattern = Pattern.compile(getString(R.string.word_pattern_wo_space));
+                                Matcher matcher = pattern.matcher(upperedString);
+                                if (matcher.matches()) {
+                                    Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
+                                    binding.gr0.setText(upperedString);
+                                }else {
+                                    Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .show();
+
+            }
+        });
         arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
                 listItems.getMemory(),
@@ -133,4 +163,45 @@ public class ContextDisplayScreen extends BaseActivity {
     }
 }
 
+class HexEditText extends EditText {
+    public HexEditText(Context context) {
+        super(context);
+        this.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        this.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefABCDEF "));
+        this.setTypeface(Typeface.MONOSPACE);
+    }
+}
+
+class ContextEditDialog extends AlertDialog{
+
+    protected ContextEditDialog(final Context context, final HexEditText hexEditTextText) {
+        super(context);
+    }
+        /*
+        this.Builder(getOwnerActivity());
+        this.setIcon(android.R.drawable.ic_dialog_info);
+        this.setTitle("テキスト入力ダイアログ");
+            //setViewにてビューを設定します。
+        this.setView(hexEditTextText);
+        this.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //入力した文字をトースト出力する
+                String upperedString =hexEditTextText.getText().toString().toUpperCase();
+                Pattern pattern = Pattern.compile(context.getString(R.string.memory_row_pattern));
+                Matcher matcher = pattern.matcher(upperedString);
+                if (matcher.matches()) {
+                    hexEditTextText.setText(upperedString);
+                }else {
+                }
+
+            }
+        });
+        this.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        })
+        .show();
+    }
+*/
+}
 
