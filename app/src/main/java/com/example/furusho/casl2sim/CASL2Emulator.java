@@ -14,5 +14,14 @@ public class CASL2Emulator extends EmulatorCore {
     public void setXX (int val){ /* レジスタXXを設定する */
 
     }
+    public void stepOver(){
+
+    }
+    public void run(){
+
+    }
+    public void waitEmu(){
+
+    }
 
 }

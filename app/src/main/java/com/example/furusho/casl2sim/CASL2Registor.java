@@ -8,7 +8,11 @@ import java.util.ArrayList;
 
 public class CASL2Registor {
     static CASL2Registor instance = new CASL2Registor();
-    ArrayList<String> memory;
+    ArrayList<String> GR;
+    ArrayList<String> PC;
+    ArrayList<String> SP;
+    ArrayList<String> FR;
+
 
     public static CASL2Registor getInstance() {
         return instance;
