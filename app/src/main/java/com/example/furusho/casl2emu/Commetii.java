@@ -1,10 +1,9 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 import android.app.Application;
 import android.content.Intent;
 import android.widget.TextView;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -76,7 +75,7 @@ public class Commetii {
     private void sendOuput(Application application) {
         Intent outputIntent = new Intent();
         outputIntent.putExtra("output", output);
-        outputIntent.setAction("com.example.furusho.casl2sim.output");
+        outputIntent.setAction("com.example.furusho.casl2emu.output");
     }
 
 

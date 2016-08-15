@@ -1,4 +1,4 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 /**
  * Created by furusho on 2016/07/09.

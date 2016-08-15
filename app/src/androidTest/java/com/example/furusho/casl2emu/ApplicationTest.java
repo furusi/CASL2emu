@@ -1,4 +1,4 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

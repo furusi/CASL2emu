@@ -1,16 +1,16 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 import java.util.ArrayList;
 
 /**
  * Created by furusho on 2016/07/09.
  */
-public class CASL2Memory {
+public class Casl2Memory {
 
-    static CASL2Memory instance = new CASL2Memory();
+    static Casl2Memory instance = new Casl2Memory();
     ArrayList<String> memory;
 
-    private CASL2Memory(){
+    private Casl2Memory(){
         memory = new ArrayList<>();
     }
 
@@ -25,7 +25,7 @@ public class CASL2Memory {
        this.memory.set(position,memory);
     }
 
-    static CASL2Memory getInstance(){
+    static Casl2Memory getInstance(){
        return instance;
     }
 }

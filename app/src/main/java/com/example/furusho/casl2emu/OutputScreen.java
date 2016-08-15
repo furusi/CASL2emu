@@ -1,4 +1,4 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
-
-import com.google.common.base.Joiner;
 
 
 public class OutputScreen extends AppCompatActivity {
@@ -24,7 +21,7 @@ public class OutputScreen extends AppCompatActivity {
         OutputReceiver myReceiver = new OutputReceiver();
 
         IntentFilter mIF = new IntentFilter();
-        mIF.addAction("com.example.furusho.casl2sim.output");
+        mIF.addAction("com.example.furusho.casl2emu.output");
         registerReceiver(myReceiver, mIF);
         cm = new Commetii(code,this.getApplication());
     }

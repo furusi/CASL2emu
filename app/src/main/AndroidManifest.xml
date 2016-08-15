@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.furusho.casl2sim">
+    package="com.example.furusho.casl2emu">
 
     <application
         android:allowBackup="true"
@@ -9,24 +9,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".InputActivity"
+            android:name="com.example.furusho.casl2emu.InputActivity"
             android:windowSoftInputMode="adjustNothing" />
-        <activity android:name=".OutputScreen">
+        <activity android:name="com.example.furusho.casl2emu.OutputScreen">
             <intent-filter>
                 <action android:name="com.example.furusho.casl2sim.output" />
             </intent-filter>
         </activity>
-        <activity android:name=".ContextDisplayScreen">
+        <activity android:name="com.example.furusho.casl2emu.ContextDisplayScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BaseActivity" />
+        <activity android:name="com.example.furusho.casl2emu.BaseActivity" />
 
         <service
-            android:name=".AppHandleService"
+            android:name="com.example.furusho.casl2emu.AppHandleService"
             android:exported="false"></service>
     </application>
 

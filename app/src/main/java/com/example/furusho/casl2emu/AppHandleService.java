@@ -1,4 +1,4 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -14,12 +14,12 @@ import android.content.Context;
 public class AppHandleService extends IntentService {
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_FOO = "com.example.furusho.casl2sim.action.FOO";
-    private static final String ACTION_BAZ = "com.example.furusho.casl2sim.action.BAZ";
+    private static final String ACTION_FOO = "com.example.furusho.casl2emu.action.FOO";
+    private static final String ACTION_BAZ = "com.example.furusho.casl2emu.action.BAZ";
 
     // TODO: Rename parameters
-    private static final String EXTRA_PARAM1 = "com.example.furusho.casl2sim.extra.PARAM1";
-    private static final String EXTRA_PARAM2 = "com.example.furusho.casl2sim.extra.PARAM2";
+    private static final String EXTRA_PARAM1 = "com.example.furusho.casl2emu.extra.PARAM1";
+    private static final String EXTRA_PARAM2 = "com.example.furusho.casl2emu.extra.PARAM2";
 
     public AppHandleService() {
         super("AppHandleService");

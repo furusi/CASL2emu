@@ -1,4 +1,4 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by furus on 2016/08/15.

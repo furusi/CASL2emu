@@ -1,36 +1,34 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-
-import java.util.ArrayList;
 
 /**
  * Created by furus on 2016/08/15.
  */
 
-public class CASL2Register extends BaseObservable{
-    static CASL2Register instance = new CASL2Register();
+public class Casl2Register extends BaseObservable{
+    static Casl2Register instance = new Casl2Register();
     @Bindable
-    public String gr[] = new String[8];
+    public char gr[] = new char[8];
     private char pc;
     private char sp;
     private char fr[] = new char[3];
 
 
-    public static CASL2Register getInstance() {
+    public static Casl2Register getInstance() {
         return instance;
     }
 
 
     @Bindable
-    public String[] getGr() {
+    public char[] getGr() {
         return gr;
     }
 
-    public void setGr(String[] gr) {
+    public void setGr(char[] gr) {
         this.gr = gr;
-        notifyPropertyChanged(BR.register);
+        notifyPropertyChanged(BR.casl2Register);
     }
 
     public char getPc() {
@@ -39,6 +37,7 @@ public class CASL2Register extends BaseObservable{
 
     public void setPc(char pc) {
         this.pc = pc;
+        notifyPropertyChanged(BR.casl2Register);
     }
 
     public char getSp() {
@@ -47,6 +46,7 @@ public class CASL2Register extends BaseObservable{
 
     public void setSp(char sp) {
         this.sp = sp;
+        notifyPropertyChanged(BR.casl2Register);
     }
 
     public char[] getFr() {
@@ -55,5 +55,6 @@ public class CASL2Register extends BaseObservable{
 
     public void setFr(char[] fr) {
         this.fr = fr;
+        notifyPropertyChanged(BR.casl2Register);
     }
 }

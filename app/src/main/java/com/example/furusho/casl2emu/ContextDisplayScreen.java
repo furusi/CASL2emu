@@ -1,4 +1,4 @@
-package com.example.furusho.casl2sim;
+package com.example.furusho.casl2emu;
 
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
@@ -7,7 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,46 +17,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.furusho.casl2sim.databinding.ActivityBinaryEditScreenBinding;
+import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.R.layout.activity_list_item;
 import static android.R.layout.simple_list_item_1;
 
 public class ContextDisplayScreen extends BaseActivity {
 
     InputText it;
     ListView listView;
-    CASL2Memory listItems;
-    CASL2Register register;
+    Casl2Memory listItems;
+    Casl2Register register;
     ArrayAdapter<String> arrayAdapter;
 
 
-    private final View.OnTouchListener showTouchListener = new View.OnTouchListener(){
-
+    private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
 
         @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if(event.getAction()==MotionEvent.ACTION_DOWN) {
-                Layout layout = ((TextView) v).getLayout();
-                String selectedWord;
-                int x = (int) event.getX();
-                int y = (int) event.getY();
-                if (layout != null) {
-                    int lineNo = layout.getLineForVertical(y);
-                    int offset = layout.getOffsetForHorizontal(lineNo, x);
-                    CharSequence line = layout.getText();
-                    if((offset+1)%3!=0){//選択したところが空白で無ければ
-                        //selectedWord = getWord(offset, line);
-                        //showToast(selectedWord);
-                        //showTextDialog(new String());
-                    }
-
-                }
-            }
-            return true;
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String msg = String.valueOf(listView.getItemAtPosition(position));
+            showTextDialog(msg,position);
         }
+
     };
 
     private void showTextDialog(String text, final int position) {
@@ -117,34 +101,28 @@ public class ContextDisplayScreen extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_binary_edit_screen);
 
-        listItems = CASL2Memory.getInstance();
-        register = CASL2Register.getInstance();
+        listItems = Casl2Memory.getInstance();
+        register = Casl2Register.getInstance();
 
-        listView = (ListView)findViewById(R.id.memory_list);
-        ActivityBinaryEditScreenBinding binding = ActivityBinaryEditScreenBinding.inflate(getLayoutInflater());
-        CASL2Register register = CASL2Register.getInstance();
-        String[] test = new String[]{"78","0", "9", "8", "78", "7", "5","23"};
+        ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
+        char[] test = new char[]{78,0,9,8,78,7,5,23};
         register.setGr(test);
-        binding.setRegister(register);
+        binding.setCasl2Register(register);
+        binding.gr0.setOnClickListener((View.OnClickListener) showTextEditDialog);
         arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
                 listItems.getMemory(),
                 Typeface.MONOSPACE);
         arrayAdapter.addAll(getString(R.string.short_zerofill).split("\\n"));
+
+        listView = (ListView)findViewById(R.id.memory_list);
         listView.setAdapter(arrayAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String msg;
-                msg = String.valueOf(listView.getItemAtPosition(position));
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                showTextDialog(msg,position);
-            }
-        });
+        listView.setOnItemClickListener(showTextEditDialog);
 
     }
 
-    public View.OnTouchListener getShowToastListener(){
-        return showTouchListener;
+    public AdapterView.OnItemClickListener getShowTextEditDialog(){
+        return showTextEditDialog;
     }
 
     //private void showToast() {
@@ -154,3 +132,5 @@ public class ContextDisplayScreen extends BaseActivity {
         Toast.makeText(ContextDisplayScreen.this,offset+" is touched!!",Toast.LENGTH_SHORT).show();
     }
 }
+
+

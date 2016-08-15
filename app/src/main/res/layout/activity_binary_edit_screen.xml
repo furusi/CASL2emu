@@ -4,13 +4,13 @@
     <data>
         <variable
             name="inputText"
-            type="com.example.furusho.casl2sim.InputText">
+            type="com.example.furusho.casl2emu.InputText">
         </variable>
         <variable
             name="contextDisplayScreen"
-            type="com.example.furusho.casl2sim.ContextDisplayScreen">
+            type="com.example.furusho.casl2emu.ContextDisplayScreen">
         </variable>
-        <variable name="register" type="com.example.furusho.casl2sim.CASL2Register"/>
+        <variable name="casl2Register" type="com.example.furusho.casl2emu.Casl2Register"/>
     </data>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,7 +22,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.furusho.casl2sim.ContextDisplayScreen">
+    tools:context="com.example.furusho.casl2emu.ContextDisplayScreen">
 
     <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -42,33 +42,43 @@
             android:text="GR0-3" />
 
         <TextView
+            android:id="@+id/gr0"
             android:layout_column="1"
             android:textSize="18sp"
+            android:clickable="true"
             android:layout_gravity="center"
+            android:background="#C8E6C9"
             android:layout_row="0"
             android:textColor="#ff000000"
-            android:text="@{register.gr[0]}" />
+            android:text="@{Integer.toHexString(casl2Register.gr[0])}" />
 
         <TextView
             android:layout_column="2"
             android:textSize="18sp"
-            android:gravity="center"
-            android:layout_width="34dp"
-            android:text="GR1" />
+            android:layout_row="0"
+            android:clickable="true"
+            android:layout_gravity="center"
+            android:text="@{Integer.toHexString(casl2Register.gr[1])}"
+            android:background="#C8E6C9"
+            />
 
         <TextView
             android:layout_column="3"
             android:textSize="18sp"
+            android:background="#C8E6C9"
+            android:clickable="true"
+            android:layout_row="0"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:text="GR2" />
+            android:text="@{Integer.toHexString(casl2Register.gr[2])}" />
 
         <TextView
             android:textSize="18sp"
             android:layout_column="4"
-            android:gravity="center"
-            android:layout_width="34dp"
-            android:text="GR3" />
+            android:background="#C8E6C9"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:text="@{Integer.toHexString(casl2Register.gr[3])}" />
 
         <TextView
             android:textSize="18sp"
@@ -112,29 +122,37 @@
             android:layout_column="1"
             android:layout_gravity="center"
             android:textSize="18sp"
+            android:clickable="true"
             android:layout_row="1"
-            android:text="GR4" />
+            android:background="#C8E6C9"
+            android:text="@{Integer.toHexString(casl2Register.gr[4])}" />
 
         <TextView
             android:layout_column="2"
             android:layout_gravity="center"
+            android:background="#C8E6C9"
+            android:clickable="true"
             android:textSize="18sp"
             android:layout_row="1"
-            android:text="GR5" />
+            android:text="@{Integer.toHexString(casl2Register.gr[5])}" />
 
         <TextView
             android:layout_column="3"
             android:textSize="18sp"
+            android:clickable="true"
+            android:background="#C8E6C9"
             android:layout_row="1"
             android:layout_gravity="center"
-            android:text="GR6" />
+            android:text="@{Integer.toHexString(casl2Register.gr[6])}" />
 
         <TextView
             android:layout_column="4"
             android:textSize="18sp"
             android:layout_gravity="center"
+            android:clickable="true"
+            android:background="#C8E6C9"
             android:layout_row="1"
-            android:text="GR7" />
+            android:text="@{Integer.toHexString(casl2Register.gr[7])}" />
 
         <TextView
             android:layout_column="4"
@@ -163,6 +181,7 @@
             android:layout_column="7"
             android:layout_width="19dp"
             android:gravity="center"
+            android:background="#C8E6C9"
             android:layout_row="2"
             android:text="0" />
 
@@ -227,9 +246,5 @@
 
         </ListView>
     </LinearLayout>
-
-
-
-
 </RelativeLayout>
 </layout>
