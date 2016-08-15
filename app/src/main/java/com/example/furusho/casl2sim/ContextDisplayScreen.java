@@ -1,12 +1,13 @@
 package com.example.furusho.casl2sim;
 
 import android.content.DialogInterface;
+import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.method.DigitsKeyListener;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.example.furusho.casl2sim.databinding.ActivityBinaryEditScreenBinding;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +30,7 @@ public class ContextDisplayScreen extends BaseActivity {
     InputText it;
     ListView listView;
     CASL2Memory listItems;
+    CASL2Register register;
     ArrayAdapter<String> arrayAdapter;
 
 
@@ -110,11 +114,21 @@ public class ContextDisplayScreen extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        listItems = CASL2Memory.getInstance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_binary_edit_screen);
 
+        listItems = CASL2Memory.getInstance();
+        register = CASL2Register.getInstance();
+
         listView = (ListView)findViewById(R.id.memory_list);
+        ActivityBinaryEditScreenBinding binding = ActivityBinaryEditScreenBinding.inflate(getLayoutInflater());
+        CASL2Register register = CASL2Register.getInstance();
+        char[] test = new char[]{78, 0, 9, 8, 78, 7, 5,23};
+        String aa= String.valueOf(test[0]);
+        register.setGr(test);
+        binding.setRegister(register);
+        char kakunin[] = register.getGr();
+        Log.d("dbg",String.valueOf(kakunin[0]));
         arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
                 listItems.getMemory(),
@@ -123,7 +137,7 @@ public class ContextDisplayScreen extends BaseActivity {
         listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String msg = position + "番目のアイテムがクリックされました";
+                String msg;
                 msg = String.valueOf(listView.getItemAtPosition(position));
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                 showTextDialog(msg,position);
