@@ -96,7 +96,7 @@ public class BinaryEditScreen extends AppCompatActivity {
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(this,
                 simple_list_item_1,
                 listItems);
-        arrayAdapter.addAll(getString(R.string.zerofill).split("\\n"));
+        arrayAdapter.addAll(getString(R.string.short_zerofill).split("\\n"));
         listView.setAdapter(arrayAdapter);
 
     }
