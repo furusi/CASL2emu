@@ -1,10 +1,12 @@
 package com.example.furusho.casl2sim;
 
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
+import android.text.method.DigitsKeyListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.R.layout.simple_list_item_1;
 
@@ -54,19 +59,29 @@ public class ContextDisplayScreen extends BaseActivity {
     private void showTextDialog(String text, final int position) {
         final EditText editView = new EditText(ContextDisplayScreen.this);
         editView.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        editView.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefABCDEF"));
         editView.setText(text);
+        editView.setTypeface(Typeface.MONOSPACE);
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
+                .setView(R.layout.input_text_dialog)
                 .setTitle("テキスト入力ダイアログ")
                 //setViewにてビューを設定します。
                 .setView(editView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         //入力した文字をトースト出力する
-                        Toast.makeText(ContextDisplayScreen.this, editView.getText().toString(), Toast.LENGTH_LONG).show();
-                        listItems.setMemory(editView.getText().toString(),position);
-                        arrayAdapter.addAll(listItems.getMemory());
-                        arrayAdapter.notifyDataSetChanged();
+                        String upperedString =editView.getText().toString().toUpperCase();
+                        Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
+                        Matcher matcher = pattern.matcher(upperedString);
+                        if (matcher.matches()) {
+                            Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
+                            listItems.setMemory(upperedString, position);
+                            arrayAdapter.addAll(listItems.getMemory());
+                            arrayAdapter.notifyDataSetChanged();
+                        }else {
+                            Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
+                        }
 
 
                         //InputMethodManager inputMethodManager= (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -100,12 +115,12 @@ public class ContextDisplayScreen extends BaseActivity {
         setContentView(R.layout.activity_binary_edit_screen);
 
         listView = (ListView)findViewById(R.id.memory_list);
-        arrayAdapter = new ArrayAdapter<String>(this,
+        arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
-                listItems.getMemory());
+                listItems.getMemory(),
+                Typeface.MONOSPACE);
         arrayAdapter.addAll(getString(R.string.short_zerofill).split("\\n"));
         listView.setAdapter(arrayAdapter);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String msg = position + "番目のアイテムがクリックされました";

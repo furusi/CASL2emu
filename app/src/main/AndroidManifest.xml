@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".InputActivity"
-            android:windowSoftInputMode="adjustNothing"></activity>
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".OutputScreen">
             <intent-filter>
                 <action android:name="com.example.furusho.casl2sim.output" />
@@ -23,7 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BaseActivity"></activity>
+        <activity android:name=".BaseActivity" />
+
+        <service
+            android:name=".AppHandleService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
