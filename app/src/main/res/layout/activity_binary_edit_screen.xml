@@ -53,7 +53,8 @@
             android:background="#C8E6C9"
             android:layout_row="0"
             android:textColor="#ff000000"
-            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[0] &amp; 0xFFFF)}" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[0] &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:id="@+id/gr1"
@@ -63,9 +64,9 @@
             android:layout_row="0"
             android:clickable="true"
             android:layout_gravity="center"
-            android:text="@{Integer.toHexString(casl2Register.gr[1])}"
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[1] &amp; 0xFFFF)}"
             android:background="#C8E6C9"
-            />
+            android:layout_margin="1dp" />
 
         <TextView
             android:layout_column="3"
@@ -76,7 +77,8 @@
             android:id="@+id/gr2"
             android:layout_row="0"
             android:layout_gravity="center"
-            android:text="@{Integer.toHexString(casl2Register.gr[2])}" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[2] &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:textSize="18sp"
@@ -87,7 +89,8 @@
             android:id="@+id/gr3"
             android:typeface="monospace"
             android:layout_width="wrap_content"
-            android:text="@{Integer.toHexString(casl2Register.gr[3])}" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[3] &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:textSize="18sp"
@@ -103,10 +106,12 @@
             android:layout_column="1"
             android:id="@+id/pc"
             android:typeface="monospace"
+            android:background="#C8E6C9"
             android:clickable="true"
             android:textSize="18sp"
             android:gravity="right"
-            android:text="0x0003" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.pc &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:text="SP"
@@ -123,11 +128,13 @@
             android:textSize="18sp"
             android:id="@+id/sp"
             android:typeface="monospace"
+            android:background="#C8E6C9"
             android:clickable="true"
             android:layout_column="3"
             android:gravity="right"
             android:layout_width="wrap_content"
-            android:text="0x0016" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.sp &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:layout_column="0"
@@ -145,7 +152,8 @@
             android:clickable="true"
             android:layout_row="1"
             android:background="#C8E6C9"
-            android:text="@{Integer.toHexString(casl2Register.gr[4])}" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[4] &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:layout_column="2"
@@ -156,7 +164,8 @@
             android:textSize="18sp"
             android:id="@+id/gr5"
             android:layout_row="1"
-            android:text="@{Integer.toHexString(casl2Register.gr[5])}" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[5] &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:layout_column="3"
@@ -167,7 +176,8 @@
             android:typeface="monospace"
             android:layout_row="1"
             android:layout_gravity="center"
-            android:text="@{Integer.toHexString(casl2Register.gr[6])}" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[6] &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:layout_column="4"
@@ -178,7 +188,8 @@
             android:typeface="monospace"
             android:background="#C8E6C9"
             android:layout_row="1"
-            android:text="@{Integer.toHexString(casl2Register.gr[7])}" />
+            android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[7] &amp; 0xFFFF)}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:layout_column="4"
@@ -187,17 +198,6 @@
             android:layout_gravity="center"
             android:typeface="monospace"
             android:text="OF" />
-
-        <TextView
-            android:layout_column="5"
-            android:textSize="18sp"
-            android:id="@+id/of"
-            android:clickable="true"
-            android:layout_row="2"
-            android:typeface="monospace"
-            android:gravity="center"
-            android:layout_width="19dp"
-            android:text="@{Integer.toHexString(casl2Register.fr[0])}" />
 
         <TextView
             android:textSize="18sp"
@@ -217,7 +217,8 @@
             android:gravity="center"
             android:background="#C8E6C9"
             android:layout_row="2"
-            android:text="@{Integer.toHexString(casl2Register.fr[1])}" />
+            android:text="@{Integer.toHexString(casl2Register.fr[1])}"
+            android:layout_margin="1dp" />
 
         <TextView
             android:layout_column="8"
@@ -232,11 +233,26 @@
             android:textSize="18sp"
             android:id="@+id/zf"
             android:typeface="monospace"
+            android:background="#C8E6C9"
             android:clickable="true"
-            android:gravity="right"
+            android:gravity="center"
             android:layout_row="2"
-            android:layout_width="25dp"
-            android:text="@{Integer.toHexString(casl2Register.fr[2])}" />
+            android:layout_width="19dp"
+            android:text="@{Integer.toHexString(casl2Register.fr[2])}"
+            android:layout_margin="1dp" />
+
+        <TextView
+            android:layout_column="5"
+            android:textSize="18sp"
+            android:id="@+id/of"
+            android:clickable="true"
+            android:background="#C8E6C9"
+            android:layout_row="2"
+            android:typeface="monospace"
+            android:gravity="center"
+            android:layout_width="19dp"
+            android:text="@{Integer.toHexString(casl2Register.fr[0])}"
+            android:layout_margin="1dp" />
 
     </GridLayout>
 
@@ -250,7 +266,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_step_over_button"
-            android:id="@+id/button"
+            android:id="@+id/stepbutton"
             />
 
     </LinearLayout>
@@ -263,7 +279,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_run_button"
-            android:id="@+id/button2"
+            android:id="@+id/runbutton"
             />
 
     </LinearLayout>

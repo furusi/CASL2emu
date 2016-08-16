@@ -1,5 +1,7 @@
 package com.example.furusho.casl2emu;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -14,8 +16,11 @@ public class Casl2Memory {
         memory = new ArrayList<>();
     }
 
-    public ArrayList<String> getMemory() {
+    public ArrayList<String> getMemoryRow() {
         return memory;
+    }
+    public String getMemoryRow(int i) {
+        return memory.get(i);
     }
 
     public void setMemory(ArrayList<String> memory) {
@@ -27,5 +32,14 @@ public class Casl2Memory {
 
     static Casl2Memory getInstance(){
        return instance;
+    }
+
+    public int getMemory(int c) {
+        int rowNum = (int)c/8;
+        int columnNum = (int)c%8;
+        String str = this.getMemoryRow(rowNum);
+        String[] arr = str.split(" ");
+        Log.d("aaaaa","tmpの中身は"+ Integer.parseInt(arr[columnNum],16) +"だよ");
+        return Integer.parseInt(arr[columnNum],16);
     }
 }

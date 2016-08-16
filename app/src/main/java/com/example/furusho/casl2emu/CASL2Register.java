@@ -11,8 +11,11 @@ public class Casl2Register extends BaseObservable{
     static Casl2Register instance = new Casl2Register();
     @Bindable
     public char gr[] = new char[8];
+    @Bindable
     private char pc;
+    @Bindable
     private char sp;
+    @Bindable
     private char fr[] = new char[3];
 
 
@@ -28,7 +31,11 @@ public class Casl2Register extends BaseObservable{
 
     public void setGr(char[] gr) {
         this.gr = gr;
-        notifyPropertyChanged(BR.casl2Register);
+        notifyPropertyChanged(BR.gr);
+    }
+    public void setGr(char data,int position){
+        gr[position]= data;
+        notifyPropertyChanged(BR.gr);
     }
 
     public char getPc() {
@@ -37,7 +44,7 @@ public class Casl2Register extends BaseObservable{
 
     public void setPc(char pc) {
         this.pc = pc;
-        notifyPropertyChanged(BR.casl2Register);
+        notifyPropertyChanged(BR.pc);
     }
 
     public char getSp() {
@@ -46,7 +53,7 @@ public class Casl2Register extends BaseObservable{
 
     public void setSp(char sp) {
         this.sp = sp;
-        notifyPropertyChanged(BR.casl2Register);
+        notifyPropertyChanged(BR.sp);
     }
 
     public char[] getFr() {
@@ -55,6 +62,6 @@ public class Casl2Register extends BaseObservable{
 
     public void setFr(char[] fr) {
         this.fr = fr;
-        notifyPropertyChanged(BR.casl2Register);
+        notifyPropertyChanged(BR.fr);
     }
 }

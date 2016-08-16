@@ -1,17 +1,12 @@
 package com.example.furusho.casl2emu;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
-import android.text.Layout;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,13 +18,11 @@ import android.widget.Toast;
 
 import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 
-import org.apache.commons.codec.binary.Hex;
-
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static android.R.layout.activity_list_item;
+import icepick.Icepick;
+
 import static android.R.layout.simple_list_item_1;
 
 public class ContextDisplayScreen extends BaseActivity {
@@ -39,6 +32,7 @@ public class ContextDisplayScreen extends BaseActivity {
     Casl2Memory listItems;
     Casl2Register register;
     ArrayAdapter<String> arrayAdapter;
+    Casl2Emulator emulator;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -69,7 +63,7 @@ public class ContextDisplayScreen extends BaseActivity {
                         if (matcher.matches()) {
                             Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
                             listItems.setMemory(upperedString, position);
-                            arrayAdapter.addAll(listItems.getMemory());
+                            arrayAdapter.addAll(listItems.getMemoryRow());
                             arrayAdapter.notifyDataSetChanged();
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
@@ -100,12 +94,15 @@ public class ContextDisplayScreen extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_binary_edit_screen);
+        Icepick.restoreInstanceState(this,savedInstanceState);
 
         listItems = Casl2Memory.getInstance();
         register = Casl2Register.getInstance();
+        emulator= Casl2Emulator.getInstance();
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        char[] test = new char[]{1,0,9,8,78,7,5,23};
+        char[] test = new char[]{5,4,9,8,78,7,5,0xabcd};
+
         register.setGr(test);
         binding.setCasl2Register(register);
         binding.gr0.setOnClickListener(showWordDialog(binding,0));
@@ -123,18 +120,38 @@ public class ContextDisplayScreen extends BaseActivity {
         binding.zf.setOnClickListener(showWordDialog(binding,12));
         arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
-                listItems.getMemory(),
+                listItems.getMemoryRow(),
                 Typeface.MONOSPACE);
+        arrayAdapter.addAll("24 21 01 00 0a 00 00 00");
         arrayAdapter.addAll(getString(R.string.short_zerofill).split("\\n"));
 
         listView = (ListView)findViewById(R.id.memory_list);
         listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(showTextEditDialog);
 
+        binding.runbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emulator.run();
+            }
+        });
+        binding.stepbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emulator.stepOver();
+            }
+        });
+
     }
 
     public AdapterView.OnItemClickListener getShowTextEditDialog(){
         return showTextEditDialog;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this,outState);
     }
 
     //private void showToast() {
@@ -202,6 +219,7 @@ public class ContextDisplayScreen extends BaseActivity {
                                             break;
                                         case 8:
                                             binding.pc.setText(upperedString);
+                                            Casl2Register.instance.setPc((char)Integer.parseInt(upperedString));
                                             break;
                                         case 9:
                                             binding.sp.setText(upperedString);
