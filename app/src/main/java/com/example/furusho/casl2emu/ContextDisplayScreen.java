@@ -25,6 +25,7 @@ import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 
 import org.apache.commons.codec.binary.Hex;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +52,7 @@ public class ContextDisplayScreen extends BaseActivity {
     };
 
     private void showTextDialog(String text, final int position) {
-        final HexEditText editView = new HexEditText(ContextDisplayScreen.this);
+        final HexEditText editView = new HexEditText(ContextDisplayScreen.this,1);
         editView.setText(text);
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -104,7 +105,7 @@ public class ContextDisplayScreen extends BaseActivity {
         register = Casl2Register.getInstance();
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        char[] test = new char[]{78,0,9,8,78,7,5,23};
+        char[] test = new char[]{1,0,9,8,78,7,5,23};
         register.setGr(test);
         binding.setCasl2Register(register);
         binding.gr0.setOnClickListener(showWordDialog(binding,0));
@@ -117,6 +118,9 @@ public class ContextDisplayScreen extends BaseActivity {
         binding.gr7.setOnClickListener(showWordDialog(binding,7));
         binding.pc.setOnClickListener(showWordDialog(binding,8));
         binding.sp.setOnClickListener(showWordDialog(binding,9));
+        binding.of.setOnClickListener(showWordDialog(binding,10));
+        binding.sf.setOnClickListener(showWordDialog(binding,11));
+        binding.zf.setOnClickListener(showWordDialog(binding,12));
         arrayAdapter = new CustomArrayAdapter(this,
                 simple_list_item_1,
                 listItems.getMemory(),
@@ -143,7 +147,12 @@ public class ContextDisplayScreen extends BaseActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final HexEditText hexEditText = new HexEditText(ContextDisplayScreen.this);
+                final HexEditText hexEditText;
+                if(id<10){
+                    hexEditText = new HexEditText(ContextDisplayScreen.this,1);
+                }else {
+                    hexEditText = new HexEditText(ContextDisplayScreen.this,2);
+                }
                 TextView textview = (TextView) v;
                 //Log.d("dbg",textview.getAccessibilityClassName().toString());
                 hexEditText.setText(textview.getText());
@@ -157,7 +166,12 @@ public class ContextDisplayScreen extends BaseActivity {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //入力した文字をトースト出力する
                                 String upperedString = hexEditText.getText().toString().toUpperCase();
-                                Pattern pattern = Pattern.compile(getString(R.string.word_pattern_wo_space));
+                                Pattern pattern;
+                                if(id<10) {
+                                    pattern = Pattern.compile(getString(R.string.word_pattern_wo_space));
+                                }else {
+                                    pattern = Pattern.compile(getString(R.string.boolean_pattern));
+                                }
                                 Matcher matcher = pattern.matcher(upperedString);
                                 if (matcher.matches()) {
                                     Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
@@ -192,6 +206,15 @@ public class ContextDisplayScreen extends BaseActivity {
                                         case 9:
                                             binding.sp.setText(upperedString);
                                             break;
+                                        case 10:
+                                            binding.of.setText(upperedString);
+                                            break;
+                                        case 11:
+                                            binding.sf.setText(upperedString);
+                                            break;
+                                        case 12:
+                                            binding.zf.setText(upperedString);
+                                            break;
                                     }
                                 } else {
                                     Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
@@ -211,10 +234,17 @@ public class ContextDisplayScreen extends BaseActivity {
 }
 
 class HexEditText extends EditText {
-    public HexEditText(Context context) {
+    public HexEditText(Context context, int i) {
         super(context);
         this.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        this.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefABCDEF "));
+        switch (i){
+            case 1:
+                this.setKeyListener(DigitsKeyListener.getInstance(context.getString(R.string.a_to_f_0_to_9)));
+                break;
+            case 2:
+                this.setKeyListener(DigitsKeyListener.getInstance(context.getString(R.string.zero_or_one)));
+                break;
+        }
         this.setTypeface(Typeface.MONOSPACE);
     }
 }

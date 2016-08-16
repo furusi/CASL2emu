@@ -8,4 +8,7 @@
     <string name="word_pattern">\\w\\w \\w\\w</string>
     <string name="word_pattern_wo_space">\\w\\w\\w\\w</string>
     <string name="byte_pattern">\\w\\w</string>
+    <string name="boolean_pattern">\\w</string>
+    <string name="a_to_f_0_to_9">"0123456789abcdefABCDEF "</string>
+    <string name="zero_or_one">01</string>
 </resources>
