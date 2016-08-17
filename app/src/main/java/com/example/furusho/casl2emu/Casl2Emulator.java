@@ -32,20 +32,14 @@ public class Casl2Emulator extends EmulatorCore {
         int datacount=0;
         if(isSameString(mem1, "10")){
             wordCount=2;
-            int[] tmp = new int[wordCount*2];
-            for(int i=0;i<wordCount*2;i++){
-               tmp[i] = memory.getMemory(register.getPc()+i);
-            }
+            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount*2);
             //データに基づいて処理する
             Log.d("aaaaa","tmpの中身は"+ tmp[1] +"だよ");
         } else if(isSameString(mem1, "20")){//ADDA
             //データに基づいて処理する
             wordCount=2;
             datacount=wordCount*2;
-            int[] tmp = new int[wordCount*2];
-            for(int i=0;i<wordCount*2;i++){
-                tmp[i] = memory.getMemory(register.getPc()+i);
-            }
+            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount*2);
             //xの中身を取得
             int sihyou_nakami = register.getGr()[tmp[2]];
             int jikkouadr = tmp[3]+sihyou_nakami;
