@@ -1,6 +1,7 @@
 package com.example.furusho.casl2emu;
 
 import android.content.Context;
+import android.databinding.ObservableArrayList;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 /**
  * Created by furus on 2016/08/15.

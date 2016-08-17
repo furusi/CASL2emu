@@ -3,7 +3,7 @@
 
     <string name="text_step_over_button">ステップ実行</string>
     <string name="text_run_button">最後まで実行</string>
-    <string name="short_zerofill">00 00 00 00 00 00 00 00\n00 00 00 00 00 00 00 00\n00 00 00 00 00 00 00 00\n00 00 00 00 00 00 00 00\n00 00 00 00 00 00 00 00\n00 00 00 00 00 00 00 00\n00 00 00 00 00 00 00 00\n00 00 00 00 00 00 00 00</string>
+    <string name="short_zerofill">00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</string>
     <string name="memory_row_pattern">\\w\\w \\w\\w \\w\\w \\w\\w \\w\\w \\w\\w \\w\\w \\w\\w</string>
     <string name="word_pattern">\\w\\w \\w\\w</string>
     <string name="word_pattern_wo_space">\\w\\w\\w\\w</string>

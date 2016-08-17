@@ -1,15 +1,23 @@
 package com.example.furusho.casl2emu;
 
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Loader;
+import android.database.Cursor;
+import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,6 +26,8 @@ import android.widget.Toast;
 
 import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,14 +35,14 @@ import icepick.Icepick;
 
 import static android.R.layout.simple_list_item_1;
 
-public class ContextDisplayScreen extends BaseActivity {
+public class ContextDisplayScreen extends BaseActivity implements LoaderCallbacks{
 
     InputText it;
     ListView listView;
-    Casl2Memory listItems;
+    Casl2Memory memory;
     Casl2Register register;
-    ArrayAdapter<String> arrayAdapter;
     Casl2Emulator emulator;
+    ArrayAdapter<String> arrayAdapter;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -62,9 +72,9 @@ public class ContextDisplayScreen extends BaseActivity {
                         Matcher matcher = pattern.matcher(upperedString);
                         if (matcher.matches()) {
                             Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
-                            listItems.setMemory(upperedString, position);
-                            arrayAdapter.addAll(listItems.getMemoryRow());
-                            arrayAdapter.notifyDataSetChanged();
+                            char[] tmp = getHexChars(upperedString," ");
+                            memory.setMemoryArray(tmp, position*8);
+                            localSetMemoryAdapter(memory.getMemory(), 0);
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
                         }
@@ -76,6 +86,15 @@ public class ContextDisplayScreen extends BaseActivity {
                     }
                 })
                 .show();
+    }
+
+    private char[] getHexChars(String s,String separeter) {
+        String[] stmp = s.split(separeter);
+        char[] tmp= new char[stmp.length];
+        for(int i=0;i<stmp.length;i++){
+           tmp[i] = (char)Integer.parseInt(stmp[i],16);
+        }
+        return tmp;
     }
 
     private String getWord(int offset, CharSequence line) {
@@ -96,7 +115,7 @@ public class ContextDisplayScreen extends BaseActivity {
         setContentView(R.layout.activity_binary_edit_screen);
         Icepick.restoreInstanceState(this,savedInstanceState);
 
-        listItems = Casl2Memory.getInstance();
+        memory = Casl2Memory.getInstance();
         register = Casl2Register.getInstance();
         emulator= Casl2Emulator.getInstance();
 
@@ -118,15 +137,14 @@ public class ContextDisplayScreen extends BaseActivity {
         binding.of.setOnClickListener(showWordDialog(binding,10));
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
-        arrayAdapter = new CustomArrayAdapter(this,
-                simple_list_item_1,
-                listItems.getMemoryRow(),
-                Typeface.MONOSPACE);
-        arrayAdapter.addAll("24 21 01 00 0a 00 00 00");
-        arrayAdapter.addAll(getString(R.string.short_zerofill).split("\\n"));
+        String initialString = "24 21 01 00 0a 00 00 00"+" "+getString(R.string.short_zerofill);
+        char[]tmp = getHexChars(initialString," ");
+        memory.setMemory(tmp);
+        final char[] a = memory.getMemory();
+
 
         listView = (ListView)findViewById(R.id.memory_list);
-        listView.setAdapter(arrayAdapter);
+        localSetMemoryAdapter(a,0);
         listView.setOnItemClickListener(showTextEditDialog);
 
         binding.runbutton.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +161,10 @@ public class ContextDisplayScreen extends BaseActivity {
         });
 
     }
+    private void localSetMemoryAdapter(char[] chars,int count) {
+        startListTask(chars,count);
+    }
+
 
     public AdapterView.OnItemClickListener getShowTextEditDialog(){
         return showTextEditDialog;
@@ -248,6 +270,97 @@ public class ContextDisplayScreen extends BaseActivity {
 
             }
         };
+    }
+
+    private void startListTask(char[]cs,int i){
+       Bundle bundle=new Bundle();
+        bundle.putCharArray("cs",cs);
+        bundle.putInt("position",i);
+        getLoaderManager().initLoader(0,bundle,this).forceLoad();
+    }
+    /**
+     * Instantiate and return a new Loader for the given ID.
+     *
+     * @param id   The ID whose loader is to be created.
+     * @param args Any arguments supplied by the caller.
+     * @return Return a new Loader instance that is ready to start loading.
+     */
+    @Override
+    public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
+        char[]cs = new char[0];
+        int i = 0;
+        if(args!=null){
+            cs = args.getCharArray("cs");
+            i = args.getInt("position");
+        }
+        return new ListDisplayTaskLoader(this,cs,i);
+    }
+
+    /**
+     * Called when a previously created loader has finished its load.  Note
+     * that normally an application is <em>not</em> allowed to commit fragment
+     * transactions while in this call, since it can happen after an
+     * FragmentManager.openTransaction()} for further discussion on this.
+     * <p>
+     * <p>This function is guaranteed to be called prior to the release of
+     * the last data that was supplied for this Loader.  At this point
+     * you should remove all use of the old data (since it will be released
+     * soon), but should not do your own release of the data since its Loader
+     * owns it and will take care of that.  The Loader will take care of
+     * management of its data so you don't have to.  In particular:
+     * <p>
+     * <ul>
+     * <li> <p>The Loader will monitor for changes to the data, and report
+     * them to you through new calls here.  You should not monitor the
+     * data yourself.  For example, if the data is a {@link Cursor}
+     * and you place it in a {@link CursorAdapter}, use
+     * the {@link CursorAdapter#CursorAdapter(Context,
+     * Cursor, int)} constructor <em>without</em> passing
+     * in either {@link CursorAdapter#FLAG_AUTO_REQUERY}
+     * or {@link CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
+     * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
+     * from doing its own observing of the Cursor, which is not needed since
+     * when a change happens you will get a new Cursor throw another call
+     * here.
+     * <li> The Loader will release the data once it knows the application
+     * is no longer using it.  For example, if the data is
+     * a {@link Cursor} from a {@link CursorLoader},
+     * you should not call close() on it yourself.  If the Cursor is being placed in a
+     * {@link CursorAdapter}, you should use the
+     * {@link CursorAdapter#swapCursor(Cursor)}
+     * method so that the old Cursor is not closed.
+     * </ul>
+     *
+     * @param loader The Loader that has finished.
+     * @param data   The data generated by the Loader.
+     */
+    @Override
+    public void onLoadFinished(Loader loader, Object data) {
+
+        if(arrayAdapter ==null) {
+            arrayAdapter = new CustomArrayAdapter(listView.getContext(),
+                    simple_list_item_1,
+                    (ArrayList<String>)data,
+                    Typeface.MONOSPACE);
+            listView.setAdapter(arrayAdapter);
+        }else {
+            arrayAdapter.clear();
+            arrayAdapter.addAll((ArrayList<String>)data);
+            arrayAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.  The application should at this point
+     * remove any references it has to the Loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader loader) {
+
     }
 }
 
