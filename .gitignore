@@ -1,3 +1,4 @@
+*.apk
 *.iml
 .gradle
 /local.properties
@@ -44,3 +45,9 @@ local.properties
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+projectFilesBackup/.idea/workspace.xml
+.idea/copyright/
+app/libs/
+app/src/main/res/drawable/
+projectFilesBackup/
