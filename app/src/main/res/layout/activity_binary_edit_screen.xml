@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout
+    >
 
     <data>
         <import type="java.util.Locale"/>
-        <variable
-            name="inputText"
-            type="com.example.furusho.casl2emu.InputText">
-        </variable>
+        <import type="java.util.ArrayList"/>
         <variable
             name="contextDisplayScreen"
             type="com.example.furusho.casl2emu.ContextDisplayScreen">
         </variable>
         <variable name="casl2Register" type="com.example.furusho.casl2emu.Casl2Register"/>
+        <variable
+            name="casl2Memory"
+            type="com.example.furusho.casl2emu.Casl2Memory"/>
     </data>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
