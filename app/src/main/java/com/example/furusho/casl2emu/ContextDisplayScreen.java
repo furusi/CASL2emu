@@ -43,6 +43,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     Casl2Register register;
     Casl2Emulator emulator;
     ArrayAdapter<String> arrayAdapter;
+    ArrayList<String> stringArrayList;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -61,7 +62,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(R.layout.input_text_dialog)
-                .setTitle("テキスト入力ダイアログ")
+                .setTitle("テキスト入力ダイアログ: "+String.format(Locale.US,"%04X",position*4 & 0xFFFF)+" - "+String.format(Locale.US,"%04X",position*4+3& 0xFFFF))
                 //setViewにてビューを設定します。
                 .setView(editView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -72,9 +73,18 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         Matcher matcher = pattern.matcher(upperedString);
                         if (matcher.matches()) {
                             Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
-                            char[] tmp = getHexChars(upperedString," ");
-                            memory.setMemoryArray(tmp, position*8);
-                            localSetMemoryAdapter(memory.getMemory(), 0);
+                            char[] chars = getHexChars(upperedString," ");
+                            memory.setMemoryArray(chars, position*4);
+                            //stringArrayList.set(position,String.format(Locale.US ,"%02X %02X %02X %02X %02X %02X %02X %02X",
+                            //        chars[0] & 0xFFFF, chars[1] & 0xFFFF, chars[2] & 0xFFFF, chars[3] &
+                            //                0xFFFF, chars[4] & 0xFFFF, chars[5] & 0xFFFF, chars[6] & 0xFFFF, chars[7] & 0xFFFF));
+                            stringArrayList.remove(position);
+                            //arrayAdapter.remove("00 00 00 00 00 00 00 00");
+                            arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                                    chars[0] & 0xFFFF, chars[1] & 0xFFFF, chars[2] & 0xFFFF, chars[3] & 0xFFFF),position);
+                            //arrayAdapter.addAll(stringArrayList);
+                            arrayAdapter.notifyDataSetChanged();
+
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
                         }
@@ -137,7 +147,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.of.setOnClickListener(showWordDialog(binding,10));
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
-        String initialString = "24 21 01 00 0a 00 00 00"+" "+getString(R.string.short_zerofill);
+        String initialString = "2421 0100 0a00 0000"+" "+getString(R.string.short_zerofill);
         char[]tmp = getHexChars(initialString," ");
         memory.setMemory(tmp);
         final char[] a = memory.getMemory();
@@ -338,9 +348,10 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     public void onLoadFinished(Loader loader, Object data) {
 
         if(arrayAdapter ==null) {
+            stringArrayList = (ArrayList<String>)data;
             arrayAdapter = new CustomArrayAdapter(listView.getContext(),
                     simple_list_item_1,
-                    (ArrayList<String>)data,
+                    stringArrayList,
                     Typeface.MONOSPACE);
             listView.setAdapter(arrayAdapter);
         }else {
