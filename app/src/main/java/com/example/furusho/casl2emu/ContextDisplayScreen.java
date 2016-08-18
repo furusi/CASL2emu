@@ -130,7 +130,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         emulator= Casl2Emulator.getInstance();
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        char[] test = new char[]{5,4,9,8,78,7,5,0xabcd};
+        char[] test = new char[]{0x000F,0,9,8,78,7,5,0xabcd};
 
         register.setGr(test);
         binding.setCasl2Register(register);
@@ -147,7 +147,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.of.setOnClickListener(showWordDialog(binding,10));
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
-        String initialString = "2421 0100 0a00 0000"+" "+getString(R.string.short_zerofill);
+        String initialString = "5101 0002 0001 0000"+" "+getString(R.string.short_zerofill);
         char[]tmp = getHexChars(initialString," ");
         memory.setMemory(tmp);
         final char[] a = memory.getMemory();
@@ -227,31 +227,39 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                     switch (id){
                                         case 0:
                                             binding.gr0.setText(upperedString);
+                                            register.setGr((char)Integer.parseInt(upperedString,16),0);
                                             break;
                                         case 1:
                                             binding.gr1.setText(upperedString);
+                                            register.setGr((char)Integer.parseInt(upperedString,16),1);
                                             break;
                                         case 2:
                                             binding.gr2.setText(upperedString);
+                                            register.setGr((char)Integer.parseInt(upperedString,16),2);
                                             break;
                                         case 3:
                                             binding.gr3.setText(upperedString);
+                                            register.setGr((char)Integer.parseInt(upperedString,16),3);
                                             break;
                                         case 4:
                                             binding.gr4.setText(upperedString);
+                                            register.setGr((char)Integer.parseInt(upperedString,16),4);
                                             break;
                                         case 5:
                                             binding.gr5.setText(upperedString);
+                                            register.setGr((char)Integer.parseInt(upperedString,16),5);
                                             break;
                                         case 6:
                                             binding.gr6.setText(upperedString);
+                                            register.setGr((char)Integer.parseInt(upperedString,16),6);
                                             break;
                                         case 7:
                                             binding.gr7.setText(upperedString);
+                                            register.setGr((char)Integer.parseInt(upperedString,16),7);
                                             break;
                                         case 8:
                                             binding.pc.setText(upperedString);
-                                            Casl2Register.instance.setPc((char)Integer.parseInt(upperedString));
+                                            register.setPc((char)Integer.parseInt(upperedString,16));
                                             break;
                                         case 9:
                                             binding.sp.setText(upperedString);
