@@ -1,6 +1,11 @@
 package com.example.furusho.casl2emu;
 
+import android.os.Handler;
+
 import java.util.Locale;
+import java.util.logging.LogRecord;
+
+import clojure.lang.Delay;
 
 /**
  * Created by furusho on 2016/07/09.
@@ -9,6 +14,7 @@ public class Casl2Emulator extends EmulatorCore {
     private static Casl2Emulator instance = new Casl2Emulator();
     Casl2Memory memory = Casl2Memory.getInstance();
     Casl2Register register = Casl2Register.getInstance();
+    Handler handler;
     char[] fr = new char[3];
 
     private Casl2Emulator() {
@@ -427,7 +433,7 @@ public class Casl2Emulator extends EmulatorCore {
             char jikkou = getJikkouAddress(tmp);
 
             //SPが指す値を1ひいてSPに入れる
-            char ans = memory.getMemory(register.getSp());
+            char ans = register.getSp();
             register.setSp((char) (ans-1));
             //SPの指すアドレスへ実行アドレスを入れる
             memory.setMemory(jikkou,register.getSp());
@@ -452,7 +458,7 @@ public class Casl2Emulator extends EmulatorCore {
             char jikkou = getJikkouAddress(tmp);
 
             //SPが指す値を1ひいてSPに入れる
-            char ans = memory.getMemory(register.getSp());
+            char ans = register.getSp();
             register.setSp((char) (ans-1));
             //SPの指すアドレスへPCを入れる
             memory.setMemory(register.getPc(),register.getSp());
@@ -611,9 +617,24 @@ public class Casl2Emulator extends EmulatorCore {
 
 
     public void run(){
+        if(handler==null){
+
+            handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    stepOver();
+                    handler.postDelayed(this,1000);
+                }
+            }, 1000);
+        }
     }
+
     public void waitEmu(){
 
+        handler.removeCallbacksAndMessages(null);
+        handler = null;
     }
     public void registerSVC (int num, String func)  /* SVC num が実行されたときに呼び出す関数 func を設定 */ {
     }

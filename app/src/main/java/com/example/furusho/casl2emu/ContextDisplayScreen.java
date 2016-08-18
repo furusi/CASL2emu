@@ -167,6 +167,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             @Override
             public void onClick(View v) {
                 emulator.stepOver();
+                startListTask(new char[0],0);
+            }
+        });
+        binding.waitbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emulator.waitEmu();
             }
         });
 
@@ -263,15 +270,19 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                             break;
                                         case 9:
                                             binding.sp.setText(upperedString);
+                                            register.setSp((char) Integer.parseInt(upperedString,16));
                                             break;
                                         case 10:
                                             binding.of.setText(upperedString);
+                                            register.setFr((char) Integer.parseInt(upperedString,16),0 );
                                             break;
                                         case 11:
                                             binding.sf.setText(upperedString);
+                                            register.setFr((char) Integer.parseInt(upperedString,16),1 );
                                             break;
                                         case 12:
                                             binding.zf.setText(upperedString);
+                                            register.setFr((char) Integer.parseInt(upperedString,16),2 );
                                             break;
                                     }
                                 } else {
