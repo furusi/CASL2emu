@@ -455,6 +455,11 @@ public class Casl2Emulator extends EmulatorCore {
             fr[0]=1;
         return value;
     }
+    private long checkCharRange(int value){
+        if(value > Character.MAX_VALUE||value < Character.MIN_VALUE)
+            fr[0]=1;
+        return value;
+    }
 
 
     public void run(){
