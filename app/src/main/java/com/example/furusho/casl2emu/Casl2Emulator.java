@@ -13,6 +13,7 @@ public class Casl2Emulator extends EmulatorCore {
     private static Casl2Emulator instance = new Casl2Emulator();
     Casl2Memory memory = Casl2Memory.getInstance();
     Casl2Register register = Casl2Register.getInstance();
+    char[] fr = new char[3];
 
     private Casl2Emulator() {
     }
@@ -42,7 +43,11 @@ public class Casl2Emulator extends EmulatorCore {
             char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
             char jikkouaddr = getJikkouAddress(tmp);
             int gr_position=checkByte(tmp[0],2);
-            register.setGr((char)memory.getMemory(jikkouaddr),gr_position);
+            char ld = memory.getMemory(jikkouaddr);
+            register.setGr(ld,gr_position);
+            fr = checkSfZf(ld);
+            fr[0]=0;//LDのOFは必ず0
+            register.setFr(fr);
             register.setPc((char)(cpc+wordCount));
         }else if(compareOPCode(mem1, 11)){//ST
             wordCount=2;
@@ -68,9 +73,12 @@ public class Casl2Emulator extends EmulatorCore {
 
             int r1_position =checkByte(tmp[0],2);
             int r2_position =checkByte(tmp[0],3);
-            char r2 = register.getGr()[r2_position];
+            char ld = register.getGr()[r2_position];
             //計算結果はrに入る
-            register.setGr(r2,r1_position);
+            register.setGr(ld,r1_position);
+            fr = checkSfZf(ld);
+            fr[0]=0;//LDのOFは必ず0
+            register.setFr(fr);
             //pcが更新される
             register.setPc((char)(cpc+wordCount));
             Log.d("aaaaa","tmpの中身は"+ tmp[1] +"だよ");
@@ -83,17 +91,11 @@ public class Casl2Emulator extends EmulatorCore {
             short jikkou = (short) getJikkouAddress(tmp);
             short r = (short) register.getGr()[tmp[1]];
             short ans=0;
-            char[] t={0,0,0};
-            try {
-                ans = (short) (r+jikkou);
-            }catch (ArithmeticException e){
-                t[0]=1;
-            }finally {
-               if(ans<0) t[1]=1;
-
-            }
+            fr = checkSfZf((char) ans);
+            ans = (short) checkShortRange((int)r+(int)jikkou);
             //計算結果はrに入る
             register.setGr((char)ans,tmp[1]);
+            register.setFr(fr);
             //pcが更新される
             register.setPc((char)(cpc+wordCount));
             Log.d("aaaaa","tmpの中身は"+ tmp[1] +"だよ");
@@ -105,7 +107,7 @@ public class Casl2Emulator extends EmulatorCore {
             //xの中身を取得
             char jikkou = getJikkouAddress(tmp);
             char r =register.getGr()[tmp[1]];
-            char ans = (char) (r-jikkou);
+            char ans = (char) checkShortRange((int)r-(int)jikkou);
             //計算結果はrに入る
             register.setGr((char)ans,tmp[1]);
             //pcが更新される
@@ -355,13 +357,46 @@ public class Casl2Emulator extends EmulatorCore {
 
             register.setGr((char) r,r_position);
             register.setPc((char)(cpc+wordCount));
+        }else if(compareOPCode(mem1, 52)){//SLA
+            wordCount=2;
+            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
+
+            //xの中身を取得
+            char jikkou = memory.getMemory(getJikkouAddress(tmp));
+            int r_position=checkByte(tmp[0],2);
+            char r =  register.getGr()[r_position];
+            //計算結果はrに入る
+            r= (char) (r<<jikkou);
+
+            register.setGr((char) r,r_position);
+            register.setPc((char)(cpc+wordCount));
+        }else if(compareOPCode(mem1, 53)){//SRA
+            wordCount=2;
+            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
+
+            //xの中身を取得
+            char jikkou =  memory.getMemory(getJikkouAddress(tmp));
+            int r_position=checkByte(tmp[0],2);
+            char r = register.getGr()[r_position];
+            //rの記号を保持
+            //計算結果はrに入る
+            r= (char) (r>>jikkou);
+            //pcが更新される
+
+            register.setGr((char) r,r_position);
+            register.setPc((char)(cpc+wordCount));
         }
 
-        //処理の結果を受けてpc以外のレジスタとメモリが書き換わる
-        //処理の結果を受けてpcが書き換わる
+    }
 
-        //処理の結果を受けてpc以外のレジスタとメモリが書き換わる
-        //処理の結果を受けてpcが書き換わる
+    private char[] checkSfZf(char ld) {
+        char[] _fr = new char[]{0,0,0};
+        if((short)(ld)<0){
+            _fr[1]=1;
+        }else if(ld==0){
+            _fr[2]=1;
+        }
+        return _fr;
     }
 
     private char[] getCompareResultL(char jikkou, char r) {
@@ -414,6 +449,11 @@ public class Casl2Emulator extends EmulatorCore {
     private int checkByte(char data, int position){
         String s = String.format(Locale.US,"%04X",data);
         return s.charAt(position);
+    }
+    private long checkShortRange(int value){
+        if(value > Short.MAX_VALUE||value < Short.MIN_VALUE)
+            fr[0]=1;
+        return value;
     }
 
 
