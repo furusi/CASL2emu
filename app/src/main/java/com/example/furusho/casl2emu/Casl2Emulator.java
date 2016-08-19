@@ -2,8 +2,6 @@ package com.example.furusho.casl2emu;
 
 import android.os.Handler;
 
-import java.util.Locale;
-
 
 /**
  * Created by furusho on 2016/07/09.
@@ -39,8 +37,8 @@ public class Casl2Emulator extends EmulatorCore {
         short sans;
         short sr1;
         short sr2;
-        char cr1;
-        char cr2;
+        char r1;
+        char r2;
         short smember;
         char jikkou;
         char cmember;
@@ -58,13 +56,12 @@ public class Casl2Emulator extends EmulatorCore {
             case 0x1000: // ST
                 wordCount=2;
                 tmp = memory.getMemoryArray(register.getPc(),wordCount);
-                cr2 = getJikkouAddress(tmp);
+                r2 = getJikkouAddress(tmp);
                 gr_position = getGrNumber(tmp);
-                //TODO charとshortの変換が必要
-                sdata = (short) memory.getMemory(cr2);
-                register.setGr((char) sdata,gr_position);
+                cdata = memory.getMemory(r2);
+                register.setGr(cdata,gr_position);
                 fr[0]=0;//LDのOFは必ず0
-                setRegisterAfterClaculationShort(cpc,wordCount,tmp,sdata);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cdata);
                 break;
             case 0x1100://ST
             wordCount=2;
@@ -78,9 +75,9 @@ public class Casl2Emulator extends EmulatorCore {
             case 0x1200://LAD
             wordCount=2;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
-                cr2 = getJikkouAddress(tmp);
+                r2 = getJikkouAddress(tmp);
                 gr_position = getGrNumber(tmp);
-                register.setGr(cr2,gr_position);
+                register.setGr(r2,gr_position);
                 register.setPc((char)(cpc+wordCount));
                 break;
             case 0x1400://LD
@@ -93,16 +90,16 @@ public class Casl2Emulator extends EmulatorCore {
                 //計算結果はrに入る
                 register.setGr(cdata,r1_position);
                 fr[0]=0;//LDのOFは必ず0
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cdata);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cdata);
                 break;
             case 0x2000://ADDA
                 //データに基づいて処理する
                 wordCount=2;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
-                cr2 = getJikkouAddress(tmp);
+                r2 = getJikkouAddress(tmp);
                 //加算数を取得
-                smember = (short) memory.getMemory(cr2);
+                smember = (short) memory.getMemory(r2);
                 //grの中身を取得
                 sr1 = (short) register.getGr()[getGrNumber(tmp)];
                 adda(cpc, wordCount, tmp, sr1, smember);
@@ -112,9 +109,9 @@ public class Casl2Emulator extends EmulatorCore {
                 wordCount=2;
                     tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
-                cr2 = getJikkouAddress(tmp);
+                r2 = getJikkouAddress(tmp);
                 //減算数を取得
-                smember = (short) memory.getMemory(cr2);
+                smember = (short) memory.getMemory(r2);
                 //grの中身を取得
                 sr1 = (short) register.getGr()[getGrNumber(tmp)];
                 suba(cpc, wordCount, tmp, sr1, smember);
@@ -124,12 +121,12 @@ public class Casl2Emulator extends EmulatorCore {
                 wordCount=2;
                     tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
-                    cr2 = getJikkouAddress(tmp);
+                    r2 = getJikkouAddress(tmp);
                 //grの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
+                r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
-                cmember = memory.getMemory(cr2);
-                addl(cpc, wordCount, tmp, cr1, cmember);
+                cmember = memory.getMemory(r2);
+                addl(cpc, wordCount, tmp, r1, cmember);
                 break;
             case 0x2300://SUBL
                 //データに基づいて処理する
@@ -138,10 +135,10 @@ public class Casl2Emulator extends EmulatorCore {
                 //実行アドレスを取得
                 jikkou = getJikkouAddress(tmp);
                 //grの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
+                r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
                 cmember = memory.getMemory(jikkou);
-                subl(cpc, wordCount, tmp, cr1, cmember);
+                subl(cpc, wordCount, tmp, r1, cmember);
                 break;
             case 0x2400://ADDA
                 //データに基づいて処理する
@@ -166,18 +163,18 @@ public class Casl2Emulator extends EmulatorCore {
                 wordCount=1;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
             //xの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
-                cr2 = register.getGr()[getGr2Number(tmp)];
-                addl(cpc,wordCount,tmp,cr1,cr2);
+                r1 = register.getGr()[getGrNumber(tmp)];
+                r2 = register.getGr()[getGr2Number(tmp)];
+                addl(cpc,wordCount,tmp,r1,r2);
                 break;
             case 0x2700://SUBL
             //データに基づいて処理する
                 wordCount=1;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
-                cr2 = register.getGr()[getGr2Number(tmp)];
-                subl(cpc, wordCount, tmp, cr1, cr2);
+                r1 = register.getGr()[getGrNumber(tmp)];
+                r2 = register.getGr()[getGr2Number(tmp)];
+                subl(cpc, wordCount, tmp, r1, r2);
                 break;
             case 0x3000://and
             //データに基づいて処理する
@@ -186,11 +183,11 @@ public class Casl2Emulator extends EmulatorCore {
                 //xの中身を取得
                 jikkou = getJikkouAddress(tmp);
                 //grの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
+                r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
                 cmember = memory.getMemory(jikkou);
-                cans = (char) (cr1 & cmember);
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                cans = (char) (r1 & cmember);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
                 break;
             case 0x3100://or
                 //データに基づいて処理する
@@ -199,11 +196,11 @@ public class Casl2Emulator extends EmulatorCore {
                 //xの中身を取得
                     jikkou = getJikkouAddress(tmp);
                 //grの中身を取得
-                    cr1 = register.getGr()[getGrNumber(tmp)];
+                    r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
                     cmember = memory.getMemory(jikkou);
-                cans = (char) (cr1|cmember);
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                cans = (char) (r1|cmember);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
                 break;
             case 0x3200://xor
                 //データに基づいて処理する
@@ -212,31 +209,31 @@ public class Casl2Emulator extends EmulatorCore {
                 //xの中身を取得
                 jikkou = getJikkouAddress(tmp);
                 //grの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
+                r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
                 cmember = memory.getMemory(jikkou);
-                char ans = (char) (cr1^cmember);
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
+                cans = (char) (r1 ^ cmember);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
                 break;
             case 0x3400://and
                 //データに基づいて処理する
                 wordCount=1;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
-                cr2 = register.getGr()[getGr2Number(tmp)];
-                cans = (char) (cr1 & cr2);
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                r1 = register.getGr()[getGrNumber(tmp)];
+                r2 = register.getGr()[getGr2Number(tmp)];
+                cans = (char) (r1 & r2);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
                 break;
             case 0x3500://or
                 //データに基づいて処理する
                 wordCount=1;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
-                cr2 = register.getGr()[getGr2Number(tmp)];
-                cans = (char) (cr1 | cr2);
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                r1 = register.getGr()[getGrNumber(tmp)];
+                r2 = register.getGr()[getGr2Number(tmp)];
+                cans = (char) (r1 | r2);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
                 break;
             case 0x3600://xor
                 //データに基づいて処理する
@@ -246,10 +243,10 @@ public class Casl2Emulator extends EmulatorCore {
                     tmp[i] = memory.getMemory(register.getPc()+i);
                 }
                 //xの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
-                cr2 = register.getGr()[getGr2Number(tmp)];
-                cans = (char) (cr1 ^ cr2);
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                r1 = register.getGr()[getGrNumber(tmp)];
+                r2 = register.getGr()[getGr2Number(tmp)];
+                cans = (char) (r1 ^ r2);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
                 break;
             case 0x4000://CPA
                 //データに基づいて処理する
@@ -273,11 +270,11 @@ public class Casl2Emulator extends EmulatorCore {
                 //xの中身を取得
                 jikkou = getJikkouAddress(tmp);
                 //grの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
+                r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
                 cmember = memory.getMemory(jikkou);
                 fr[0]=0;
-                getCompareResultL(cr1, cmember);
+                getCompareResultL(r1, cmember);
                 //pcが更新される
                 register.setPc((char)(cpc+wordCount));
                 break;
@@ -298,10 +295,10 @@ public class Casl2Emulator extends EmulatorCore {
                 wordCount=1;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
-                cr2 = register.getGr()[getGr2Number(tmp)];
+                r1 = register.getGr()[getGrNumber(tmp)];
+                r2 = register.getGr()[getGr2Number(tmp)];
                 fr[0]=0;
-                getCompareResultL(cr1, cr2);
+                getCompareResultL(r1, r2);
                 //pcが更新される
                 register.setPc((char)(cpc+wordCount));
                 break;
@@ -326,7 +323,7 @@ public class Casl2Emulator extends EmulatorCore {
 
                 //OFは最後に送り出されたビットの値
                 fr[0]= (char) ((r_before>>(15-smember))&0x0001);
-                setRegisterAfterClaculationShort(cpc,wordCount,tmp,sans);
+                setRegisterAfterClaculation(cpc,wordCount,tmp, (char) sans);
                 break;
             case 0x5100://SRA
                 //データに基づいて処理する
@@ -346,7 +343,7 @@ public class Casl2Emulator extends EmulatorCore {
                 fr[0]= (char) ((r_before>>(smember-1))&0x0001);
 
                 //pcが更新される
-                setRegisterAfterClaculationShort(cpc,wordCount,tmp,sans);
+                setRegisterAfterClaculation(cpc,wordCount,tmp, (char) sans);
                 break;
             case 0x5200://SLA
                 //データに基づいて処理する
@@ -357,15 +354,15 @@ public class Casl2Emulator extends EmulatorCore {
                 //加算数を取得
                 cmember = memory.getMemory(jikkou);
                 //grの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
+                r1 = register.getGr()[getGrNumber(tmp)];
                 //rの記号を保持
-                r_before = cr1;
+                r_before = r1;
                 //計算結果はrに入る
-                cans= (char) checkCharRange((int)cr1<<cmember);
+                cans= (char) checkCharRange((int)r1<<cmember);
 
                 //OFは最後に送り出されたビットの値
                 fr[0]= (char) ((r_before>>(15-cmember))&0x0001);
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
                 break;
             case 0x5300://SRA
                 //データに基づいて処理する
@@ -376,17 +373,17 @@ public class Casl2Emulator extends EmulatorCore {
                 //加算数を取得
                 cmember = memory.getMemory(jikkou);
                 //grの中身を取得
-                cr1 = register.getGr()[getGrNumber(tmp)];
+                r1 = register.getGr()[getGrNumber(tmp)];
                 //rの記号を保持
-                r_before = cr1;
+                r_before = r1;
                 //計算結果はrに入る
-                cans= (char) checkCharRange((int)cr1>>cmember);
+                cans= (char) checkCharRange((int)r1>>cmember);
 
                 //OFは最後に送り出されたビットの値
                 fr[0]= (char) ((r_before>>(cmember-1))&0x0001);
 
                 //pcが更新される
-                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
                 break;
             case 0x6100://JMI
                 //データに基づいて処理する
@@ -538,38 +535,30 @@ public class Casl2Emulator extends EmulatorCore {
     private void subl(char cpc, int wordCount, char[] tmp, int r, int subber) {
         char ans=0;
         ans = (char) checkCharRange(r - subber);
-        setRegisterAfterClaculationChar(cpc, wordCount, tmp, ans);
+        setRegisterAfterClaculation(cpc, wordCount, tmp, ans);
     }
 
     private void addl(char cpc, int wordCount, char[] tmp, int r, int adder) {
         char ans=0;
         ans = (char) checkCharRange(r + adder);
-        setRegisterAfterClaculationChar(cpc, wordCount, tmp, ans);
+        setRegisterAfterClaculation(cpc, wordCount, tmp, ans);
     }
 
     private void suba(char cpc, int wordCount, char[] tmp, int r , int subber) {
         short ans=0;
         ans = (short) checkShortRange(r - subber);
-        setRegisterAfterClaculationShort(cpc, wordCount, tmp, ans);
+        setRegisterAfterClaculation(cpc, wordCount, tmp, (char) ans);
     }
 
     private void adda(char cpc, int wordCount, char[] tmp, int r1, int r2) {
         short ans=0;
         ans = (short) checkShortRange(r1 + r2);
 
-        setRegisterAfterClaculationShort(cpc, wordCount, tmp, ans);
+        setRegisterAfterClaculation(cpc, wordCount, tmp, (char) ans);
     }
 
-    private void setRegisterAfterClaculationShort(char cpc, int wordCount, char[] tmp, short ans) {
-        checkShortSfZf(ans);
-        //計算結果はrに入る
-        register.setGr((char)ans,getGrNumber(tmp));
-        register.setFr(fr);
-        //pcが更新される
-        register.setPc((char)(cpc+wordCount));
-    }
-    private void setRegisterAfterClaculationChar(char cpc, int wordCount, char[] tmp, char ans) {
-        checkCharSfZf(ans);
+    private void setRegisterAfterClaculation(char cpc, int wordCount, char[] tmp, char ans) {
+        checkSfZf(ans);
         //計算結果はrに入る
         register.setGr(ans,getGrNumber(tmp));
         register.setFr(fr);
@@ -578,45 +567,32 @@ public class Casl2Emulator extends EmulatorCore {
     }
 
 
-    private void checkShortSfZf(short ld) {
-        if(ld<0){
-            fr[1]=1;
-        }else if(ld==0){
-            fr[2]=1;
-        }
-    }
-    private void checkCharSfZf(char ld) {
-        char d = (char) ( ld/(256*128));
+    private void checkSfZf(char ld) {
+        int d =   (ld>>15);
         if(d==1){
             fr[1]=1;
-        }else if(ld==0){
+        }else if(ld==0x0000){
             fr[2]=1;
         }
     }
 
     private void getCompareResultL(char r, char jikkou) {
         if(r>jikkou){
-            fr[1] = 0;
-            fr[2] = 0;
+            fr[1] = 0; fr[2] = 0;
         }else if (r == jikkou){
-            fr[1] = 0;
-            fr[2] = 1;
+            fr[1] = 0; fr[2] = 1;
         }else {
-            fr[1] = 1;
-            fr[2] = 0;
+            fr[1] = 1; fr[2] = 0;
         }
     }
 
     private void getCompareResultA(short r, short jikkou) {
         if(r>jikkou){
-           fr[1] = 0;
-           fr[2] = 0;
+            fr[1] = 0; fr[2] = 0;
         }else if (r == jikkou){
-            fr[1] = 0;
-            fr[2] = 1;
+            fr[1] = 0; fr[2] = 1;
         }else {
-            fr[1] = 1;
-            fr[2] = 0;
+            fr[1] = 1; fr[2] = 0;
         }
     }
 
@@ -626,25 +602,11 @@ public class Casl2Emulator extends EmulatorCore {
         return (char) (tmp[1]+sihyou_nakami);
     }
 
-    private boolean compareOPCode(char mem1, int opcode) {
-        char i = (char) ((char)mem1>>8);
-        return i == Integer.decode( "0x" + opcode );
-    }
-    private boolean compareOPCodeS(char mem1, String opcode) {
-        char i = (char) ((char)mem1>>8);
-        return i == Integer.decode( "0x" + opcode );
-    }
     private int getGrNumber(char[] data){
-        String s = String.format(Locale.US,"%04X",data[0] & 0xFFFF);
-        return Character.digit(s.charAt(2),10);
+        return (data[0]>>4) & 0x000F;
     }
     private int getGr2Number(char[] data){
-        String s = String.format(Locale.US,"%04X",data[0]& 0xFFFF);
-        return Character.digit(s.charAt(3),10);
-    }
-    private int checkByte(char data, int position){
-        String s = String.format(Locale.US,"%04X",data);
-        return s.charAt(position);
+        return data[0] & 0x000F;
     }
     private long checkShortRange(int value){
         if(value > Short.MAX_VALUE||value < Short.MIN_VALUE)
