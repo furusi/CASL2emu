@@ -3,9 +3,7 @@ package com.example.furusho.casl2emu;
 import android.os.Handler;
 
 import java.util.Locale;
-import java.util.logging.LogRecord;
 
-import clojure.lang.Delay;
 
 /**
  * Created by furusho on 2016/07/09.
@@ -35,454 +33,504 @@ public class Casl2Emulator extends EmulatorCore {
         char cpc = register.getPc(); char mem1 = memory.getMemory(cpc);
         //pcの命令をみて読み込むデータ数が決まる。
         int wordCount=0;
+        char[] tmp;
+        int gr_position;
+        char cans;
+        short sans;
+        short sr1;
+        short sr2;
+        char cr1;
+        char cr2;
+        short smember;
+        char jikkou;
+        char cmember;
+        char spaddr;
+        int r_before;
+        char cdata;
+        short sdata;
 
-        if(compareOPCode(mem1, 00)){//NOP
+        switch (mem1 & 0xff00) {
+            case 0x0000: // NOP
             //データに基づいて処理する
-            wordCount=1;
-            register.setPc((char)(cpc+wordCount));
-        }else if(compareOPCode(mem1, 10)){//LD
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            char jikkouaddr = getDataAtJikkouAddress(tmp);
-            int gr_position= getGrNumber(tmp);
-            short ld = (short) memory.getMemory(jikkouaddr);
-            register.setGr((char) ld,gr_position);
-            fr[0]=0;//LDのOFは必ず0
-            setRegisterAfterClaculationShort(cpc,wordCount,tmp,ld);
-        }else if(compareOPCode(mem1, 11)){//ST
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char setaddr = getJikkouAddress(tmp);
-            int gr_position= getGrNumber(tmp);
-            memory.setMemory(register.getGr()[gr_position],setaddr);
-            register.setPc((char)(cpc+wordCount));
-
-        }else if(compareOPCode(mem1, 12)){//LAD
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            char jikkouaddr = getDataAtJikkouAddress(tmp);
-            int gr_position= getGrNumber(tmp);
-            register.setGr(jikkouaddr,gr_position);
-            register.setPc((char)(cpc+wordCount));
-        }else if(compareOPCode(mem1, 14)){//LD
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-
-            int r1_position = getGrNumber(tmp);
-            int r2_position = getGr2Number(tmp);
-            char ld = register.getGr()[r2_position];
-            //計算結果はrに入る
-            register.setGr(ld,r1_position);
-            fr[0]=0;//LDのOFは必ず0
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ld);
-        } else if(compareOPCode(mem1, 20)){//ADDA
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-            //加算数を取得
-            short adder = (short) memory.getMemory(jikkou);
-            //grの中身を取得
-            short r = (short) register.getGr()[getGrNumber(tmp)];
-            adda(cpc, wordCount, tmp, r, adder);
-        } else if(compareOPCode(mem1, 21)){//SUBA
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char jikkou = getJikkouAddress(tmp);
-            //減算数を取得
-            short subber = (short) memory.getMemory(jikkou);
-            //grの中身を取得
-            short r = (short) register.getGr()[getGrNumber(tmp)];
-            suba(cpc, wordCount, tmp, r, subber);
-        } else if(compareOPCode(mem1, 22)){//ADDL
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-            //grの中身を取得
-            char r = register.getGr()[getGrNumber(tmp)];
-            //加算数を取得
-            char adder = memory.getMemory(jikkou);
-            addl(cpc, wordCount, tmp, r, adder);
-        } else if(compareOPCode(mem1, 23)){//SUBL
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-            //grの中身を取得
-            char r = register.getGr()[getGrNumber(tmp)];
-            //加算数を取得
-            char subber = memory.getMemory(jikkou);
-            subl(cpc, wordCount, tmp, r, subber);
-        }else if(compareOPCode(mem1, 24)){//ADDA
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            short r1 = (short) register.getGr()[getGrNumber(tmp)];
-            short r2 = (short) register.getGr()[getGr2Number(tmp)];
-            adda(cpc, wordCount, tmp, r1, r2);
-        }else if(compareOPCode(mem1, 25)){//SUBA
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            short r1 = (short) register.getGr()[getGrNumber(tmp)];
-            short r2 = (short) register.getGr()[getGr2Number(tmp)];
-            suba(cpc, wordCount, tmp, r1, r2);
-        }else if(compareOPCode(mem1, 26)){//ADDL
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char r1 = register.getGr()[getGrNumber(tmp)];
-            char r2 = register.getGr()[getGr2Number(tmp)];
-            addl(cpc,wordCount,tmp,r1,r2);
-        }else if(compareOPCode(mem1, 27)){//SUBL
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char r1 = register.getGr()[getGrNumber(tmp)];
-            char r2 = register.getGr()[getGr2Number(tmp)];
-            subl(cpc, wordCount, tmp, r1, r2);
-        } else if(compareOPCode(mem1, 30)){//and
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char jikkou = getJikkouAddress(tmp);
-            //grの中身を取得
-            char r = register.getGr()[getGrNumber(tmp)];
-            //加算数を取得
-            char ander = memory.getMemory(jikkou);
-            char ans = (char) (r&ander);
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
-        } else if(compareOPCode(mem1, 31)){//or
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char jikkou = getJikkouAddress(tmp);
-            //grの中身を取得
-            char r = register.getGr()[getGrNumber(tmp)];
-            //加算数を取得
-            char orer = memory.getMemory(jikkou);
-            char ans = (char) (r|orer);
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
-        } else if(compareOPCode(mem1, 32)){//xor
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char jikkou = getJikkouAddress(tmp);
-            //grの中身を取得
-            char r = register.getGr()[getGrNumber(tmp)];
-            //加算数を取得
-            char xorer = memory.getMemory(jikkou);
-            char ans = (char) (r^xorer);
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
-        }else if(compareOPCode(mem1, 34)){//and
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char r1 = register.getGr()[getGrNumber(tmp)];
-            char r2 = register.getGr()[getGr2Number(tmp)];
-            char ans = (char) (r1&r2);
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
-        }else if(compareOPCode(mem1, 35)){//or
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char r1 = register.getGr()[getGrNumber(tmp)];
-            char r2 = register.getGr()[getGr2Number(tmp)];
-            char ans = (char) (r1|r2);
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
-        }else if(compareOPCode(mem1, 36)){//xor
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = new char[wordCount];
-            for(int i=0;i<wordCount;i++){
-                tmp[i] = memory.getMemory(register.getPc()+i);
-            }
-            //xの中身を取得
-            char r1 = register.getGr()[getGrNumber(tmp)];
-            char r2 = register.getGr()[getGr2Number(tmp)];
-            char ans = (char) (r1^r2);
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
-        } else if(compareOPCode(mem1, 40)){//CPA
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-            //加算数を取得
-            short cpa = (short) memory.getMemory(jikkou);
-            //grの中身を取得
-            short r = (short) register.getGr()[getGrNumber(tmp)];
-            fr[0]=0;
-            getCompareResultA(r, cpa);
-            //pcが更新される
-            register.setPc((char)(cpc+wordCount));
-        } else if(compareOPCode(mem1, 41)){//CPL
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char jikkou = getJikkouAddress(tmp);
-            //grの中身を取得
-            char r = register.getGr()[getGrNumber(tmp)];
-            //加算数を取得
-            char cpl = memory.getMemory(jikkou);
-            fr[0]=0;
-            getCompareResultL(r, cpl);
-            //pcが更新される
-            register.setPc((char)(cpc+wordCount));
-        } else if(compareOPCode(mem1, 44)){//CPA
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            short r1 = (short) register.getGr()[getGrNumber(tmp)];
-            short r2 = (short) register.getGr()[getGr2Number(tmp)];
-            fr[0]=0;
-            getCompareResultA(r1, r2);
-            //pcが更新される
-            register.setPc((char)(cpc+wordCount));
-        } else if(compareOPCode(mem1, 45)){//CPL
-            //データに基づいて処理する
-            wordCount=1;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //xの中身を取得
-            char r1 = register.getGr()[getGrNumber(tmp)];
-            char r2 = register.getGr()[getGr2Number(tmp)];
-            fr[0]=0;
-            getCompareResultL(r1, r2);
-            //pcが更新される
-            register.setPc((char)(cpc+wordCount));
-        }else if(compareOPCode(mem1, 50)){//SLA
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-            //加算数を取得
-            short sla = (short) memory.getMemory(jikkou);
-            //grの中身を取得
-            short r = (short) register.getGr()[getGrNumber(tmp)];
-            //rの記号を保持
-            int r_before = r;
-            //計算結果はrに入る
-            short ans;
-            ans= (short) checkShortRange((int)r<<sla);
-
-            if(r_before * ans<0){//符号が変わっていれば元に戻す
-                ans= (short) (ans^0x8000);
-            }
-
-            //OFは最後に送り出されたビットの値
-            fr[0]= (char) ((r_before>>(15-sla))&0x0001);
-            setRegisterAfterClaculationShort(cpc,wordCount,tmp,ans);
-        }else if(compareOPCode(mem1, 51)){//SRA
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-            //加算数を取得
-            short sla = (short) memory.getMemory(jikkou);
-            //grの中身を取得
-            short r = (short) register.getGr()[getGrNumber(tmp)];
-            //rの記号を保持
-            int r_before = r;
-            //計算結果はrに入る
-            short ans;
-            ans= (short) checkShortRange((int)r>>>sla);
-            //OFは最後に送り出されたビットの値
-            fr[0]= (char) ((r_before>>(sla-1))&0x0001);
-
-            //pcが更新される
-            setRegisterAfterClaculationShort(cpc,wordCount,tmp,ans);
-        }else if(compareOPCode(mem1, 52)){//SLA
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-            //加算数を取得
-            char sla = memory.getMemory(jikkou);
-            //grの中身を取得
-            char r = register.getGr()[getGrNumber(tmp)];
-            //rの記号を保持
-            int r_before = r;
-            //計算結果はrに入る
-            char ans;
-            ans= (char) checkCharRange((int)r<<sla);
-
-            //OFは最後に送り出されたビットの値
-            fr[0]= (char) ((r_before>>(15-sla))&0x0001);
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
-        }else if(compareOPCode(mem1, 53)){//SRA
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-            //加算数を取得
-            char sla = memory.getMemory(jikkou);
-            //grの中身を取得
-            char r = register.getGr()[getGrNumber(tmp)];
-            //rの記号を保持
-            int r_before = r;
-            //計算結果はrに入る
-            char ans;
-            ans= (char) checkCharRange((int)r>>sla);
-
-            //OFは最後に送り出されたビットの値
-            fr[0]= (char) ((r_before>>(sla-1))&0x0001);
-
-            //pcが更新される
-            setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
-        }else if(compareOPCode(mem1, 61)){//JMI
-            //データに基づいて処理する
-            wordCount=2;
-            char[] tmp = memory.getMemoryArray(register.getPc(),wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-
-            //SFが1であれば実行アドレスをPCに代入
-            if(fr[1]==1){
-                register.setPc(jikkou);
-            }else {//0ならば次へ進む
+                wordCount=1;
                 register.setPc((char)(cpc+wordCount));
-            }
-        }else if(compareOPCode(mem1, 62)) {//JNZ
-            //データに基づいて処理する
-            wordCount = 2;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
+                break;
+            case 0x1000: // ST
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(),wordCount);
+                cr2 = getJikkouAddress(tmp);
+                gr_position = getGrNumber(tmp);
+                //TODO charとshortの変換が必要
+                sdata = (short) memory.getMemory(cr2);
+                register.setGr((char) sdata,gr_position);
+                fr[0]=0;//LDのOFは必ず0
+                setRegisterAfterClaculationShort(cpc,wordCount,tmp,sdata);
+                break;
+            case 0x1100://ST
+            wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                char setaddr = getJikkouAddress(tmp);
+                gr_position = getGrNumber(tmp);
+                memory.setMemory(register.getGr()[gr_position],setaddr);
+                register.setPc((char)(cpc+wordCount));
+                break;
+            case 0x1200://LAD
+            wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                cr2 = getJikkouAddress(tmp);
+                gr_position = getGrNumber(tmp);
+                register.setGr(cr2,gr_position);
+                register.setPc((char)(cpc+wordCount));
+                break;
+            case 0x1400://LD
+            wordCount=1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
 
-            //ZFが0であれば実行アドレスをPCに代入
-            if (fr[2] == 0) {
+                int r1_position = getGrNumber(tmp);
+                int r2_position = getGr2Number(tmp);
+                cdata = register.getGr()[r2_position];
+                //計算結果はrに入る
+                register.setGr(cdata,r1_position);
+                fr[0]=0;//LDのOFは必ず0
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cdata);
+                break;
+            case 0x2000://ADDA
+                //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                cr2 = getJikkouAddress(tmp);
+                //加算数を取得
+                smember = (short) memory.getMemory(cr2);
+                //grの中身を取得
+                sr1 = (short) register.getGr()[getGrNumber(tmp)];
+                adda(cpc, wordCount, tmp, sr1, smember);
+                break;
+            case 0x2100://SUBA
+                //データに基づいて処理する
+                wordCount=2;
+                    tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                cr2 = getJikkouAddress(tmp);
+                //減算数を取得
+                smember = (short) memory.getMemory(cr2);
+                //grの中身を取得
+                sr1 = (short) register.getGr()[getGrNumber(tmp)];
+                suba(cpc, wordCount, tmp, sr1, smember);
+                break;
+            case 0x2200://ADDL
+                //データに基づいて処理する
+                wordCount=2;
+                    tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                    cr2 = getJikkouAddress(tmp);
+                //grの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                //加算数を取得
+                cmember = memory.getMemory(cr2);
+                addl(cpc, wordCount, tmp, cr1, cmember);
+                break;
+            case 0x2300://SUBL
+                //データに基づいて処理する
+                wordCount=2;
+                    tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+                //grの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                //加算数を取得
+                cmember = memory.getMemory(jikkou);
+                subl(cpc, wordCount, tmp, cr1, cmember);
+                break;
+            case 0x2400://ADDA
+                //データに基づいて処理する
+                wordCount=1;
+                    tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                sr1 = (short) register.getGr()[getGrNumber(tmp)];
+                sr2 = (short) register.getGr()[getGr2Number(tmp)];
+                adda(cpc, wordCount, tmp, sr1, sr2);
+                break;
+            case 0x2500://SUBA
+                //データに基づいて処理する
+                wordCount=1;
+                    tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                    sr1 = (short) register.getGr()[getGrNumber(tmp)];
+                    sr2 = (short) register.getGr()[getGr2Number(tmp)];
+                suba(cpc, wordCount, tmp, sr1, sr2);
+                break;
+            case 0x2600://ADDL
+            //データに基づいて処理する
+                wordCount=1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+            //xの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                cr2 = register.getGr()[getGr2Number(tmp)];
+                addl(cpc,wordCount,tmp,cr1,cr2);
+                break;
+            case 0x2700://SUBL
+            //データに基づいて処理する
+                wordCount=1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                cr2 = register.getGr()[getGr2Number(tmp)];
+                subl(cpc, wordCount, tmp, cr1, cr2);
+                break;
+            case 0x3000://and
+            //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                jikkou = getJikkouAddress(tmp);
+                //grの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                //加算数を取得
+                cmember = memory.getMemory(jikkou);
+                cans = (char) (cr1 & cmember);
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                break;
+            case 0x3100://or
+                //データに基づいて処理する
+                wordCount=2;
+                    tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                    jikkou = getJikkouAddress(tmp);
+                //grの中身を取得
+                    cr1 = register.getGr()[getGrNumber(tmp)];
+                //加算数を取得
+                    cmember = memory.getMemory(jikkou);
+                cans = (char) (cr1|cmember);
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                break;
+            case 0x3200://xor
+                //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                jikkou = getJikkouAddress(tmp);
+                //grの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                //加算数を取得
+                cmember = memory.getMemory(jikkou);
+                char ans = (char) (cr1^cmember);
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,ans);
+                break;
+            case 0x3400://and
+                //データに基づいて処理する
+                wordCount=1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                cr2 = register.getGr()[getGr2Number(tmp)];
+                cans = (char) (cr1 & cr2);
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                break;
+            case 0x3500://or
+                //データに基づいて処理する
+                wordCount=1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                cr2 = register.getGr()[getGr2Number(tmp)];
+                cans = (char) (cr1 | cr2);
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                break;
+            case 0x3600://xor
+                //データに基づいて処理する
+                wordCount=1;
+                tmp = new char[wordCount];
+                for(int i=0;i<wordCount;i++){
+                    tmp[i] = memory.getMemory(register.getPc()+i);
+                }
+                //xの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                cr2 = register.getGr()[getGr2Number(tmp)];
+                cans = (char) (cr1 ^ cr2);
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                break;
+            case 0x4000://CPA
+                //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+                //加算数を取得
+                smember = (short) memory.getMemory(jikkou);
+                //grの中身を取得
+                sr1 = (short) register.getGr()[getGrNumber(tmp)];
+                fr[0]=0;
+                getCompareResultA(sr1, smember);
+                //pcが更新される
+                register.setPc((char)(cpc+wordCount));
+                break;
+            case 0x4100://CPL
+                //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                jikkou = getJikkouAddress(tmp);
+                //grの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                //加算数を取得
+                cmember = memory.getMemory(jikkou);
+                fr[0]=0;
+                getCompareResultL(cr1, cmember);
+                //pcが更新される
+                register.setPc((char)(cpc+wordCount));
+                break;
+            case 0x4400://CPA
+                //データに基づいて処理する
+                wordCount=1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                sr1 = (short) register.getGr()[getGrNumber(tmp)];
+                sr2 = (short) register.getGr()[getGr2Number(tmp)];
+                fr[0]=0;
+                getCompareResultA(sr1, sr2);
+                //pcが更新される
+                register.setPc((char)(cpc+wordCount));
+                break;
+            case 0x4500://CPL
+                //データに基づいて処理する
+                wordCount=1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //xの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                cr2 = register.getGr()[getGr2Number(tmp)];
+                fr[0]=0;
+                getCompareResultL(cr1, cr2);
+                //pcが更新される
+                register.setPc((char)(cpc+wordCount));
+                break;
+            case 0x5000://SLA
+                //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+                //加算数を取得
+                smember = (short) memory.getMemory(jikkou);
+                //grの中身を取得
+                sr1 = (short) register.getGr()[getGrNumber(tmp)];
+                //rの記号を保持
+                r_before = sr1;
+                //計算結果はrに入る
+                sans= (short) checkShortRange((int)sr1<<smember);
+
+                if(r_before * sans<0){//符号が変わっていれば元に戻す
+                    sans= (short) (sans^0x8000);
+                }
+
+                //OFは最後に送り出されたビットの値
+                fr[0]= (char) ((r_before>>(15-smember))&0x0001);
+                setRegisterAfterClaculationShort(cpc,wordCount,tmp,sans);
+                break;
+            case 0x5100://SRA
+                //データに基づいて処理する
+                wordCount=2;
+                    tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+                //加算数を取得
+                smember = (short) memory.getMemory(jikkou);
+                //grの中身を取得
+                sr1 = (short) register.getGr()[getGrNumber(tmp)];
+                //rの記号を保持
+                r_before = sr1;
+                //計算結果はrに入る
+                sans= (short) checkShortRange((int)sr1>>>smember);
+                //OFは最後に送り出されたビットの値
+                fr[0]= (char) ((r_before>>(smember-1))&0x0001);
+
+                //pcが更新される
+                setRegisterAfterClaculationShort(cpc,wordCount,tmp,sans);
+                break;
+            case 0x5200://SLA
+                //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+                //加算数を取得
+                cmember = memory.getMemory(jikkou);
+                //grの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                //rの記号を保持
+                r_before = cr1;
+                //計算結果はrに入る
+                cans= (char) checkCharRange((int)cr1<<cmember);
+
+                //OFは最後に送り出されたビットの値
+                fr[0]= (char) ((r_before>>(15-cmember))&0x0001);
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                break;
+            case 0x5300://SRA
+                //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+                //加算数を取得
+                cmember = memory.getMemory(jikkou);
+                //grの中身を取得
+                cr1 = register.getGr()[getGrNumber(tmp)];
+                //rの記号を保持
+                r_before = cr1;
+                //計算結果はrに入る
+                cans= (char) checkCharRange((int)cr1>>cmember);
+
+                //OFは最後に送り出されたビットの値
+                fr[0]= (char) ((r_before>>(cmember-1))&0x0001);
+
+                //pcが更新される
+                setRegisterAfterClaculationChar(cpc,wordCount,tmp,cans);
+                break;
+            case 0x6100://JMI
+                //データに基づいて処理する
+                wordCount=2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+
+                //SFが1であれば実行アドレスをPCに代入
+                if(fr[1]==1){
+                    register.setPc(jikkou);
+                }else {//0ならば次へ進む
+                    register.setPc((char)(cpc+wordCount));
+                }
+                break;
+            case 0x6200://JNZ
+                //データに基づいて処理する
+                wordCount = 2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+
+                //ZFが0であれば実行アドレスをPCに代入
+                if (fr[2] == 0) {
+                    register.setPc(jikkou);
+                } else {//1ならば次へ進む
+                    register.setPc((char) (cpc + wordCount));
+                }
+                break;
+            case 0x6300://JZE
+                //データに基づいて処理する
+                wordCount = 2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+
+                //ZFが1であれば実行アドレスをPCに代入
+                if (fr[2] == 1) {
+                    register.setPc(jikkou);
+                } else {//0ならば次へ進む
+                    register.setPc((char) (cpc + wordCount));
+                }
+                break;
+            case 0x6400://JUMP
+                //データに基づいて処理する
+                wordCount = 2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+
+                //無条件で飛ぶ
                 register.setPc(jikkou);
-            } else {//1ならば次へ進む
-                register.setPc((char) (cpc + wordCount));
-            }
-        }else if(compareOPCode(mem1, 63)) {//JZE
-            //データに基づいて処理する
-            wordCount = 2;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
+                break;
+            case 0x6500://JPL
+                //データに基づいて処理する
+                wordCount = 2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
 
-            //ZFが1であれば実行アドレスをPCに代入
-            if (fr[2] == 1) {
+                //SFZFがともに1であれば実行アドレスをPCに代入
+                if (fr[1]==1&&fr[2] == 1) {
+                    register.setPc(jikkou);
+                } else {//0ならば次へ進む
+                    register.setPc((char) (cpc + wordCount));
+                }
+                break;
+            case 0x6600://JOV
+                //データに基づいて処理する
+                wordCount = 2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+
+                //OFが1であれば実行アドレスをPCに代入
+                if (fr[0] == 1) {
+                    register.setPc(jikkou);
+                } else {//0ならば次へ進む
+                    register.setPc((char) (cpc + wordCount));
+                }
+                break;
+            case 0x7000://PUSH
+                //データに基づいて処理する
+                wordCount = 2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+
+                //SPが指す値を1ひいてSPに入れる
+                cans = register.getSp();
+                register.setSp((char) (cans-1));
+                //SPの指すアドレスへ実行アドレスを入れる
+                memory.setMemory(jikkou,register.getSp());
+                register.setPc((char) (cpc + wordCount));
+                break;
+            case 0x7100://POP
+                //データに基づいて処理する
+                wordCount = 1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //spの指すアドレスを取得
+                spaddr = register.getSp();
+                //そのアドレスが指す値をgrへ格納
+                register.setGr(memory.getMemory(spaddr),getGr2Number(tmp));
+                //spに1を加算して格納
+                register.setSp((char) (spaddr+1));
+
+                register.setPc((char) (cpc + wordCount));
+                break;
+            case 0x8000://CALL
+                //データに基づいて処理する
+                wordCount = 2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //実行アドレスを取得
+                jikkou = getJikkouAddress(tmp);
+
+                //SPが指す値を1ひいてSPに入れる
+                cans = register.getSp();
+                register.setSp((char) (cans-1));
+                //SPの指すアドレスへPCを入れる
+                memory.setMemory(register.getPc(),register.getSp());
+                //PCへ実行アドレスを入れる
                 register.setPc(jikkou);
-            } else {//0ならば次へ進む
+                break;
+            case 0x8100://RET
+                //データに基づいて処理する
+                wordCount = 1;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //spの指すアドレスを取得
+                spaddr = register.getSp();
+                //そのアドレスが指す値をPCへ格納
+                register.setPc(memory.getMemory(spaddr));
+                //spに1を加算して格納
+                register.setSp((char) (spaddr+1));
+
+                break;
+            case 0xF000://SVC
+                //データに基づいて処理する
+                wordCount = 2;
+                tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                //spの指すアドレスを取得
+                spaddr = register.getSp();
+
                 register.setPc((char) (cpc + wordCount));
-            }
-        }else if(compareOPCode(mem1, 64)) {//JUMP
-            //データに基づいて処理する
-            wordCount = 2;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-
-            //無条件で飛ぶ
-            register.setPc(jikkou);
-        }else if(compareOPCode(mem1, 65)) {//JPL
-            //データに基づいて処理する
-            wordCount = 2;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-
-            //SFZFがともに1であれば実行アドレスをPCに代入
-            if (fr[1]==1&&fr[2] == 1) {
-                register.setPc(jikkou);
-            } else {//0ならば次へ進む
-                register.setPc((char) (cpc + wordCount));
-            }
-        }else if(compareOPCode(mem1, 66)) {//JOV
-            //データに基づいて処理する
-            wordCount = 2;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-
-            //OFが1であれば実行アドレスをPCに代入
-            if (fr[0] == 1) {
-                register.setPc(jikkou);
-            } else {//0ならば次へ進む
-                register.setPc((char) (cpc + wordCount));
-            }
-        }else if(compareOPCode(mem1, 70)) {//PUSH
-            //データに基づいて処理する
-            wordCount = 2;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-
-            //SPが指す値を1ひいてSPに入れる
-            char ans = register.getSp();
-            register.setSp((char) (ans-1));
-            //SPの指すアドレスへ実行アドレスを入れる
-            memory.setMemory(jikkou,register.getSp());
-            register.setPc((char) (cpc + wordCount));
-        }else if(compareOPCode(mem1, 71)) {//POP
-            //データに基づいて処理する
-            wordCount = 1;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //spの指すアドレスを取得
-            char spaddr = register.getSp();
-            //そのアドレスが指す値をgrへ格納
-            register.setGr(memory.getMemory(spaddr),getGr2Number(tmp));
-            //spに1を加算して格納
-            register.setSp((char) (spaddr+1));
-
-            register.setPc((char) (cpc + wordCount));
-        }else if(compareOPCode(mem1, 80)) {//CALL
-            //データに基づいて処理する
-            wordCount = 2;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //実行アドレスを取得
-            char jikkou = getJikkouAddress(tmp);
-
-            //SPが指す値を1ひいてSPに入れる
-            char ans = register.getSp();
-            register.setSp((char) (ans-1));
-            //SPの指すアドレスへPCを入れる
-            memory.setMemory(register.getPc(),register.getSp());
-            //PCへ実行アドレスを入れる
-            register.setPc(jikkou);
-        }else if(compareOPCode(mem1, 81)) {//RET
-            //データに基づいて処理する
-            wordCount = 1;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //spの指すアドレスを取得
-            char spaddr = register.getSp();
-            //そのアドレスが指す値をPCへ格納
-            register.setPc(memory.getMemory(spaddr));
-            //spに1を加算して格納
-            register.setSp((char) (spaddr+1));
-
-        }else if(compareOPCodeS(mem1, "F0")) {//SVC
-            //データに基づいて処理する
-            wordCount = 2;
-            char[] tmp = memory.getMemoryArray(register.getPc(), wordCount);
-            //spの指すアドレスを取得
-            char spaddr = register.getSp();
-
-            register.setPc((char) (cpc + wordCount));
+                break;
         }
 
     }
@@ -572,12 +620,6 @@ public class Casl2Emulator extends EmulatorCore {
         }
     }
 
-    private char getDataAtJikkouAddress(char[] tmp) {
-        int i = tmp[0]%4096;
-        char sihyou_nakami = (char) (register.getGr()[i]);
-        char addr = memory.getMemory(tmp[1]);
-        return (char) (addr+sihyou_nakami);
-    }
     private char getJikkouAddress(char[] tmp) {
         int sihyou = getGr2Number(tmp);
         char sihyou_nakami = (char) (register.getGr()[sihyou]);
