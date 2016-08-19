@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" >
+    <item
+        android:id="@+id/action_save"
+        android:title="データ保存"
+        android:orderInCategory="100"/>
+    <item
+        android:id="@+id/action_load"
+        android:title="データ読込"
+        android:orderInCategory="101"/>
+</menu>

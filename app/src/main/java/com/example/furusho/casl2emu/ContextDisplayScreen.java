@@ -14,6 +14,9 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,8 +28,23 @@ import android.widget.Toast;
 
 
 import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
+import com.google.common.primitives.Chars;
 
+import org.apache.commons.lang.ArrayUtils;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -179,7 +197,61 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         });
 
     }
-    private void localSetMemoryAdapter(char[] chars,int count) {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        String filename="data.cl2";
+        switch(item.getItemId()){
+            case R.id.action_load:
+                byte[] loaddata = new byte[131098];
+                FileInputStream fileInputStream;
+                try {
+                    fileInputStream=openFileInput(filename);
+                    fileInputStream.read(loaddata,0,loaddata.length);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+               //Chars.
+                //register.setGr();
+                break;
+            case R.id.action_save:
+
+                char[] casl2data;
+                casl2data = Chars.concat(ArrayUtils.add(ArrayUtils.add(register.getGr(),register.getPc()),register.getSp()),register.getFr(),memory.getMemory());
+                byte[]savedata = toBytes(casl2data);
+
+                FileOutputStream fileOutputStream;
+                try {
+                    fileOutputStream = openFileOutput(filename,Context.MODE_PRIVATE);
+                    fileOutputStream.write(savedata);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private byte[] toBytes(char[] chars) {
+        CharBuffer charBuffer = CharBuffer.wrap(chars);
+        ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
+        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
+                byteBuffer.position(), byteBuffer.limit());
+        return bytes;
+    }
+
+    private void localSetMemoryAdapter(char[] chars, int count) {
         startListTask(chars,count);
     }
 
