@@ -93,14 +93,10 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                             Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
                             char[] chars = getHexChars(upperedString," ");
                             memory.setMemoryArray(chars, position*4);
-                            //stringArrayList.set(position,String.format(Locale.US ,"%02X %02X %02X %02X %02X %02X %02X %02X",
-                            //        chars[0] & 0xFFFF, chars[1] & 0xFFFF, chars[2] & 0xFFFF, chars[3] &
-                            //                0xFFFF, chars[4] & 0xFFFF, chars[5] & 0xFFFF, chars[6] & 0xFFFF, chars[7] & 0xFFFF));
                             stringArrayList.remove(position);
                             //arrayAdapter.remove("00 00 00 00 00 00 00 00");
                             arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
                                     chars[0] & 0xFFFF, chars[1] & 0xFFFF, chars[2] & 0xFFFF, chars[3] & 0xFFFF),position);
-                            //arrayAdapter.addAll(stringArrayList);
                             arrayAdapter.notifyDataSetChanged();
 
                         }else {
@@ -123,17 +119,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
            tmp[i] = (char)Integer.parseInt(stmp[i],16);
         }
         return tmp;
-    }
-
-    private String getWord(int offset, CharSequence line) {
-        String ret="";
-        if((offset+1)%3==1){//一桁目ならoffset-1をとる
-            ret= String.valueOf(line.charAt(offset))+String.valueOf(line.charAt(offset+1));
-        }else if((offset+1)%3==2){
-            ret= String.valueOf(line.charAt(offset-1))+String.valueOf(line.charAt(offset));
-
-        }
-        return ret;
     }
 
 
@@ -220,6 +205,16 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                for(int i = 0;i<8*2;i+=2)
+                    register.setGr(Chars.fromBytes(loaddata[i], loaddata[i+1]), i);
+                register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
+                register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
+                for(int i = 0;i<3*2;i+=2)
+                    register.setFr(Chars.fromBytes(loaddata[10*2+i],loaddata[10*2+i+1]),i);
+                for(int i =0;i<65536*2;i+=2)
+                    memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[13*2+i],loaddata[13*2+i+1]),i);
+                memory.notifyPropertyChanged(BR.casl2Memory);
                //Chars.
                 //register.setGr();
                 break;
@@ -398,44 +393,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         return new ListDisplayTaskLoader(this,cs,i);
     }
 
-    /**
-     * Called when a previously created loader has finished its load.  Note
-     * that normally an application is <em>not</em> allowed to commit fragment
-     * transactions while in this call, since it can happen after an
-     * FragmentManager.openTransaction()} for further discussion on this.
-     * <p>
-     * <p>This function is guaranteed to be called prior to the release of
-     * the last data that was supplied for this Loader.  At this point
-     * you should remove all use of the old data (since it will be released
-     * soon), but should not do your own release of the data since its Loader
-     * owns it and will take care of that.  The Loader will take care of
-     * management of its data so you don't have to.  In particular:
-     * <p>
-     * <ul>
-     * <li> <p>The Loader will monitor for changes to the data, and report
-     * them to you through new calls here.  You should not monitor the
-     * data yourself.  For example, if the data is a {@link Cursor}
-     * and you place it in a {@link CursorAdapter}, use
-     * the {@link CursorAdapter#CursorAdapter(Context,
-     * Cursor, int)} constructor <em>without</em> passing
-     * in either {@link CursorAdapter#FLAG_AUTO_REQUERY}
-     * or {@link CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
-     * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
-     * from doing its own observing of the Cursor, which is not needed since
-     * when a change happens you will get a new Cursor throw another call
-     * here.
-     * <li> The Loader will release the data once it knows the application
-     * is no longer using it.  For example, if the data is
-     * a {@link Cursor} from a {@link CursorLoader},
-     * you should not call close() on it yourself.  If the Cursor is being placed in a
-     * {@link CursorAdapter}, you should use the
-     * {@link CursorAdapter#swapCursor(Cursor)}
-     * method so that the old Cursor is not closed.
-     * </ul>
-     *
-     * @param loader The Loader that has finished.
-     * @param data   The data generated by the Loader.
-     */
     @Override
     public void onLoadFinished(Loader loader, Object data) {
 
@@ -483,35 +440,3 @@ class HexEditText extends EditText {
     }
 }
 
-class ContextEditDialog extends AlertDialog{
-
-    protected ContextEditDialog(final Context context, final HexEditText hexEditTextText) {
-        super(context);
-    }
-        /*
-        this.Builder(getOwnerActivity());
-        this.setIcon(android.R.drawable.ic_dialog_info);
-        this.setTitle("テキスト入力ダイアログ");
-            //setViewにてビューを設定します。
-        this.setView(hexEditTextText);
-        this.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //入力した文字をトースト出力する
-                String upperedString =hexEditTextText.getText().toString().toUpperCase();
-                Pattern pattern = Pattern.compile(context.getString(R.string.memory_row_pattern));
-                Matcher matcher = pattern.matcher(upperedString);
-                if (matcher.matches()) {
-                    hexEditTextText.setText(upperedString);
-                }else {
-                }
-
-            }
-        });
-        this.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            }
-        })
-        .show();
-    }
-*/
-}
