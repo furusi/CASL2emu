@@ -5,11 +5,17 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
@@ -32,8 +38,10 @@ import com.google.common.primitives.Chars;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -45,6 +53,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -191,63 +200,106 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==5657&&resultCode==RESULT_OK){
+
+            List<String> openfilename=data.getData().getPathSegments();
+            byte[] loaddata = new byte[131098];
+            FileInputStream fileInputStream = null;
+            BufferedInputStream bufferedInputStream;
+            try {
+                fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
+                        openfilename.get(1).split(":")[1]));
+                fileInputStream.read(loaddata);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            for(int i = 0;i<8;i++)
+                register.setGr(Chars.fromBytes(loaddata[2*i], loaddata[2*i+1]), i);
+            register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
+            register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
+            for(int i = 0;i<3;i++)
+                register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
+            for(int i =0;i<65536;i++)
+                memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
+            localSetMemoryAdapter(memory.getMemory(),0);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String filename="data.cl2";
+        final String filename="data.cl2";
+        byte[] bytes = new byte[0];
         switch(item.getItemId()){
             case R.id.action_load:
-                byte[] loaddata = new byte[131098];
-                FileInputStream fileInputStream;
-                try {
-                    fileInputStream=openFileInput(filename);
-                    fileInputStream.read(loaddata,0,loaddata.length);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                for(int i = 0;i<8*2;i+=2)
-                    register.setGr(Chars.fromBytes(loaddata[i], loaddata[i+1]), i);
-                register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
-                register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
-                for(int i = 0;i<3*2;i+=2)
-                    register.setFr(Chars.fromBytes(loaddata[10*2+i],loaddata[10*2+i+1]),i);
-                for(int i =0;i<65536*2;i+=2)
-                    memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[13*2+i],loaddata[13*2+i+1]),i);
-                memory.notifyPropertyChanged(BR.casl2Memory);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("*/*");
+                startActivityForResult(intent,5657);
                //Chars.
                 //register.setGr();
                 break;
             case R.id.action_save:
+                final EditText editView = new EditText(getApplicationContext());
+                editView.setText(filename);
+                editView.setTextColor(Color.BLACK);
+                new AlertDialog.Builder(ContextDisplayScreen.this)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setView(R.layout.input_text_dialog)
+                        .setTitle("ファイル名入力: ")
+                        //setViewにてビューを設定します。
+                        .setView(editView)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //入力した文字をトースト出力する
+                                String savedfielname = editView.getText().toString();
+                                char[] casl2data;
+                                casl2data = Chars.concat(ArrayUtils.add(ArrayUtils.add(register.getGr(),register.getPc()),register.getSp()),register.getFr(),memory.getMemory());
+                                byte[]savedata = toBytes(casl2data);
+                                FileOutputStream fileOutputStream;
 
-                char[] casl2data;
-                casl2data = Chars.concat(ArrayUtils.add(ArrayUtils.add(register.getGr(),register.getPc()),register.getSp()),register.getFr(),memory.getMemory());
-                byte[]savedata = toBytes(casl2data);
+                                try {
+                                    File dir = new File(Environment.getExternalStorageDirectory().getPath()+"/CASL2Emu");
+                                    if(!dir.exists()){
+                                        dir.mkdir();
+                                    }
+                                    File file = new File(Environment.getExternalStorageDirectory().getPath()+"/CASL2Emu",filename);
+                                    fileOutputStream = new FileOutputStream(file);
+                                    fileOutputStream.write(savedata);
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
-                FileOutputStream fileOutputStream;
-                try {
-                    fileOutputStream = openFileOutput(filename,Context.MODE_PRIVATE);
-                    fileOutputStream.write(savedata);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                            }
+                        })
+                        .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .show();
+
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private byte[] toBytes(char[] chars) {
-        CharBuffer charBuffer = CharBuffer.wrap(chars);
-        ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
-        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(),
-                byteBuffer.position(), byteBuffer.limit());
+
+        byte[] bytes =  new byte[chars.length*2];
+        for(int i=0;i<chars.length;i++){
+           bytes[i*2]= (byte) (chars[i] >> 8);
+           bytes[i*2+1]= (byte) (chars[i]&0x00FF);
+        }
         return bytes;
     }
 
-    private void localSetMemoryAdapter(char[] chars, int count) {
-        startListTask(chars,count);
+    private void localSetMemoryAdapter(char[] chars, int positon) {
+        startListTask(chars,positon);
     }
 
 
