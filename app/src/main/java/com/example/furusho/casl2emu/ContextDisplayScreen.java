@@ -101,7 +101,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
                         Matcher matcher = pattern.matcher(upperedString);
                         if (matcher.matches()) {
-                            Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
                             char[] chars = getHexChars(upperedString," ");
                             memory.setMemoryArray(chars, position*4);
                             stringArrayList.remove(position);
@@ -375,7 +375,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                 }
                                 Matcher matcher = pattern.matcher(upperedString);
                                 if (matcher.matches()) {
-                                    Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
+                                   //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
                                     switch (id){
                                         case 0:
                                             binding.gr0.setText(upperedString);
