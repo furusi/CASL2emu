@@ -33,7 +33,6 @@ public class Casl2Emulator extends EmulatorCore {
         int wordCount=0;
         char[] tmp;
         int r1_position;
-        char cans;
         short sans;
         short sr1;
         short sr2;
@@ -44,8 +43,7 @@ public class Casl2Emulator extends EmulatorCore {
         char cmember;
         char spaddr;
         int r_before;
-        char cdata;
-        short sdata;
+        char data;
 
         switch (mem1 & 0xff00) {
             case 0x0000: // NOP
@@ -58,10 +56,10 @@ public class Casl2Emulator extends EmulatorCore {
                 tmp = memory.getMemoryArray(register.getPc(),wordCount);
                 r2 = getJikkouAddress(tmp);
                 r1_position = getGrNumber(tmp);
-                cdata = memory.getMemory(r2);
-                register.setGr(cdata,r1_position);
+                data = memory.getMemory(r2);
+                register.setGr(data,r1_position);
                 fr[0]=0;//LDのOFは必ず0
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cdata);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x1100://ST
             wordCount=2;
@@ -86,11 +84,11 @@ public class Casl2Emulator extends EmulatorCore {
 
                 r1_position = getGrNumber(tmp);
                 int r2_position = getGr2Number(tmp);
-                cdata = register.getGr()[r2_position];
+                data = register.getGr()[r2_position];
                 //計算結果はrに入る
-                register.setGr(cdata,r1_position);
+                register.setGr(data,r1_position);
                 fr[0]=0;//LDのOFは必ず0
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cdata);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x2000://ADDA
                 //データに基づいて処理する
@@ -186,8 +184,8 @@ public class Casl2Emulator extends EmulatorCore {
                 r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
                 cmember = memory.getMemory(jikkou);
-                cans = (char) (r1 & cmember);
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
+                data = (char) (r1 & cmember);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x3100://or
                 //データに基づいて処理する
@@ -199,8 +197,8 @@ public class Casl2Emulator extends EmulatorCore {
                     r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
                     cmember = memory.getMemory(jikkou);
-                cans = (char) (r1|cmember);
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
+                data = (char) (r1|cmember);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x3200://xor
                 //データに基づいて処理する
@@ -212,8 +210,8 @@ public class Casl2Emulator extends EmulatorCore {
                 r1 = register.getGr()[getGrNumber(tmp)];
                 //加算数を取得
                 cmember = memory.getMemory(jikkou);
-                cans = (char) (r1 ^ cmember);
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
+                data = (char) (r1 ^ cmember);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x3400://and
                 //データに基づいて処理する
@@ -222,8 +220,8 @@ public class Casl2Emulator extends EmulatorCore {
                 //xの中身を取得
                 r1 = register.getGr()[getGrNumber(tmp)];
                 r2 = register.getGr()[getGr2Number(tmp)];
-                cans = (char) (r1 & r2);
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
+                data = (char) (r1 & r2);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x3500://or
                 //データに基づいて処理する
@@ -232,8 +230,8 @@ public class Casl2Emulator extends EmulatorCore {
                 //xの中身を取得
                 r1 = register.getGr()[getGrNumber(tmp)];
                 r2 = register.getGr()[getGr2Number(tmp)];
-                cans = (char) (r1 | r2);
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
+                data = (char) (r1 | r2);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x3600://xor
                 //データに基づいて処理する
@@ -245,8 +243,8 @@ public class Casl2Emulator extends EmulatorCore {
                 //xの中身を取得
                 r1 = register.getGr()[getGrNumber(tmp)];
                 r2 = register.getGr()[getGr2Number(tmp)];
-                cans = (char) (r1 ^ r2);
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
+                data = (char) (r1 ^ r2);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x4000://CPA
                 //データに基づいて処理する
@@ -358,11 +356,11 @@ public class Casl2Emulator extends EmulatorCore {
                 //rの記号を保持
                 r_before = r1;
                 //計算結果はrに入る
-                cans= (char) checkCharRange((int)r1<<cmember);
+                data= (char) checkCharRange((int)r1<<cmember);
 
                 //OFは最後に送り出されたビットの値
                 fr[0]= (char) ((r_before>>(15-cmember))&0x0001);
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x5300://SRA
                 //データに基づいて処理する
@@ -377,13 +375,13 @@ public class Casl2Emulator extends EmulatorCore {
                 //rの記号を保持
                 r_before = r1;
                 //計算結果はrに入る
-                cans= (char) checkCharRange((int)r1>>cmember);
+                data= (char) checkCharRange((int)r1>>cmember);
 
                 //OFは最後に送り出されたビットの値
                 fr[0]= (char) ((r_before>>(cmember-1))&0x0001);
 
                 //pcが更新される
-                setRegisterAfterClaculation(cpc,wordCount,tmp,cans);
+                setRegisterAfterClaculation(cpc,wordCount,tmp,data);
                 break;
             case 0x6100://JMI
                 //データに基づいて処理する
@@ -473,8 +471,8 @@ public class Casl2Emulator extends EmulatorCore {
                 jikkou = getJikkouAddress(tmp);
 
                 //SPが指す値を1ひいてSPに入れる
-                cans = register.getSp();
-                register.setSp((char) (cans-1));
+                data = register.getSp();
+                register.setSp((char) (data-1));
                 //SPの指すアドレスへ実行アドレスを入れる
                 memory.setMemory(jikkou,register.getSp());
                 register.setPc((char) (cpc + wordCount));
@@ -486,7 +484,7 @@ public class Casl2Emulator extends EmulatorCore {
                 //spの指すアドレスを取得
                 spaddr = register.getSp();
                 //そのアドレスが指す値をgrへ格納
-                register.setGr(memory.getMemory(spaddr),getGr2Number(tmp));
+                register.setGr(memory.getMemory(spaddr),getGrNumber(tmp));
                 //spに1を加算して格納
                 register.setSp((char) (spaddr+1));
 
@@ -500,8 +498,8 @@ public class Casl2Emulator extends EmulatorCore {
                 jikkou = getJikkouAddress(tmp);
 
                 //SPが指す値を1ひいてSPに入れる
-                cans = register.getSp();
-                register.setSp((char) (cans-1));
+                data = register.getSp();
+                register.setSp((char) (data-1));
                 //SPの指すアドレスへPCを入れる
                 memory.setMemory(register.getPc(),register.getSp());
                 //PCへ実行アドレスを入れる
@@ -637,8 +635,10 @@ public class Casl2Emulator extends EmulatorCore {
 
     public void waitEmu(){
 
+        if(handler!=null){
         handler.removeCallbacksAndMessages(null);
         handler = null;
+        }
     }
     public void registerSVC (int num, String func)  /* SVC num が実行されたときに呼び出す関数 func を設定 */ {
     }
