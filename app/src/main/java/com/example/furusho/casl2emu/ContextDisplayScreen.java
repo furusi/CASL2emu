@@ -1,5 +1,6 @@
 package com.example.furusho.casl2emu;
 
+import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.support.v7.app.AlertDialog;
@@ -230,11 +232,35 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final String filename="data.cl2";
+        final EditText editView = new EditText(getApplicationContext());
         byte[] bytes = new byte[0];
         switch(item.getItemId()){
+            case R.id.action_jump:
+                editView.setTextColor(Color.BLACK);
+                new AlertDialog.Builder(ContextDisplayScreen.this)
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setView(R.layout.input_text_dialog)
+                        .setTitle("何番目のデータを表示しますか？: ")
+                        //setViewにてビューを設定します。
+                        .setView(editView)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //入力した文字をトースト出力する
+                                String position = editView.getText().toString();
+                                listView.setSelection(Integer.parseInt(position)/4);
+
+                            }
+                        })
+                        .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .show();
+                break;
             case R.id.action_load:
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("*/*");
@@ -243,7 +269,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 //register.setGr();
                 break;
             case R.id.action_save:
-                final EditText editView = new EditText(getApplicationContext());
                 editView.setText(filename);
                 editView.setTextColor(Color.BLACK);
                 new AlertDialog.Builder(ContextDisplayScreen.this)
