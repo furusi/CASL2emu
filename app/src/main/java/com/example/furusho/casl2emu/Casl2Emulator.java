@@ -32,7 +32,7 @@ public class Casl2Emulator extends EmulatorCore {
         //pcの命令をみて読み込むデータ数が決まる。
         int wordCount=0;
         char[] tmp;
-        int gr_position;
+        int r1_position;
         char cans;
         short sans;
         short sr1;
@@ -53,13 +53,13 @@ public class Casl2Emulator extends EmulatorCore {
                 wordCount=1;
                 register.setPc((char)(cpc+wordCount));
                 break;
-            case 0x1000: // ST
+            case 0x1000: // LD
                 wordCount=2;
                 tmp = memory.getMemoryArray(register.getPc(),wordCount);
                 r2 = getJikkouAddress(tmp);
-                gr_position = getGrNumber(tmp);
+                r1_position = getGrNumber(tmp);
                 cdata = memory.getMemory(r2);
-                register.setGr(cdata,gr_position);
+                register.setGr(cdata,r1_position);
                 fr[0]=0;//LDのOFは必ず0
                 setRegisterAfterClaculation(cpc,wordCount,tmp,cdata);
                 break;
@@ -68,23 +68,23 @@ public class Casl2Emulator extends EmulatorCore {
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 char setaddr = getJikkouAddress(tmp);
-                gr_position = getGrNumber(tmp);
-                memory.setMemory(register.getGr()[gr_position],setaddr);
+                r1_position = getGrNumber(tmp);
+                memory.setMemory(register.getGr()[r1_position],setaddr);
                 register.setPc((char)(cpc+wordCount));
                 break;
             case 0x1200://LAD
             wordCount=2;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 r2 = getJikkouAddress(tmp);
-                gr_position = getGrNumber(tmp);
-                register.setGr(r2,gr_position);
+                r1_position = getGrNumber(tmp);
+                register.setGr(r2,r1_position);
                 register.setPc((char)(cpc+wordCount));
                 break;
             case 0x1400://LD
             wordCount=1;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
 
-                int r1_position = getGrNumber(tmp);
+                r1_position = getGrNumber(tmp);
                 int r2_position = getGr2Number(tmp);
                 cdata = register.getGr()[r2_position];
                 //計算結果はrに入る
