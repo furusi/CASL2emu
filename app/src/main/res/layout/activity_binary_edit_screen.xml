@@ -41,7 +41,7 @@
             android:textSize="18sp"
             android:typeface="monospace"
             android:layout_row="0"
-            android:text="@string/gr0_3" />
+            android:text="GR0" />
 
         <TextView
             android:id="@+id/gr0"
@@ -52,13 +52,18 @@
             android:typeface="monospace"
             android:background="#C8E6C9"
             android:layout_row="0"
-            android:textColor="#ff000000"
             android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[0] &amp; 0xFFFF)}"
             android:layout_margin="1dp" />
 
         <TextView
-            android:id="@+id/gr1"
             android:layout_column="2"
+            android:textSize="18sp"
+            android:typeface="monospace"
+            android:layout_row="0"
+            android:text="GR1" />
+        <TextView
+            android:id="@+id/gr1"
+            android:layout_column="3"
             android:textSize="18sp"
             android:typeface="monospace"
             android:layout_row="0"
@@ -67,9 +72,15 @@
             android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[1] &amp; 0xFFFF)}"
             android:background="#C8E6C9"
             android:layout_margin="1dp" />
+        <TextView
+            android:layout_column="4"
+            android:textSize="18sp"
+            android:typeface="monospace"
+            android:layout_row="0"
+            android:text="GR2" />
 
         <TextView
-            android:layout_column="3"
+            android:layout_column="5"
             android:textSize="18sp"
             android:background="#C8E6C9"
             android:clickable="true"
@@ -79,10 +90,16 @@
             android:layout_gravity="center"
             android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[2] &amp; 0xFFFF)}"
             android:layout_margin="1dp" />
+        <TextView
+            android:layout_column="6"
+            android:textSize="18sp"
+            android:typeface="monospace"
+            android:layout_row="0"
+            android:text="GR3" />
 
         <TextView
             android:textSize="18sp"
-            android:layout_column="4"
+            android:layout_column="7"
             android:background="#C8E6C9"
             android:layout_gravity="center"
             android:clickable="true"
@@ -141,7 +158,7 @@
             android:layout_row="1"
             android:typeface="monospace"
             android:textSize="18sp"
-            android:text="@string/gr4_7" />
+            android:text="GR4" />
 
         <TextView
             android:layout_column="1"
@@ -154,9 +171,15 @@
             android:background="#C8E6C9"
             android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[4] &amp; 0xFFFF)}"
             android:layout_margin="1dp" />
-
         <TextView
             android:layout_column="2"
+            android:layout_row="1"
+            android:typeface="monospace"
+            android:textSize="18sp"
+            android:text="GR5" />
+
+        <TextView
+            android:layout_column="3"
             android:layout_gravity="center"
             android:background="#C8E6C9"
             android:clickable="true"
@@ -166,9 +189,15 @@
             android:layout_row="1"
             android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[5] &amp; 0xFFFF)}"
             android:layout_margin="1dp" />
+        <TextView
+            android:layout_column="4"
+            android:layout_row="1"
+            android:typeface="monospace"
+            android:textSize="18sp"
+            android:text="GR6" />
 
         <TextView
-            android:layout_column="3"
+            android:layout_column="5"
             android:textSize="18sp"
             android:id="@+id/gr6"
             android:clickable="true"
@@ -178,9 +207,15 @@
             android:layout_gravity="center"
             android:text="@{String.format(Locale.US ,&quot;%04X&quot;, (int)casl2Register.gr[6] &amp; 0xFFFF)}"
             android:layout_margin="1dp" />
+        <TextView
+            android:layout_column="6"
+            android:layout_row="1"
+            android:typeface="monospace"
+            android:textSize="18sp"
+            android:text="GR7" />
 
         <TextView
-            android:layout_column="4"
+            android:layout_column="7"
             android:textSize="18sp"
             android:layout_gravity="center"
             android:id="@+id/gr7"

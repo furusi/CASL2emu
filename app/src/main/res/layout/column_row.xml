@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:id="@+id/columnrow"
+     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <TextView
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="0x0000"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rownumber" />
+        <TextView
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="0000 0000 0000 0000"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rowbody" />
+
+</LinearLayout>

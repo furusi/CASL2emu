@@ -24,4 +24,5 @@
     <string name="zf">ZF</string>
     <string name="button_stp">処理を停止</string>
     <string name="dummytext">0123456789</string>
+    <string name="jump_dialog_text">"番地を入力(0000-FFFF): "</string>
 </resources>

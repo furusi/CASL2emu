@@ -91,7 +91,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(R.layout.input_text_dialog)
-                .setTitle("テキスト入力ダイアログ: "+String.format(Locale.US,"%04X",position*4 & 0xFFFF)+" - "+String.format(Locale.US,"%04X",position*4+3& 0xFFFF))
+                .setTitle("メモリを編集: "+String.format(Locale.US,"0x%04X",position*4 & 0xFFFF)+" - "+String.format(Locale.US,"0x%04X",position*4+3& 0xFFFF))
                 //setViewにてビューを設定します。
                 .setView(editView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -167,7 +167,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         final char[] a = memory.getMemory();
 
 
-        listView = (ListView)findViewById(R.id.memory_list);
+        listView = binding.memoryList;
         localSetMemoryAdapter(a,0);
         listView.setOnItemClickListener(showTextEditDialog);
 
@@ -244,14 +244,14 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 new AlertDialog.Builder(ContextDisplayScreen.this)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(R.layout.input_text_dialog)
-                        .setTitle("何番目のデータを表示しますか？: ")
+                        .setTitle(getString(R.string.jump_dialog_text))
                         //setViewにてビューを設定します。
                         .setView(editView)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //入力した文字をトースト出力する
                                 String position = editView.getText().toString();
-                                listView.setSelection(Integer.parseInt(position)/4);
+                                listView.setSelection(Integer.parseInt(position,16)/4);
 
                             }
                         })
@@ -360,7 +360,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 new AlertDialog.Builder(ContextDisplayScreen.this)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(R.layout.input_text_dialog)
-                        .setTitle("テキスト入力ダイアログ")
+                        .setTitle("レジスタを編集")
                         //setViewにてビューを設定します。
                         .setView(hexEditText)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
