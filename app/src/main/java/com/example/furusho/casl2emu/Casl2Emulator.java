@@ -1,6 +1,9 @@
 package com.example.furusho.casl2emu;
 
 import android.os.Handler;
+import android.util.Log;
+
+import java.util.Arrays;
 
 
 /**
@@ -522,7 +525,15 @@ public class Casl2Emulator extends EmulatorCore {
                 wordCount = 2;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 //spの指すアドレスを取得
-                spaddr = register.getSp();
+                switch(tmp[1]){
+                    case 0xFABC:
+                        data = memory.getMemory(tmp[1]);
+                        char datacount = memory.getMemory(data);
+                        Log.d("dbg", Arrays.toString(Arrays.copyOfRange(memory.getMemory(),data+1,data+datacount+1)));
+                        break;
+                }
+                //FF00 FABCで文字出力できるようにする
+                //実行アドレスに
 
                 register.setPc((char) (cpc + wordCount));
                 break;

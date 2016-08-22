@@ -473,7 +473,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     @Override
     public void onLoadFinished(Loader loader, Object data) {
 
-        if(arrayAdapter ==null) {
+        if(arrayAdapter == null) {
             stringArrayList = (ArrayList<String>)data;
             arrayAdapter = new CustomArrayAdapter(listView.getContext(),
                     simple_list_item_1,
