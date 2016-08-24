@@ -192,6 +192,15 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             }
         });
 
+        binding.outputscreenbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(),OutputScreen.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override

@@ -17,13 +17,15 @@ public class OutputScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_output_screen);
-        code = this.getIntent().getStringArrayExtra(new String("sourcecode"));
-        OutputReceiver myReceiver = new OutputReceiver();
+        if(this.getIntent().hasExtra("sourcecode")) {
+            code = this.getIntent().getStringArrayExtra("sourcecode");
+            OutputReceiver myReceiver = new OutputReceiver();
 
-        IntentFilter mIF = new IntentFilter();
-        mIF.addAction("com.example.furusho.casl2emu.output");
-        registerReceiver(myReceiver, mIF);
-        cm = new Commetii(code,this.getApplication());
+            IntentFilter mIF = new IntentFilter();
+            mIF.addAction("com.example.furusho.casl2emu.output");
+            registerReceiver(myReceiver, mIF);
+            cm = new Commetii(code, this.getApplication());
+        }
     }
 
     @Override

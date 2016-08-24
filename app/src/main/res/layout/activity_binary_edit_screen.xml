@@ -304,6 +304,20 @@
             android:id="@+id/stepbutton"
             />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_run_button"
+            android:id="@+id/runbutton" />
+
+        <Button
+            android:text="@string/button_stp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/waitbutton"
+            android:textColor="?attr/colorSwitchThumbNormal"
+            android:background="?attr/colorAccent" />
+
     </LinearLayout>
     <LinearLayout
         android:layout_alignParentBottom="true"
@@ -311,32 +325,12 @@
         android:id="@+id/runbuttonlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
         <Button
+            android:text="実行画面"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_run_button"
-            android:id="@+id/runbutton"
-            />
+            android:id="@+id/outputscreenbutton" />
 
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/waitbuttonlayout"
-        android:layout_centerHorizontal="true"
-        android:layout_toLeftOf="@id/runbuttonlayout">
-
-        <Button
-            android:text="@string/button_stp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/waitbutton"
-            android:textColor="?attr/colorSwitchThumbNormal"
-            android:layout_weight="1"
-            android:background="?attr/colorAccent" />
     </LinearLayout>
     <LinearLayout
         android:background="@color/material_grey_100"
@@ -356,5 +350,7 @@
 
         </ListView>
     </LinearLayout>
+
+
 </RelativeLayout>
 </layout>
