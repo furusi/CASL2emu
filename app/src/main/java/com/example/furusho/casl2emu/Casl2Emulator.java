@@ -32,6 +32,7 @@ public class Casl2Emulator extends EmulatorCore {
     public void stepOver(){
         //pcの指すメモリの中身をを見る
         char cpc = register.getPc(); char mem1 = memory.getMemory(cpc);
+        fr[0]=0; fr[1]=0; fr[2]=0;
         //pcの命令をみて読み込むデータ数が決まる。
         int wordCount=0;
         char[] tmp;
@@ -524,9 +525,12 @@ public class Casl2Emulator extends EmulatorCore {
                 //データに基づいて処理する
                 wordCount = 2;
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                jikkou = getJikkouAddress(tmp);
                 //spの指すアドレスを取得
-                switch(tmp[1]){
-                    case 0xFABC:
+                switch(jikkou){
+                    case 0xFF01://OUT
+                        //r0を文字数、r1-r7を文字データとする。
+                        //文字数分のデータを読み取りStringに変換。
                         data = memory.getMemory(tmp[1]);
                         char datacount = memory.getMemory(data);
                         Log.d("dbg", Arrays.toString(Arrays.copyOfRange(memory.getMemory(),data+1,data+datacount+1)));
@@ -541,21 +545,21 @@ public class Casl2Emulator extends EmulatorCore {
 
     }
 
-    private void subl(char cpc, int wordCount, char[] tmp, int r, int subber) {
+    private void subl(char cpc, int wordCount, char[] tmp, int r, int member) {
         char ans=0;
-        ans = (char) checkCharRange(r - subber);
+        ans = (char) checkCharRange(r - member);
         setRegisterAfterClaculation(cpc, wordCount, tmp, ans);
     }
 
-    private void addl(char cpc, int wordCount, char[] tmp, int r, int adder) {
+    private void addl(char cpc, int wordCount, char[] tmp, int r, int member) {
         char ans=0;
-        ans = (char) checkCharRange(r + adder);
+        ans = (char) checkCharRange(r + member);
         setRegisterAfterClaculation(cpc, wordCount, tmp, ans);
     }
 
-    private void suba(char cpc, int wordCount, char[] tmp, int r , int subber) {
+    private void suba(char cpc, int wordCount, char[] tmp, int r , int member) {
         short ans=0;
-        ans = (short) checkShortRange(r - subber);
+        ans = (short) checkShortRange(r - member);
         setRegisterAfterClaculation(cpc, wordCount, tmp, (char) ans);
     }
 
@@ -607,8 +611,8 @@ public class Casl2Emulator extends EmulatorCore {
 
     private char getJikkouAddress(char[] tmp) {
         int sihyou = getGr2Number(tmp);
-        char sihyou_nakami = (char) (register.getGr()[sihyou]);
-        return (char) (tmp[1]+sihyou_nakami);
+        char sihyou_nakami = register.getGr()[sihyou];
+        return (char) ((int)tmp[1]+(int)sihyou_nakami);
     }
 
     private int getGrNumber(char[] data){

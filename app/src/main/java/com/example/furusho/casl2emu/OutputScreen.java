@@ -4,8 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+
+import com.example.furusho.casl2emu.databinding.ActivityOutputScreenBinding;
 
 
 public class OutputScreen extends AppCompatActivity {
@@ -26,6 +30,9 @@ public class OutputScreen extends AppCompatActivity {
             registerReceiver(myReceiver, mIF);
             cm = new Commetii(code, this.getApplication());
         }
+
+
+        ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
     }
 
     @Override
@@ -41,4 +48,5 @@ public class OutputScreen extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
         }
     }
+
 }
