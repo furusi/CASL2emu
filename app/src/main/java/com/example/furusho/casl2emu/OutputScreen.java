@@ -5,9 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.furusho.casl2emu.databinding.ActivityOutputScreenBinding;
 
@@ -17,22 +22,22 @@ public class OutputScreen extends AppCompatActivity {
 
     String[] code;
     Commetii cm;
+    OutputBuffer outputBuffer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_output_screen);
-        if(this.getIntent().hasExtra("sourcecode")) {
-            code = this.getIntent().getStringArrayExtra("sourcecode");
-            OutputReceiver myReceiver = new OutputReceiver();
-
-            IntentFilter mIF = new IntentFilter();
-            mIF.addAction("com.example.furusho.casl2emu.output");
-            registerReceiver(myReceiver, mIF);
-            cm = new Commetii(code, this.getApplication());
-        }
 
 
         ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
+        //binding.output.setText("Casl2emu is LEADY");
+        outputBuffer = OutputBuffer.getInstance();
+        //outputBuffer.setData("CASL2Emu is ready!!!!");
+        binding.setOutputbuffer(outputBuffer);
+        outputBuffer.setCasl2PaintView(getApplicationContext());
+        addContentView(outputBuffer.getCasl2PaintView(), new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
     }
 
     @Override

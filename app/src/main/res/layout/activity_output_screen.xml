@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+   <data>
+       <variable
+           name="outputbuffer"
+           type="com.example.furusho.casl2emu.OutputBuffer"/>
+   </data>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -20,15 +25,17 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="false"
         android:foregroundGravity="bottom"
-        android:background="@color/background_material_dark" >
+        android:background="@color/background_material_dark"
+        android:layout_alignWithParentIfMissing="false">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
+            android:text="@{outputbuffer.data}"
             android:id="@+id/output"
-            android:textColor="@color/material_grey_50" />
+            android:textColor="@color/material_grey_50"
+            android:singleLine="false" />
     </ScrollView>
 </RelativeLayout>
 </layout>

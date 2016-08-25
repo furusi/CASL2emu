@@ -144,7 +144,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         emulator= Casl2Emulator.getInstance();
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        char[] test = new char[]{0x000F,0,9,8,78,7,5,0xabcd};
+        char[] test = new char[]{0,0,9,8,78,7,4,4};
 
         register.setGr(test);
         binding.setCasl2Register(register);
@@ -161,7 +161,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.of.setOnClickListener(showWordDialog(binding,10));
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
-        String initialString = "5101 0002 0001 0000"+" "+getString(R.string.short_zerofill);
+        String initialString = "F000 FF00 0001 0000 2134 480a 5C6e"+" "+getString(R.string.short_zerofill);
         char[]tmp = getHexChars(initialString," ");
         memory.setMemory(tmp);
         final char[] a = memory.getMemory();

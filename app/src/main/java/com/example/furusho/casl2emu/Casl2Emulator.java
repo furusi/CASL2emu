@@ -3,6 +3,7 @@ package com.example.furusho.casl2emu;
 import android.os.Handler;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -524,17 +525,49 @@ public class Casl2Emulator extends EmulatorCore {
             case 0xF000://SVC
                 //データに基づいて処理する
                 wordCount = 2;
+                OutputBuffer outputBuffer = OutputBuffer.getInstance();
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 jikkou = getJikkouAddress(tmp);
+                char memory_position;
+                char count;
+                char[] subarray;
                 //spの指すアドレスを取得
                 switch(jikkou){
-                    case 0xFF01://OUT
-                        //r0を文字数、r1-r7を文字データとする。
+                    case 0xFF00://OUT
+                        //r7を文字数(wordの数ではない)、r6を先頭アドレスとする。
+                        memory_position = register.getGr()[6];
+                        count = register.getGr()[7];
                         //文字数分のデータを読み取りStringに変換。
-                        data = memory.getMemory(tmp[1]);
-                        char datacount = memory.getMemory(data);
-                        Log.d("dbg", Arrays.toString(Arrays.copyOfRange(memory.getMemory(),data+1,data+datacount+1)));
+                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
+                        byte[] bytes = new byte[subarray.length*2];
+                        for(int i =0;i<subarray.length;i++){
+
+                            byte[] _bytes = new byte[2];
+                            _bytes[0] = (byte) (subarray[i]>>8);
+                            _bytes[1] = (byte) (subarray[i]&0x00FF);
+                            for(int j=0;j<2;j++){
+                                if((_bytes[j]>=0x20&&_bytes[j]<=0x7E)||_bytes[j]==0x0a){
+                                   bytes[2*i+j]=_bytes[j];
+                                }
+                            }
+                        }
+                        outputBuffer.addData(new String(bytes));
                         break;
+                    case 0xFF01://描画
+                        //先頭アドレス:gr6
+                        memory_position = register.getGr()[6];
+                        //種類:gr6
+                        char type = register.getGr()[7];
+                        switch (type){
+                            case 1://circle
+                                subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+3);
+                                float cx = (short)subarray[0];
+                                float cy = (short)subarray[1];
+                                float radius = (short)subarray[2];
+                                float[] circleprop = {cx,cy,radius};
+                                outputBuffer.addDrawObjectArray(1,circleprop);
+                                break;
+                        }
                 }
                 //FF00 FABCで文字出力できるようにする
                 //実行アドレスに
