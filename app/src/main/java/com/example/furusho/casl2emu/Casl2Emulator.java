@@ -1,5 +1,6 @@
 package com.example.furusho.casl2emu;
 
+import android.graphics.Rect;
 import android.os.Handler;
 import android.util.Log;
 
@@ -554,19 +555,29 @@ public class Casl2Emulator extends EmulatorCore {
                         outputBuffer.addData(new String(bytes));
                         break;
                     case 0xFF01://描画
-                        //先頭アドレス:gr6
-                        memory_position = register.getGr()[6];
-                        //種類:gr6
-                        char type = register.getGr()[7];
-                        switch (type){
+                        //先頭アドレス:gr7
+                        memory_position = register.getGr()[7];
+                        int color;
+                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
+                        switch (subarray[0]){//種類別の処理
                             case 1://circle
-                                subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+3);
-                                float cx = (short)subarray[0];
-                                float cy = (short)subarray[1];
-                                float radius = (short)subarray[2];
+                                float cx = (short)subarray[1];
+                                float cy = (short)subarray[2];
+                                float radius = (short)subarray[3];
                                 float[] circleprop = {cx,cy,radius};
-                                outputBuffer.addDrawObjectArray(1,circleprop);
+                                color = subarray[4];
+                                outputBuffer.addDrawObjectArray(1,circleprop,color);
                                 break;
+                            case 2://rectangle
+                                int left = (short)subarray[1];
+                                int top = (short)subarray[2];
+                                int right = (short)subarray[3];
+                                int bottom = (short)subarray[4];
+                                Rect rect = new Rect(left,top,right,bottom);
+                                color = subarray[5];
+                                outputBuffer.addDrawObjectArray(2,rect,color);
+                                break;
+
                         }
                 }
                 //FF00 FABCで文字出力できるようにする
