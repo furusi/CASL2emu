@@ -1,6 +1,9 @@
 package com.example.furusho.casl2emu;
 
+import android.app.AlarmManager;
 import android.graphics.Rect;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Handler;
 import android.util.Log;
 
@@ -579,6 +582,9 @@ public class Casl2Emulator extends EmulatorCore {
                                 break;
 
                         }
+                    case 0xFF02://音を鳴らす
+                        ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM,ToneGenerator.MAX_VOLUME);
+                        toneGenerator.startTone(ToneGenerator.TONE_DTMF_0,2000);
                 }
                 //FF00 FABCで文字出力できるようにする
                 //実行アドレスに

@@ -161,7 +161,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.of.setOnClickListener(showWordDialog(binding,10));
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
-        String initialString = "F000 FF01 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        String initialString = "F000 FF02 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         char[]tmp = getHexChars(initialString," ");
         memory.setMemory(tmp);
         final char[] a = memory.getMemory();
