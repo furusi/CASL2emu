@@ -538,9 +538,9 @@ public class Casl2Emulator extends EmulatorCore {
                 //spの指すアドレスを取得
                 switch(jikkou){
                     case 0xFF00://OUT
-                        //r7を文字数(wordの数ではない)、r6を先頭アドレスとする。
-                        memory_position = register.getGr()[6];
-                        count = register.getGr()[7];
+                        //r6を先頭アドレス、r7を文字数(wordの数ではない)とする。
+                        memory_position = register.getGr()[7];
+                        count = register.getGr()[6];
                         //文字数分のデータを読み取りStringに変換。
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
                         byte[] bytes = new byte[subarray.length*2];
@@ -562,6 +562,7 @@ public class Casl2Emulator extends EmulatorCore {
                         memory_position = register.getGr()[7];
                         int color;
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
+                        //図形のデータsubarray[n]：[0]が種類、[1]~[n-2]がデータ、[n-1]が色
                         switch (subarray[0]){//種類別の処理
                             case 1://circle
                                 float cx = (short)subarray[1];
@@ -582,9 +583,11 @@ public class Casl2Emulator extends EmulatorCore {
                                 break;
 
                         }
+                        break;
                     case 0xFF02://音を鳴らす
                         ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM,ToneGenerator.MAX_VOLUME);
                         toneGenerator.startTone(ToneGenerator.TONE_DTMF_0,2000);
+                        break;
                 }
                 //FF00 FABCで文字出力できるようにする
                 //実行アドレスに
