@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.media.AudioTrack;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,12 +18,11 @@ import android.widget.LinearLayout;
 import com.example.furusho.casl2emu.databinding.ActivityOutputScreenBinding;
 
 
-public class OutputScreen extends AppCompatActivity {
+public class OutputScreen extends AppCompatActivity implements Runnable{
 
 
-    String[] code;
-    Commetii cm;
     OutputBuffer outputBuffer;
+    private AudioTrack audioTrack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,11 @@ public class OutputScreen extends AppCompatActivity {
         binding.setOutputbuffer(outputBuffer);
         outputBuffer.setCasl2PaintView(getApplicationContext());
         addContentView(outputBuffer.getCasl2PaintView(), new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        audioTrack= outputBuffer.getSoundGenerator().getAudioTrack();
+        Thread thread = new Thread(OutputScreen.this);
+        thread.start();
+
 
     }
 
@@ -53,5 +58,24 @@ public class OutputScreen extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
         }
     }
+
+      @Override
+  public void run() {
+
+    // 再生中なら一旦止める
+    if(audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+      audioTrack.stop();
+      audioTrack.reloadStaticData();
+    }
+    // 再生開始
+    audioTrack.play();
+
+    // スコアデータを書き込む
+    for(SoundDto dto : outputBuffer.getSoundList()) {
+      audioTrack.write(dto.getSound(), 0, dto.getSound().length);
+    }
+    // 再生停止
+    audioTrack.stop();
+  }
 
 }

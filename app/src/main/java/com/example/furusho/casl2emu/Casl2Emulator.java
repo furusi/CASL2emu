@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+
 /**
  * Created by furusho on 2016/07/09.
  */
 public class Casl2Emulator extends EmulatorCore {
     private static Casl2Emulator instance = new Casl2Emulator();
     Casl2Memory memory = Casl2Memory.getInstance();
+    OutputBuffer outputBuffer = OutputBuffer.getInstance();
     Casl2Register register = Casl2Register.getInstance();
     Handler handler;
     char[] fr = new char[3];
@@ -529,7 +531,6 @@ public class Casl2Emulator extends EmulatorCore {
             case 0xF000://SVC
                 //データに基づいて処理する
                 wordCount = 2;
-                OutputBuffer outputBuffer = OutputBuffer.getInstance();
                 tmp = memory.getMemoryArray(register.getPc(), wordCount);
                 jikkou = getJikkouAddress(tmp);
                 char memory_position;
@@ -557,7 +558,7 @@ public class Casl2Emulator extends EmulatorCore {
                         }
                         outputBuffer.addData(new String(bytes));
                         break;
-                    case 0xFF01://描画
+                    case 0xFF02://描画
                         //先頭アドレス:gr7
                         memory_position = register.getGr()[7];
                         int color;
@@ -582,9 +583,15 @@ public class Casl2Emulator extends EmulatorCore {
                                 break;
 
                         }
-                    case 0xFF02://音を鳴らす
-                        ToneGenerator toneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM,ToneGenerator.MAX_VOLUME);
-                        toneGenerator.startTone(ToneGenerator.TONE_DTMF_0,2000);
+                    case 0xFF04://音を鳴らす
+                        //先頭アドレス:gr7
+                        memory_position = register.getGr()[7];
+                        count = register.getGr()[6];
+                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
+                        for(int i =0;i<subarray.length;i++){
+                            outputBuffer.getSoundList().add(new SoundDto(generateSound(outputBuffer.getSoundGenerator(),subarray[2*i], subarray[2*i+1]), subarray[2*i+1]));
+                        }
+
                 }
                 //FF00 FABCで文字出力できるようにする
                 //実行アドレスに
@@ -709,5 +716,19 @@ public class Casl2Emulator extends EmulatorCore {
     }
     public void unregisterSVC (int num) {
     }
+
+      public byte[] generateSound(Casl2SoundGenerator gen, int freq, int length) {
+    return gen.getSound(freq, length);
+  }
+
+  /**
+   * 無音データを作成する
+   * @param gen Generator
+   * @param length 無音データの長さ
+   * @return 無音データ
+   */
+  public byte[] generateEmptySound(Casl2SoundGenerator gen, int length) {
+    return gen.getEmptySound(length);
+  }
 
 }
