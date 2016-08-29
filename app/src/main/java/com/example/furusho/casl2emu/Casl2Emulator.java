@@ -582,6 +582,7 @@ public class Casl2Emulator extends EmulatorCore {
                                 outputBuffer.addDrawObjectArray(2,rect,color);
                                 break;
 
+
                         }
                     case 0xFF04://音を鳴らす
                         //先頭アドレス:gr7
