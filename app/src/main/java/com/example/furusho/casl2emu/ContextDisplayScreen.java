@@ -14,6 +14,7 @@ import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.AudioTrack;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -64,7 +65,7 @@ import icepick.Icepick;
 
 import static android.R.layout.simple_list_item_1;
 
-public class ContextDisplayScreen extends BaseActivity implements LoaderCallbacks{
+public class ContextDisplayScreen extends BaseActivity implements LoaderCallbacks,Runnable{
 
     InputText it;
     ListView listView;
@@ -73,6 +74,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     Casl2Emulator emulator;
     ArrayAdapter<String> arrayAdapter;
     ArrayList<String> stringArrayList;
+    AudioTrack audioTrack;
+    OutputBuffer outputBuffer;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -455,6 +458,28 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             }
         };
     }
+    @Override
+    public void run() {
+
+        // 再生中なら一旦止める
+        if(audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+            audioTrack.stop();
+            audioTrack.reloadStaticData();
+        }
+        // 再生開始
+        audioTrack.play();
+
+        // スコアデータを書き込む
+        /*
+        for(SoundDto dto : outputBuffer.getSoundList()) {
+            audioTrack.write(dto.getSound(), 0, dto.getSound().length);
+        }
+        */
+
+        // 再生停止
+        audioTrack.stop();
+    }
+
 
     private void startListTask(char[]cs,int i){
        Bundle bundle=new Bundle();

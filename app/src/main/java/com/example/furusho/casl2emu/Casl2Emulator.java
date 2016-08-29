@@ -591,6 +591,17 @@ public class Casl2Emulator extends EmulatorCore {
                         for(int i =0;i<subarray.length;i++){
                             outputBuffer.getSoundList().add(new SoundDto(generateSound(outputBuffer.getSoundGenerator(),subarray[2*i], subarray[2*i+1]), subarray[2*i+1]));
                         }
+                        break;
+                    case 0xFF06://浮動小数点数演算
+                        //先頭アドレス:gr7
+                        //仮数部７ビット（＋符号１ビット）、指数部７ビット（＋符号１ビット）
+                        memory_position = register.getGr()[7];
+                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+8);
+                        char[] a_kasu = Arrays.copyOfRange(subarray,0,2);
+                        char a_sisu = subarray[1];
+                        short b_kasu = (short) subarray[2];
+                        char b_sisu = subarray[3];
+                        //int a0 =
 
                 }
                 //FF00 FABCで文字出力できるようにする

@@ -52,7 +52,7 @@ public class Casl2SoundGenerator {
     /**
      * サウンド生成
      * @param frequency 鳴らしたい音の周波数
-     * @param soundLengh 音の長さ
+     * @param soundLength 音の長さ
      * @return 音声データ
      */
     public byte[] getSound(int frequency, int soundLength) {
@@ -130,7 +130,6 @@ public class Casl2SoundGenerator {
 
     /**
      * いわゆる休符
-     * @param frequency
      * @param soundLength
      * @return 無音データ
      */
