@@ -147,7 +147,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         emulator= Casl2Emulator.getInstance();
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        char[] test = new char[]{0,0,9,8,78,7,7,5};
+        char[] test = new char[]{0,0,9,8,78,7,8,2};
+        //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
 
         register.setGr(test);
         binding.setCasl2Register(register);
@@ -165,7 +167,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
         //String initialString = "F000 FF02 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
-        String initialString = "F000 FF02 1476 F000 FF02 0000 0001 0006 0001 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        //String initialString = "8314 1592 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         char[]tmp = getHexChars(initialString," ");
         memory.setMemory(tmp);
         final char[] a = memory.getMemory();

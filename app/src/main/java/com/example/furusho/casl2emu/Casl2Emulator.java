@@ -7,6 +7,7 @@ import android.media.ToneGenerator;
 import android.os.Handler;
 import android.util.Log;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -595,14 +596,87 @@ public class Casl2Emulator extends EmulatorCore {
                         break;
                     case 0xFF06://浮動小数点数演算
                         //先頭アドレス:gr7
-                        //仮数部７ビット（＋符号１ビット）、指数部７ビット（＋符号１ビット）
+                        //有効桁数7桁 指数部-37~37
+                        //仮数部は4*7=28ビットで表す(2word)符号は-の時8。指数部は1word使う。
+                        //演算の種類gr6
                         memory_position = register.getGr()[7];
-                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+8);
+                        char op = register.getGr()[6];
+                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
                         char[] a_kasu = Arrays.copyOfRange(subarray,0,2);
-                        char a_sisu = subarray[1];
-                        short b_kasu = (short) subarray[2];
-                        char b_sisu = subarray[3];
-                        //int a0 =
+                        double a = getFloat(subarray[2], a_kasu);
+                        char[] b_kasu = Arrays.copyOfRange(subarray,3,5);
+                        double b = getFloat(subarray[5], b_kasu);
+                        char r_position = (char) (memory_position+7);
+                        float r;
+                        switch (op){
+                            case 1://足し算
+                                r=(float)checkFloatRange(a+b);
+                                break;
+                            case 2://引き算
+                                r=(float)checkFloatRange(a-b);
+                                break;
+                            case 3://掛け算
+                                r=(float)checkFloatRange(a*b);
+                                break;
+                            case 4://割り算
+                                r=(float)checkFloatRange(a/b);
+                                break;
+                            case 5://べき乗
+                                r=(float)checkFloatRange(Math.pow(a,b));
+                                break;
+                            case 7://正弦
+                                r=(float)checkFloatRange(Math.sin(a));
+                                break;
+                            case 8://余弦
+                                r=(float)checkFloatRange(Math.cos(a));
+                                break;
+                            case 9://正接
+                                r=(float)checkFloatRange(Math.tan(a));
+                                break;
+                            default:
+                                r=(float)0;
+                        }
+
+                        char sign=0;
+                        if (r < 0){
+                            sign = 8;
+                            r= Math.abs(r);
+                        }
+                        short r_sisu=0;
+
+                        float abs_r =Math.abs(r);
+                       if(abs_r<1) {
+                           for (short i = 0; i < 37; i++) {
+                               if (Math.abs(r) >= 1) {
+                                   r_sisu = (short) (i*-1);
+                                   break;
+                               }else{
+                                   r = r * 10;
+
+                               }
+                           }
+                       }else if (abs_r>=10){
+                           for (short i = 0; i < 37; i++) {
+                               if (Math.abs(r) < 10){
+                                   r_sisu = i;
+                                   break;
+                               }else {
+                                   r = r / 10;
+                               }
+                           }
+                       }
+
+                        char[] r_array = new char[3];
+                        char[] _r={48,48,48,48,48,48,48,48};
+                        char[] cs = String.valueOf(r).toCharArray();
+                        for(int i=0;i<cs.length;i++){
+                            _r[i]=cs[i];
+                        }
+                        //'0'=48,'1'=49   '1'-48=1
+                        r_array[0]= (char) ((sign <<12) + ((_r[0]-48) <<8) +((_r[2]-48)<<4)+((_r[3]-48)));
+                        r_array[1]= (char) (((_r[4]-48) <<12) + ((_r[5]-48) <<8) +((_r[6]-48)<<4)+((_r[7]-48)));
+                        r_array[2]= (char) r_sisu;
+                        memory.setMemoryArray(r_array,r_position);
 
                 }
                 //FF00 FABCで文字出力できるようにする
@@ -612,6 +686,24 @@ public class Casl2Emulator extends EmulatorCore {
                 break;
         }
 
+    }
+
+    private double getFloat(char c, char[] a_kasu) {
+        int[] _array = new int[7];
+        int sign=1;
+        if((a_kasu[0] >> 15) == 1){
+           sign = -1;
+        }
+        _array[0]= (a_kasu[0]&0x0F00)>>8;
+        _array[1]= (a_kasu[0]&0x00F0)>>4;
+        _array[2]= a_kasu[0]&0x000F;
+        _array[3]= (a_kasu[1]&0xF000)>>12;
+        _array[4]= (a_kasu[1]&0x0F00)>>8;
+        _array[5]= (a_kasu[1]&0x00F0)>>4;
+        _array[6]= a_kasu[1]&0x000F;
+        short a_sisu = (short)c;
+        double flt = (double) ((_array[0]+_array[1]*0.1+_array[2]*0.01+_array[3]*0.001+_array[4]*0.0001+_array[5]*0.00001+_array[6]*0.000001)*sign*(Math.pow(10,a_sisu)));
+        return flt;
     }
 
     private void subl(char cpc, int wordCount, char[] tmp, int r, int member) {
@@ -700,6 +792,11 @@ public class Casl2Emulator extends EmulatorCore {
             fr[0]=1;
         return value;
     }
+    private double checkFloatRange(double value){
+        if(value > Float.MAX_VALUE||value < Float.MIN_VALUE)
+            fr[0]=1;
+        return value;
+    }
 
 
     public void run(){
@@ -742,5 +839,13 @@ public class Casl2Emulator extends EmulatorCore {
   public byte[] generateEmptySound(Casl2SoundGenerator gen, int length) {
     return gen.getEmptySound(length);
   }
+    private char[] getHexChars(String s,String separeter) {
+        String[] stmp = s.split(separeter);
+        char[] tmp= new char[stmp.length];
+        for(int i=0;i<stmp.length;i++){
+            tmp[i] = (char)Integer.parseInt(stmp[i],16);
+        }
+        return tmp;
+    }
 
 }
