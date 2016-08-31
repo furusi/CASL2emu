@@ -144,12 +144,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
         memory = Casl2Memory.getInstance();
         register = Casl2Register.getInstance();
-        emulator= Casl2Emulator.getInstance();
+        emulator= Casl2Emulator.getInstance(getApplicationContext());
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        char[] test = new char[]{0,0,9,8,78,7,8,2};
+        char[] test = new char[]{0,0,9,8,78,7,1,2};
         //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
-        String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        String initialString = "F000 FF04 0001 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
 
         register.setGr(test);
         binding.setCasl2Register(register);

@@ -1,8 +1,10 @@
 package com.example.furusho.casl2emu;
 
 import android.app.AlarmManager;
+import android.content.Context;
 import android.graphics.Rect;
 import android.media.AudioManager;
+import android.media.JetPlayer;
 import android.media.ToneGenerator;
 import android.os.Handler;
 import android.util.Log;
@@ -23,11 +25,16 @@ public class Casl2Emulator extends EmulatorCore {
     Casl2Register register = Casl2Register.getInstance();
     Handler handler;
     char[] fr = new char[3];
+    private JetPlayer jetPlayer=JetPlayer.getJetPlayer();
+    private static Context context;
 
     private Casl2Emulator() {
     }
 
-   static public Casl2Emulator getInstance(){
+   static public Casl2Emulator getInstance(Context context1){
+       if(context==null) {
+           context = context1;
+       }
       return instance;
    }
 
@@ -586,12 +593,17 @@ public class Casl2Emulator extends EmulatorCore {
 
                         }
                     case 0xFF04://音を鳴らす
-                        //先頭アドレス:gr7
+                        //先頭アドレス:gr7 データ数:gr6
                         memory_position = register.getGr()[7];
                         count = register.getGr()[6];
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
+                        jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremi));
                         for(int i =0;i<subarray.length;i++){
-                            outputBuffer.getSoundList().add(new SoundDto(generateSound(outputBuffer.getSoundGenerator(),subarray[2*i], subarray[2*i+1]), subarray[2*i+1]));
+                            //outputBuffer.getSoundList().add(new SoundDto(generateSound(outputBuffer.getSoundGenerator(),subarray[2*i], subarray[2*i+1]), subarray[2*i+1]));
+
+                            //jetPlayer.clearQueue();
+                            jetPlayer.queueJetSegment(subarray[i], -1, 0, 0, 0, (byte) 0);
+                            jetPlayer.play();
                         }
                         break;
                     case 0xFF06://浮動小数点数演算
