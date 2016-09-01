@@ -1,5 +1,6 @@
 package com.example.furusho.casl2emu;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -8,6 +9,7 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.databinding.BindingAdapter;
@@ -19,6 +21,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
@@ -43,6 +48,7 @@ import org.apache.commons.lang.ArrayUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -51,6 +57,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -74,8 +84,10 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     Casl2Emulator emulator;
     ArrayAdapter<String> arrayAdapter;
     ArrayList<String> stringArrayList;
-    AudioTrack audioTrack;
     OutputBuffer outputBuffer;
+    HttpURLConnection connection;
+    private final static String casl2filedirectory = Environment.getExternalStorageDirectory().getPath()+"CASL2Emu";
+    private static final int REQUEST_WRITE_STORAGE = 112;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -251,7 +263,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final String filename="data.cl2";
+        final String filename=getString(R.string.default_file_name);
         final EditText editView = new EditText(getApplicationContext());
         byte[] bytes = new byte[0];
         switch(item.getItemId()){
@@ -284,6 +296,82 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                //Chars.
                 //register.setGr();
                 break;
+            case R.id.action_teishutu:
+                /*ステップ1 :接続URLを決める。
+                    ステップ5 :リクエストボディの書き込みを行う。(POSTのみ行う)
+                    ステップ6 :レスポンスの読み出しを行う。
+                    ステップ7 :コネクションを閉じる。*/
+
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        URL url;
+                        connection = null;
+                        DataOutputStream outputStream = null;
+                        try {
+                            //ステップ1 :接続URLを決める。
+                            url = new URL(getString(R.string.server_address));
+                            // ステップ2 :URLへのコネクションを取得する。
+                            connection = (HttpURLConnection)url.openConnection();
+                            //ステップ3 :接続設定(メソッドの決定,タイムアウト値,ヘッダー値等)を行う。
+                            connection.setDoOutput(true);
+                            connection.setDoInput(true);
+                            connection.setReadTimeout(10000 /* milliseconds */);
+                            connection.setConnectTimeout(15000 /* milliseconds */);
+                            connection.setRequestMethod("POST");
+                            connection.setRequestProperty("Connection", "Keep-Alive");
+                            connection.setRequestProperty("Cache-Control", "no-cache");
+                            connection.setRequestProperty(
+                                    "Content-Type", "multipart/form-data;boundary=" + getString(R.string.boundary));
+                            //ステップ4 :コネクションを開く
+
+                            //ステップ5 :リクエストボディの書き込みを行う。(POSTのみ行う)
+                            outputStream = new DataOutputStream(connection.getOutputStream());
+                            outputStream.writeBytes(getString(R.string.twohyphens) + getString(R.string.boundary) + getString(R.string.crlf));
+                            outputStream.writeBytes("Content-Disposition: form-data; name=\"" +
+                                    "data" + "\";filename=\"" +
+                                    "data.cl2" + "\"" + getString(R.string.crlf));
+                            outputStream.writeBytes(getString(R.string.crlf));
+
+
+                            byte[] loaddata = new byte[131098];
+                            FileInputStream fileInputStream = null;
+                            BufferedInputStream bufferedInputStream;
+                            fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
+                                        getString(R.string.default_file_name)));
+                            fileInputStream.read(loaddata);
+
+                            outputStream.write(loaddata);
+                            outputStream.writeBytes(getString(R.string.crlf));
+                            outputStream.writeBytes(getString(R.string.twohyphens) + getString(R.string.boundary) + getString(R.string.crlf));
+
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (FileNotFoundException e){
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            if(outputStream!=null){
+
+                                try {
+                                    outputStream.flush();
+                                    outputStream.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if(connection!=null) {
+                                connection.disconnect();
+                            }
+                        }
+
+                    }
+                }).start();
+
+
+                break;
             case R.id.action_save:
                 editView.setText(filename);
                 editView.setTextColor(Color.BLACK);
@@ -304,6 +392,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
                                 try {
                                     File dir = new File(Environment.getExternalStorageDirectory().getPath()+"/CASL2Emu");
+                                    boolean hasPermission = (ContextCompat.checkSelfPermission(ContextDisplayScreen.this,
+                                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+                                    if (!hasPermission) {
+                                        ActivityCompat.requestPermissions(ContextDisplayScreen.this,
+                                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                                REQUEST_WRITE_STORAGE);
+                                    }
                                     if(!dir.exists()){
                                         dir.mkdir();
                                     }
@@ -352,6 +447,11 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this,outState);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     //private void showToast() {
@@ -464,23 +564,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     @Override
     public void run() {
 
-        // 再生中なら一旦止める
-        if(audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
-            audioTrack.stop();
-            audioTrack.reloadStaticData();
-        }
-        // 再生開始
-        audioTrack.play();
-
-        // スコアデータを書き込む
-        /*
-        for(SoundDto dto : outputBuffer.getSoundList()) {
-            audioTrack.write(dto.getSound(), 0, dto.getSound().length);
-        }
-        */
-
-        // 再生停止
-        audioTrack.stop();
     }
 
 

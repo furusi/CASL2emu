@@ -25,4 +25,9 @@
     <string name="button_stp">処理を停止</string>
     <string name="dummytext">0123456789</string>
     <string name="jump_dialog_text">"番地を入力(0000-FFFF): "</string>
+    <string name="menu_teishutu">課題を提出</string>
+    <string name="default_file_name">data.cl2</string>
+    <string name="boundary">*****</string>
+    <string name="twohyphens">--</string>
+    <string name="crlf">\r\n</string>
 </resources>

@@ -598,10 +598,10 @@ public class Casl2Emulator extends EmulatorCore {
                         count = register.getGr()[6];
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
                         jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremi));
+                        jetPlayer.clearQueue();
                         for(int i =0;i<subarray.length;i++){
                             //outputBuffer.getSoundList().add(new SoundDto(generateSound(outputBuffer.getSoundGenerator(),subarray[2*i], subarray[2*i+1]), subarray[2*i+1]));
 
-                            //jetPlayer.clearQueue();
                             jetPlayer.queueJetSegment(subarray[i], -1, 0, 0, 0, (byte) 0);
                             jetPlayer.play();
                         }
@@ -696,6 +696,8 @@ public class Casl2Emulator extends EmulatorCore {
 
                 register.setPc((char) (cpc + wordCount));
                 break;
+            default:
+                //TODO:トーストを表示する
         }
 
     }
