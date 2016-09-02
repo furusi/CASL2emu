@@ -2,39 +2,29 @@ package com.example.furusho.casl2emu;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.database.Cursor;
-import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.media.AudioTrack;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,27 +35,19 @@ import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 import com.google.common.primitives.Chars;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -309,6 +291,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         URL url;
                         connection = null;
                         DataOutputStream outputStream = null;
+                        FTPClient ftpClient;
+
                         try {
                             //ステップ1 :接続URLを決める。
                             url = new URL(getString(R.string.server_address));
@@ -588,7 +572,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             cs = args.getCharArray("cs");
             i = args.getInt("position");
         }
-        return new ListDisplayTaskLoader(this,cs,i);
+        return new ListDisplayTask(this,cs,i);
     }
 
     @Override
