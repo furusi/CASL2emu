@@ -22,9 +22,7 @@
         </activity>
         <activity android:name="com.example.furusho.casl2emu.BaseActivity" />
 
-        <service
-            android:name="com.example.furusho.casl2emu.AppHandleService"
-            android:exported="false"></service>
+        <service android:name="com.example.furusho.casl2emu.DataSendTask"/>
     </application>
 
 </manifest>

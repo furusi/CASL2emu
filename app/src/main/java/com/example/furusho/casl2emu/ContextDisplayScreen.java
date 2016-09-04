@@ -3,6 +3,7 @@ package com.example.furusho.casl2emu;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -248,6 +249,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         final String filename=getString(R.string.default_file_name);
         final EditText editView = new EditText(getApplicationContext());
         byte[] bytes = new byte[0];
+        Intent intent;
         switch(item.getItemId()){
             case R.id.action_jump:
                 editView.setTextColor(Color.BLACK);
@@ -272,7 +274,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         .show();
                 break;
             case R.id.action_load:
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("*/*");
                 startActivityForResult(intent,5657);
                //Chars.
@@ -283,77 +285,26 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     ステップ5 :リクエストボディの書き込みを行う。(POSTのみ行う)
                     ステップ6 :レスポンスの読み出しを行う。
                     ステップ7 :コネクションを閉じる。*/
+                intent = new Intent(getApplicationContext(),DataSendTask.class);
+                ArrayList<String> localfile= new ArrayList<String >();
+                localfile.add(getString(R.string.server_address));
+                localfile.add("21");
+                localfile.add("~/test1111.cl2");
+                localfile.add(getString(R.string.username));
+                localfile.add(getString(R.string.passwd));
+                localfile.add("false");
+                localfile.add(Environment.getExternalStorageDirectory().getPath()+getString(R.string.app_directory_name)+"/data.cl2");
+                intent.putExtra("data",localfile);
+                startService(intent);
 
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        URL url;
-                        connection = null;
-                        DataOutputStream outputStream = null;
-                        FTPClient ftpClient;
-
-                        try {
-                            //ステップ1 :接続URLを決める。
-                            url = new URL(getString(R.string.server_address));
-                            // ステップ2 :URLへのコネクションを取得する。
-                            connection = (HttpURLConnection)url.openConnection();
-                            //ステップ3 :接続設定(メソッドの決定,タイムアウト値,ヘッダー値等)を行う。
-                            connection.setDoOutput(true);
-                            connection.setDoInput(true);
-                            connection.setReadTimeout(10000 /* milliseconds */);
-                            connection.setConnectTimeout(15000 /* milliseconds */);
-                            connection.setRequestMethod("POST");
-                            connection.setRequestProperty("Connection", "Keep-Alive");
-                            connection.setRequestProperty("Cache-Control", "no-cache");
-                            connection.setRequestProperty(
-                                    "Content-Type", "multipart/form-data;boundary=" + getString(R.string.boundary));
-                            //ステップ4 :コネクションを開く
-
-                            //ステップ5 :リクエストボディの書き込みを行う。(POSTのみ行う)
-                            outputStream = new DataOutputStream(connection.getOutputStream());
-                            outputStream.writeBytes(getString(R.string.twohyphens) + getString(R.string.boundary) + getString(R.string.crlf));
-                            outputStream.writeBytes("Content-Disposition: form-data; name=\"" +
-                                    "data" + "\";filename=\"" +
-                                    "data.cl2" + "\"" + getString(R.string.crlf));
-                            outputStream.writeBytes(getString(R.string.crlf));
-
-
-                            byte[] loaddata = new byte[131098];
-                            FileInputStream fileInputStream = null;
-                            BufferedInputStream bufferedInputStream;
-                            fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
-                                        getString(R.string.default_file_name)));
-                            fileInputStream.read(loaddata);
-
-                            outputStream.write(loaddata);
-                            outputStream.writeBytes(getString(R.string.crlf));
-                            outputStream.writeBytes(getString(R.string.twohyphens) + getString(R.string.boundary) + getString(R.string.crlf));
-
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        } catch (FileNotFoundException e){
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if(outputStream!=null){
-
-                                try {
-                                    outputStream.flush();
-                                    outputStream.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            if(connection!=null) {
-                                connection.disconnect();
-                            }
-                        }
-
-                    }
-                }).start();
-
+                /*
+                ProgressDialog myProgressDialog = new ProgressDialog(this);
+                myProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                myProgressDialog.setCancelable(true);
+                myProgressDialog.setTitle("データ送信");
+                myProgressDialog.setMessage("アップロード中");
+                myProgressDialog.show();
+                */
 
                 break;
             case R.id.action_save:
@@ -375,7 +326,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                 FileOutputStream fileOutputStream;
 
                                 try {
-                                    File dir = new File(Environment.getExternalStorageDirectory().getPath()+"/CASL2Emu");
+                                    File dir = new File(Environment.getExternalStorageDirectory().getPath()+getString(R.string.app_directory_name));
                                     boolean hasPermission = (ContextCompat.checkSelfPermission(ContextDisplayScreen.this,
                                             Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
                                     if (!hasPermission) {

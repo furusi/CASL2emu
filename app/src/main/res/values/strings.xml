@@ -30,4 +30,5 @@
     <string name="boundary">*****</string>
     <string name="twohyphens">--</string>
     <string name="crlf">\r\n</string>
+    <string name="app_directory_name">/CASL2Emu</string>
 </resources>

@@ -1,86 +1,66 @@
 package com.example.furusho.casl2emu;
 
+import android.app.IntentService;
 import android.app.ProgressDialog;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Environment;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by furusho on 2016/09/02.
  */
 
-public class DataSendTask extends SimpleTaskLoader implements DialogInterface.OnCancelListener{
+public class DataSendTask extends IntentService{
     private Context myContext;
     private ProgressDialog myProgressDialog;
     private FTPClient myFTPClient;
-    private String[] params;
+    private ArrayList<String> params;
 
-    public DataSendTask(Context context,String... params) {
-        super(context);
-        myContext = context;
-        this.params=params;
-    }
-    /**
-     * @param params String... 0:FTPサーバーアドレス 1:FTPサーバーポート 2:サーバーフォルダ 3:ログインユーザID
-     *               4:ログインパスワード 5:パッシブモード使用"0" or "1" 6:送信ファイル名
-    */
-    public void setParams(String... params){
-        this.params=params;
-    }
 
+    public DataSendTask() {
+        super("DataSendTask");
+    }
 
 
     /**
-     * Subclasses must implement this to take care of loading their data,
-     * as per {@link #startLoading()}.  This is not called by clients directly,
-     * but as a result of a call to {@link #startLoading()}.
-     */
-    @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        myProgressDialog = new ProgressDialog(myContext);
-        myProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        myProgressDialog.setCancelable(true);
-        myProgressDialog.setOnCancelListener(this);
-        myProgressDialog.setTitle("データ送信");
-        myProgressDialog.setMessage("アップロード中");
-        myProgressDialog.show();
-    }
-
-
-    @Override
-    public Object loadInBackground() {
-            String remoteserver = params[0];                 //FTPサーバーアドレス
-            int remoteport = Integer.parseInt(params[1]);    //FTPサーバーポート
-            String remotefile = params[2];                   //サーバーフォルダ
-            String userid = params[3];                       //ログインユーザID
-            String passwd = params[4];                       //ログインパスワード
-            boolean passive = Boolean.valueOf(params[5]);    //パッシブモード使用
-            String localFile = params[6];
-            //ＦＴＰファイル送信
-            FTP ftp = new FTP(myContext);
-            String result = ftp.putData(remoteserver, remoteport, userid, passwd, passive, remotefile, localFile);
-            ftp = null;
-
-            return result;
-    }
-
-    /**
-     * This method will be invoked when the dialog is canceled.
+     * This method is invoked on the worker thread with a request to process.
+     * Only one Intent is processed at a time, but the processing happens on a
+     * worker thread that runs independently from other application logic.
+     * So, if this code takes a long time, it will hold up other requests to
+     * the same IntentService, but it will not hold up anything else.
+     * When all requests have been handled, the IntentService stops itself,
+     * so you should not call {@link #stopSelf}.
      *
-     * @param dialog The dialog that was canceled will be passed into the
-     *               method.
+     * @param intent The value passed to {@link
+     *               Context#startService(Intent)}.
      */
     @Override
-    public void onCancel(DialogInterface dialog) {
-        cancelLoad();
+    protected void onHandleIntent(Intent intent) {
+        params=intent.getStringArrayListExtra("data");
+
+        myContext = getApplicationContext();
+        String remoteserver = params.get(0);                 //FTPサーバーアドレス
+        int remoteport = Integer.parseInt(params.get(1));    //FTPサーバーポート
+        String remotefile = params.get(2);                   //サーバーフォルダ
+        String userid = params.get(3);                       //ログインユーザID
+        String passwd = params.get(4);                       //ログインパスワード
+        boolean passive = Boolean.valueOf(params.get(5));    //パッシブモード使用
+        String localFile = params.get(6);
+        //ＦＴＰファイル送信
+        FTP ftp = new FTP(myContext);
+        String result = ftp.putData(remoteserver, remoteport, userid, passwd, passive, remotefile, localFile);
+        ftp = null;
 
     }
 
@@ -118,7 +98,8 @@ public class DataSendTask extends SimpleTaskLoader implements DialogInterface.On
                 }//ファイル送信
                 myFTPClient.setDataTimeout(15000);
                 myFTPClient.setSoTimeout(15000);
-                FileInputStream fileInputStream = this.openFileInput(localFile);
+                //FileInputStream fileInputStream = this.openFileInput(localFile);
+                FileInputStream fileInputStream = new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath()+getString(R.string.app_directory_name),"data.cl2"));
                 myFTPClient.storeFile(remotefile, fileInputStream);
                 reply = myFTPClient.getReplyCode();
                 if (!FTPReply.isPositiveCompletion(reply)) {
