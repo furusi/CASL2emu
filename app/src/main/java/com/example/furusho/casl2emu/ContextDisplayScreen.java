@@ -252,17 +252,18 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         Intent intent;
         switch(item.getItemId()){
             case R.id.action_jump:
-                editView.setTextColor(Color.BLACK);
+                final HexEditText memory_position = new HexEditText(getApplicationContext(),1);
+                memory_position.setTextColor(Color.BLACK);
                 new AlertDialog.Builder(ContextDisplayScreen.this)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(R.layout.input_text_dialog)
                         .setTitle(getString(R.string.jump_dialog_text))
                         //setViewにてビューを設定します。
-                        .setView(editView)
+                        .setView(memory_position)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //入力した文字をトースト出力する
-                                String position = editView.getText().toString();
+                                String position = memory_position.getText().toString();
                                 listView.setSelection(Integer.parseInt(position,16)/4);
 
                             }
