@@ -25,7 +25,7 @@ public class Casl2Emulator extends EmulatorCore {
     Casl2Register register = Casl2Register.getInstance();
     Handler handler;
     char[] fr = new char[3];
-    private JetPlayer jetPlayer=JetPlayer.getJetPlayer();
+    private static JetPlayer jetPlayer=JetPlayer.getJetPlayer();
     private static Context context;
 
     private Casl2Emulator() {
@@ -34,6 +34,7 @@ public class Casl2Emulator extends EmulatorCore {
    static public Casl2Emulator getInstance(Context context1){
        if(context==null) {
            context = context1;
+           jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremi));
        }
       return instance;
    }
