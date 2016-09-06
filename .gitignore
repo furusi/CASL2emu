@@ -51,3 +51,5 @@ projectFilesBackup/.idea/workspace.xml
 app/libs/
 app/src/main/res/drawable/
 projectFilesBackup/
+
+app/src/main/res/values/address.xml

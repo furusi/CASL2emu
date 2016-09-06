@@ -836,10 +836,6 @@ public class Casl2Emulator extends EmulatorCore {
         handler = null;
         }
     }
-    public void registerSVC (int num, String func)  /* SVC num が実行されたときに呼び出す関数 func を設定 */ {
-    }
-    public void unregisterSVC (int num) {
-    }
 
       public byte[] generateSound(Casl2SoundGenerator gen, int freq, int length) {
     return gen.getSound(freq, length);
