@@ -78,6 +78,18 @@ public class OutputBuffer extends BaseObservable{
             case 1:
                 color=Color.RED;
                 break;
+            case 2:
+                color=Color.GREEN;
+                break;
+            case 3:
+                color=Color.BLUE;
+                break;
+            case 4:
+                color=Color.YELLOW;
+                break;
+            case 5:
+                color=Color.BLACK;
+                break;
             default:
                 color=Color.WHITE;
         }

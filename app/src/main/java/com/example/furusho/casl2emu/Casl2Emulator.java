@@ -590,9 +590,26 @@ public class Casl2Emulator extends EmulatorCore {
                                 color = subarray[5];
                                 outputBuffer.addDrawObjectArray(2,rect,color);
                                 break;
-
+                            case 3://line
+                                float sx=(short)subarray[1];
+                                float sy=(short)subarray[2];
+                                float ex=(short)subarray[3];
+                                float ey=(short)subarray[4];
+                                float[]lp = {sx,sy,ex,ey};
+                                color = subarray[5];
+                                outputBuffer.addDrawObjectArray(3,lp,color);
+                                break;
+                            case 4://point
+                                float x=(short)subarray[1];
+                                float y=(short)subarray[2];
+                                float[]pp = {x,y};
+                                color = subarray[3];
+                                outputBuffer.addDrawObjectArray(4,pp,color);
+                                break;
+                            default:
 
                         }
+                        break;
                     case 0xFF04://音を鳴らす
                         //先頭アドレス:gr7 データ数:gr6
                         memory_position = register.getGr()[7];
@@ -637,13 +654,13 @@ public class Casl2Emulator extends EmulatorCore {
                             case 5://べき乗
                                 r=(float)checkFloatRange(Math.pow(a,b));
                                 break;
-                            case 7://正弦
+                            case 6://正弦
                                 r=(float)checkFloatRange(Math.sin(a));
                                 break;
-                            case 8://余弦
+                            case 7://余弦
                                 r=(float)checkFloatRange(Math.cos(a));
                                 break;
-                            case 9://正接
+                            case 8://正接
                                 r=(float)checkFloatRange(Math.tan(a));
                                 break;
                             default:
@@ -690,7 +707,7 @@ public class Casl2Emulator extends EmulatorCore {
                         r_array[1]= (char) (((_r[4]-48) <<12) + ((_r[5]-48) <<8) +((_r[6]-48)<<4)+((_r[7]-48)));
                         r_array[2]= (char) r_sisu;
                         memory.setMemoryArray(r_array,r_position);
-
+                        break;
                 }
                 //FF00 FABCで文字出力できるようにする
                 //実行アドレスに
@@ -706,7 +723,7 @@ public class Casl2Emulator extends EmulatorCore {
     private double getFloat(char c, char[] a_kasu) {
         int[] _array = new int[7];
         int sign=1;
-        if((a_kasu[0] >> 15) == 1){
+        if((a_kasu[0] >> 12) == 0xF){
            sign = -1;
         }
         _array[0]= (a_kasu[0]&0x0F00)>>8;

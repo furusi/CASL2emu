@@ -33,6 +33,15 @@ public class Casl2PaintView extends View {
                     break;
                 case 2:
                     canvas.drawRect((Rect)f.getProp(),paint);
+                    break;
+                case 3:
+                    float[]lp = (float[])f.getProp();
+                    canvas.drawLine(lp[0],lp[1],lp[2],lp[3],paint);
+                    break;
+                case 4:
+                    float[]pointprop = (float[])f.getProp();
+                    canvas.drawPoint(pointprop[0],pointprop[1],paint);
+                    break;
             }
         }
     }

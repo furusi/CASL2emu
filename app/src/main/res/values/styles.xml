@@ -31,4 +31,10 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
+    <style name="MyTheme" parent="AppTheme">
+        <item name="colorAccent">#FEF070</item>
+        <item name="colorPrimary">#9A252B</item>
+        <item name="colorPrimaryDark">#9A252B</item>
+    </style>
+
 </resources>
