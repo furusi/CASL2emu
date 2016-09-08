@@ -1,16 +1,10 @@
 package com.example.furusho.casl2emu;
 
-import android.app.AlarmManager;
 import android.content.Context;
 import android.graphics.Rect;
-import android.media.AudioManager;
 import android.media.JetPlayer;
-import android.media.ToneGenerator;
 import android.os.Handler;
-import android.util.Log;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -34,7 +28,7 @@ public class Casl2Emulator extends EmulatorCore {
    static public Casl2Emulator getInstance(Context context1){
        if(context==null) {
            context = context1;
-           jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremi));
+           jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
        }
       return instance;
    }
@@ -549,8 +543,8 @@ public class Casl2Emulator extends EmulatorCore {
                 switch(jikkou){
                     case 0xFF00://OUT
                         //r7を文字数(wordの数ではない)、r6を先頭アドレスとする。
-                        memory_position = register.getGr()[6];
-                        count = register.getGr()[7];
+                        memory_position = register.getGr()[7];
+                        count = register.getGr()[6];
                         //文字数分のデータを読み取りStringに変換。
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
                         byte[] bytes = new byte[subarray.length*2];
@@ -615,7 +609,7 @@ public class Casl2Emulator extends EmulatorCore {
                         memory_position = register.getGr()[7];
                         count = register.getGr()[6];
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
-                        jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremi));
+                        jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
                         jetPlayer.clearQueue();
                         for(int i =0;i<subarray.length;i++){
                             //outputBuffer.getSoundList().add(new SoundDto(generateSound(outputBuffer.getSoundGenerator(),subarray[2*i], subarray[2*i+1]), subarray[2*i+1]));
@@ -708,6 +702,17 @@ public class Casl2Emulator extends EmulatorCore {
                         r_array[2]= (char) r_sisu;
                         memory.setMemoryArray(r_array,r_position);
                         break;
+                    case 0xFF08://浮動小数点数変換
+                        //先頭アドレス:gr7
+                        //変換後代入先アドレス:gr6
+                        //仮数部は4*7=28ビットで表す(2word)符号は-の時8。指数部は1word使う。
+                        //演算の種類gr6
+                        memory_position = register.getGr()[7];
+                        char tr_positon = register.getGr()[6];
+                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
+                        char[] a_kasu1 = Arrays.copyOfRange(subarray,0,2);
+                        double a1 = getFloat(subarray[2], a_kasu1);
+                        memory.setMemory((char) (a1/1),tr_positon);
                 }
                 //FF00 FABCで文字出力できるようにする
                 //実行アドレスに

@@ -3,7 +3,6 @@ package com.example.furusho.casl2emu;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,12 +12,12 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.os.Bundle;
 import android.text.method.DigitsKeyListener;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,23 +30,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 import com.google.common.primitives.Chars;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.BufferedInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -60,15 +54,12 @@ import static android.R.layout.simple_list_item_1;
 
 public class ContextDisplayScreen extends BaseActivity implements LoaderCallbacks,Runnable{
 
-    InputText it;
     ListView listView;
     Casl2Memory memory;
     Casl2Register register;
     Casl2Emulator emulator;
     ArrayAdapter<String> arrayAdapter;
     ArrayList<String> stringArrayList;
-    OutputBuffer outputBuffer;
-    HttpURLConnection connection;
     private final static String casl2filedirectory = Environment.getExternalStorageDirectory().getPath()+"CASL2Emu";
     private static final int REQUEST_WRITE_STORAGE = 112;
 
@@ -103,7 +94,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                             char[] chars = getHexChars(upperedString," ");
                             memory.setMemoryArray(chars, position*4);
                             stringArrayList.remove(position);
-                            //arrayAdapter.remove("00 00 00 00 00 00 00 00");
                             arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
                                     chars[0] & 0xFFFF, chars[1] & 0xFFFF, chars[2] & 0xFFFF, chars[3] & 0xFFFF),position);
                             arrayAdapter.notifyDataSetChanged();
@@ -142,12 +132,22 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         emulator= Casl2Emulator.getInstance(getApplicationContext());
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
-        char[] test = new char[]{0,0,9,8,78,7,1,2};
-        //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
-        //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
-        String initialString = "F000 FF04 0001 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        char[] initialState;
+        String initialString;
+        //OUTデモ
+        initialState = new char[]{0,0,9,8,78,7,0x000F,2};
+        initialString = "F000 FF00 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
 
-        register.setGr(test);
+        //図形描画デモ
+        initialState = new char[]{0,0,9,8,78,0x0013,0x000D,8};
+        initialString = "F000 FF02 1476 F000 FF02 1475 F000 FF02 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000 0003 0190 0190 01F4 01F4 0002"+" "+getString(R.string.short_zerofill);
+        //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        //音楽再生デモ
+        //initialState = new char[]{0,0,9,8,78,7,1,2};
+        //initialString = "F000 FF04 0001 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+
+        register.setGr(initialState);
         binding.setCasl2Register(register);
         binding.gr0.setOnClickListener(showWordDialog(binding,0));
         binding.gr1.setOnClickListener(showWordDialog(binding,1));
@@ -162,15 +162,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.of.setOnClickListener(showWordDialog(binding,10));
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
-        //String initialString = "F000 FF02 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         //String initialString = "8314 1592 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         char[]tmp = getHexChars(initialString," ");
         memory.setMemory(tmp);
-        final char[] a = memory.getMemory();
 
 
         listView = binding.memoryList;
-        localSetMemoryAdapter(a,0);
+        localSetMemoryAdapter(memory.getMemory(),0);
         listView.setOnItemClickListener(showTextEditDialog);
 
         binding.runbutton.setOnClickListener(new View.OnClickListener() {
@@ -219,7 +217,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             List<String> openfilename=data.getData().getPathSegments();
             byte[] loaddata = new byte[131098];
             FileInputStream fileInputStream = null;
-            BufferedInputStream bufferedInputStream;
             try {
                 fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
                         openfilename.get(1).split(":")[1]));
@@ -230,14 +227,11 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 e.printStackTrace();
             }
 
-            for(int i = 0;i<8;i++)
-                register.setGr(Chars.fromBytes(loaddata[2*i], loaddata[2*i+1]), i);
+            for(int i = 0;i<8;i++) register.setGr(Chars.fromBytes(loaddata[2*i], loaddata[2*i+1]), i);
             register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
             register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
-            for(int i = 0;i<3;i++)
-                register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
-            for(int i =0;i<65536;i++)
-                memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
+            for(int i = 0;i<3;i++) register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
+            for(int i =0;i<65536;i++) memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
             localSetMemoryAdapter(memory.getMemory(),0);
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -278,8 +272,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("*/*");
                 startActivityForResult(intent,5657);
-               //Chars.
-                //register.setGr();
                 break;
             case R.id.action_teishutu:
                 /*ステップ1 :接続URLを決める。

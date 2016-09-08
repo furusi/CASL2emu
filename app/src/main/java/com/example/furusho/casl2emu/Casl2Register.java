@@ -12,9 +12,9 @@ public class Casl2Register extends BaseObservable{
     @Bindable
     public char gr[] = new char[8];
     @Bindable
-    private char pc;
+    private char pc=0x0000;
     @Bindable
-    private char sp;
+    private char sp=0xFEFF;
     @Bindable
     private char fr[] = new char[3];
 
