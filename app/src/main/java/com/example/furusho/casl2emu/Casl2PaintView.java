@@ -31,7 +31,7 @@ public class Casl2PaintView extends View {
         if(figureArrayList!=null) {
             for (Casl2Figure f : figureArrayList) {
                 paint.setColor(f.color);
-                paint.setStrokeWidth(4);
+                paint.setStrokeWidth(f.getWidth());
                 switch (f.getType()) {
                     case 1:
                         float[] circleprop = (float[]) f.getProp();

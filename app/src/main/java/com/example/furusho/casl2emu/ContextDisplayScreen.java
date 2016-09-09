@@ -139,8 +139,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         initialString = "F000 FF00 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
 
         //図形描画デモ
-        initialState = new char[]{0,0,0,0,0x001C,0x0016,0x0010,0x000b};
-        initialString = "F000 FF02 1476 F000 FF02 1475 F000 FF02 1474 F000 FF02 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000 0003 0190 0190 01F4 01F4 0002 0004 0258 0258 0003"+" "+getString(R.string.short_zerofill);
+        //initialState = new char[]{0,0,0,0,0x001D,0x0016,0x0010,0x000b};
+        //initialString = "F000 FF02 1476 F000 FF02 1475 F000 FF02 1474 F000 FF02 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000 0003 0190 0190 01F4 01F4 0002 000a 0004 0258 0258 0003 0010"+" "+getString(R.string.short_zerofill);
         //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         //音楽再生デモ

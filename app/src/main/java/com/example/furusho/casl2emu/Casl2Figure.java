@@ -10,8 +10,25 @@ public class Casl2Figure {
     int type;
     Object prop;
     int color;
+    float width;
 
-    public Casl2Figure(int type, Object prop,int color) {
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public Casl2Figure() {
+
+    }
+
+    public Casl2Figure(int type, Object prop, int color) {
         this.type = type;
         this.prop = prop;
         this.color = color;

@@ -63,7 +63,11 @@ public class OutputBuffer extends BaseObservable{
     public void setDrawObjectArray(ArrayList<Casl2Figure> drawObjectArray) {
         this.drawObjectArray = drawObjectArray;
     }
-    public void addDrawObjectArray(int type,Object o,int i){
+    public void addDrawObjectArray(int type,Object object,int i,float width){
+
+        Casl2Figure figure =new Casl2Figure();
+        figure.setType(type);
+        figure.setProp(object);
 
         int color;
         switch (i){
@@ -85,7 +89,9 @@ public class OutputBuffer extends BaseObservable{
             default:
                 color=Color.WHITE;
         }
-        drawObjectArray.add(new Casl2Figure(type,o,color));
+        figure.setColor(color);
+        figure.setWidth(width);
+        drawObjectArray.add(figure);
         casl2PaintView.setDrawObjectArray(drawObjectArray);
 
     }
