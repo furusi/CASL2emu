@@ -18,11 +18,11 @@ import android.widget.LinearLayout;
 import com.example.furusho.casl2emu.databinding.ActivityOutputScreenBinding;
 
 
-public class OutputScreen extends AppCompatActivity implements Runnable{
+public class OutputScreen extends AppCompatActivity {
 
 
     OutputBuffer outputBuffer;
-    private AudioTrack audioTrack;
+    Casl2Emulator emulator = Casl2Emulator.getInstance(getApplicationContext());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +37,24 @@ public class OutputScreen extends AppCompatActivity implements Runnable{
         binding.setOutputbuffer(outputBuffer);
         outputBuffer.setCasl2PaintView(getApplicationContext());
         addContentView(outputBuffer.getCasl2PaintView(), new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        audioTrack= outputBuffer.getSoundGenerator().getAudioTrack();
-        Thread thread = new Thread(OutputScreen.this);
-        thread.start();
-
-
+        binding.runbuttonoutput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emulator.run();
+            }
+        });
+        binding.stepbuttonoutput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emulator.stepOver();
+            }
+        });
+        binding.waitbuttonoutput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emulator.waitEmu();
+            }
+        });
     }
 
     @Override
@@ -58,24 +70,5 @@ public class OutputScreen extends AppCompatActivity implements Runnable{
         public void onReceive(Context context, Intent intent) {
         }
     }
-
-      @Override
-  public void run() {
-
-    // 再生中なら一旦止める
-    if(audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
-      audioTrack.stop();
-      audioTrack.reloadStaticData();
-    }
-    // 再生開始
-    audioTrack.play();
-
-    // スコアデータを書き込む
-    for(SoundDto dto : outputBuffer.getSoundList()) {
-      audioTrack.write(dto.getSound(), 0, dto.getSound().length);
-    }
-    // 再生停止
-    audioTrack.stop();
-  }
 
 }
