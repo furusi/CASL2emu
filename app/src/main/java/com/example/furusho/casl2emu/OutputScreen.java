@@ -5,12 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.media.AudioTrack;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -24,6 +20,8 @@ public class OutputScreen extends AppCompatActivity {
     OutputBuffer outputBuffer;
     Casl2Emulator emulator;
     Casl2PaintView paintView;
+    BroadcastReceiver receiver ;
+    IntentFilter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,20 +56,21 @@ public class OutputScreen extends AppCompatActivity {
                 emulator.waitEmu();
             }
         });
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                paintView.invalidate();
+            }
+        };
+        filter = new IntentFilter(getString(R.string.action_view_invalidate));
+        registerReceiver(receiver,filter);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         //textView.setText(Joiner.on("\n").skipNulls().join(code));
-    }
-
-
-    public class OutputReceiver extends BroadcastReceiver{
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-        }
     }
 
 }

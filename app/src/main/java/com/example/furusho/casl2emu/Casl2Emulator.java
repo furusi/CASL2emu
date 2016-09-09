@@ -1,6 +1,7 @@
 package com.example.furusho.casl2emu;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.media.JetPlayer;
 import android.os.Handler;
@@ -21,6 +22,7 @@ public class Casl2Emulator extends EmulatorCore {
     char[] fr = new char[3];
     private static JetPlayer jetPlayer=JetPlayer.getJetPlayer();
     private static Context context;
+    static Intent broadcastIntent= new Intent();
 
     private Casl2Emulator() {
     }
@@ -29,6 +31,7 @@ public class Casl2Emulator extends EmulatorCore {
        if(context==null) {
            context = context1;
            jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
+           broadcastIntent.setAction(context.getString(R.string.action_view_invalidate));
        }
       return instance;
    }
@@ -565,7 +568,8 @@ public class Casl2Emulator extends EmulatorCore {
                         //先頭アドレス:gr7
                         memory_position = register.getGr()[7];
                         int color;
-                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
+                        int width;
+                        subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+7);
                         switch (subarray[0]){//種類別の処理
                             case 1://circle
                                 float cx = (short)subarray[1];
@@ -573,7 +577,7 @@ public class Casl2Emulator extends EmulatorCore {
                                 float radius = (short)subarray[3];
                                 float[] circleprop = {cx,cy,radius};
                                 color = subarray[4];
-                                outputBuffer.addDrawObjectArray(1,circleprop,color);
+                                outputBuffer.addDrawObjectArray(1,circleprop,color,1);
                                 break;
                             case 2://rectangle
                                 int left = (short)subarray[1];
@@ -582,7 +586,7 @@ public class Casl2Emulator extends EmulatorCore {
                                 int bottom = (short)subarray[4];
                                 Rect rect = new Rect(left,top,right,bottom);
                                 color = subarray[5];
-                                outputBuffer.addDrawObjectArray(2,rect,color);
+                                outputBuffer.addDrawObjectArray(2,rect,color,1);
                                 break;
                             case 3://line
                                 float sx=(short)subarray[1];
@@ -591,14 +595,16 @@ public class Casl2Emulator extends EmulatorCore {
                                 float ey=(short)subarray[4];
                                 float[]lp = {sx,sy,ex,ey};
                                 color = subarray[5];
-                                outputBuffer.addDrawObjectArray(3,lp,color);
+                                width = subarray[6];
+                                outputBuffer.addDrawObjectArray(3,lp,color,width);
                                 break;
                             case 4://point
                                 float x=(short)subarray[1];
                                 float y=(short)subarray[2];
                                 float[]pp = {x,y};
                                 color = subarray[3];
-                                outputBuffer.addDrawObjectArray(4,pp,color);
+                                width = subarray[4];
+                                outputBuffer.addDrawObjectArray(4,pp,color,width);
                                 break;
                             default:
 
@@ -720,7 +726,7 @@ public class Casl2Emulator extends EmulatorCore {
                 register.setPc((char) (cpc + wordCount));
                 break;
             default:
-                //TODO:トーストを表示する
+                context.sendBroadcast(broadcastIntent);
         }
 
     }
