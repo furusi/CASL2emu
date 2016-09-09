@@ -6,8 +6,10 @@ import android.graphics.Rect;
 import android.media.JetPlayer;
 import android.os.Handler;
 
-import java.util.Arrays;
+import org.apache.commons.lang.math.RandomUtils;
 
+import java.util.Arrays;
+import java.util.Random;
 
 
 /**
@@ -16,7 +18,7 @@ import java.util.Arrays;
 public class Casl2Emulator extends EmulatorCore {
     private static Casl2Emulator instance = new Casl2Emulator();
     Casl2Memory memory = Casl2Memory.getInstance();
-    OutputBuffer outputBuffer = OutputBuffer.getInstance();
+    static OutputBuffer outputBuffer = OutputBuffer.getInstance();
     Casl2Register register = Casl2Register.getInstance();
     Handler handler;
     char[] fr = new char[3];
@@ -32,6 +34,7 @@ public class Casl2Emulator extends EmulatorCore {
            context = context1;
            jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
            broadcastIntent.setAction(context.getString(R.string.action_view_invalidate));
+           outputBuffer.setCasl2PaintView(context);
        }
       return instance;
    }
@@ -719,6 +722,10 @@ public class Casl2Emulator extends EmulatorCore {
                         char[] a_kasu1 = Arrays.copyOfRange(subarray,0,2);
                         double a1 = getFloat(subarray[2], a_kasu1);
                         memory.setMemory((char) (a1/1),tr_positon);
+                        break;
+                    case 0xFF0A://rand
+                        Random random = new Random(System.currentTimeMillis());
+                        short randnum = (short) random.nextInt(Short.MAX_VALUE+1);
                 }
                 //FF00 FABCで文字出力できるようにする
                 //実行アドレスに
@@ -726,8 +733,8 @@ public class Casl2Emulator extends EmulatorCore {
                 register.setPc((char) (cpc + wordCount));
                 break;
             default:
-                context.sendBroadcast(broadcastIntent);
         }
+        context.sendBroadcast(broadcastIntent);
 
     }
 

@@ -140,7 +140,10 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
         //図形描画デモ
         //initialState = new char[]{0,0,0,0,0x001D,0x0016,0x0010,0x000b};
-        //initialString = "F000 FF02 1476 F000 FF02 1475 F000 FF02 1474 F000 FF02 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000 0003 0190 0190 01F4 01F4 0002 000a 0004 0258 0258 0003 0010"+" "+getString(R.string.short_zerofill);
+        //initialString = "F000 FF02 1476 F000 FF02 1475 F000 FF02 1474 F000 FF02 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000 0003 0190 0190 01F4 01F4 0002 000a 0004 0100 0100 0003 0010"+" "+getString(R.string.short_zerofill);
+        //音楽再生デモ
+        initialState = new char[]{0,0,0,0,0x009,0x0008,0x0001,0x0007};
+        initialString = "F000 FF04 1475 F000 FF04 1474 F000 FF04 0001 0002 0003 F000 FF02 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000 0003 0190 0190 01F4 01F4 0002 000a 0004 0100 0100 0003 0010"+" "+getString(R.string.short_zerofill);
         //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         //String initialString = "F000 FF06 0314 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         //音楽再生デモ
@@ -245,6 +248,10 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         byte[] bytes = new byte[0];
         Intent intent;
         switch(item.getItemId()){
+            case R.id.output_initialize:
+                OutputBuffer.getInstance().setData("");
+                OutputBuffer.getInstance().setDrawObjectArray(new ArrayList<Casl2Figure>());
+                break;
             case R.id.action_jump:
                 final HexEditText memory_position = new HexEditText(getApplicationContext(),1);
                 memory_position.setTextColor(Color.BLACK);
@@ -312,7 +319,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //入力した文字をトースト出力する
-                                String savedfielname = editView.getText().toString();
+                                String save_filename = editView.getText().toString();
                                 char[] casl2data;
                                 casl2data = Chars.concat(ArrayUtils.add(ArrayUtils.add(register.getGr(),register.getPc()),register.getSp()),register.getFr(),memory.getMemory());
                                 byte[]savedata = toBytes(casl2data);
@@ -330,7 +337,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                     if(!dir.exists()){
                                         dir.mkdir();
                                     }
-                                    File file = new File(Environment.getExternalStorageDirectory().getPath()+"/CASL2Emu",filename);
+                                    File file = new File(Environment.getExternalStorageDirectory().getPath()+"/CASL2Emu",save_filename);
                                     fileOutputStream = new FileOutputStream(file);
                                     fileOutputStream.write(savedata);
                                 } catch (FileNotFoundException e) {

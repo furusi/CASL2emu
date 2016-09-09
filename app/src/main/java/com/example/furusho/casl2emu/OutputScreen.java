@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.example.furusho.casl2emu.databinding.ActivityOutputScreenBinding;
 
@@ -22,6 +24,8 @@ public class OutputScreen extends AppCompatActivity {
     Casl2PaintView paintView;
     BroadcastReceiver receiver ;
     IntentFilter filter;
+    RelativeLayout relativeLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +35,8 @@ public class OutputScreen extends AppCompatActivity {
         outputBuffer = OutputBuffer.getInstance();
         outputBuffer.setCasl2PaintView(getApplicationContext());
         paintView = outputBuffer.getCasl2PaintView();
-        ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
+        relativeLayout = (RelativeLayout) findViewById(R.id.out_relativelayout);
+        final ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
         //binding.output.setText("Casl2emu is LEADY");
         //outputBuffer.setData("CASL2Emu is ready!!!!");
         binding.setOutputbuffer(outputBuffer);
@@ -47,7 +52,7 @@ public class OutputScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 emulator.stepOver();
-                paintView.invalidate();
+                //paintView.invalidate();
             }
         });
         binding.waitbuttonoutput.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +65,7 @@ public class OutputScreen extends AppCompatActivity {
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                binding.output.getText();
                 paintView.invalidate();
             }
         };

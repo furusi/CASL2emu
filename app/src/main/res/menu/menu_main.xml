@@ -17,4 +17,8 @@
         android:id="@+id/action_teishutu"
         android:title="@string/menu_teishutu"
         android:orderInCategory="103"/>
+    <item
+        android:id="@+id/output_initialize"
+        android:title="@string/output_initialize"
+        android:orderInCategory="104"/>
 </menu>

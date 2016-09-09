@@ -45,4 +45,5 @@
         completions."
     </string>
     <string name="action_view_invalidate">VIEW_INVALIDATE</string>
+    <string name="output_initialize">出力画面を初期化</string>
 </resources>
