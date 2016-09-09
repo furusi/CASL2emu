@@ -20,14 +20,6 @@ public class OutputBuffer extends BaseObservable{
     private Casl2PaintView casl2PaintView;
     private ArrayList<Casl2Figure> drawObjectArray = new ArrayList<Casl2Figure>();
     private ArrayList<SoundDto> soundList = new ArrayList<SoundDto>();
-    private Casl2SoundGenerator soundGenerator = new Casl2SoundGenerator(44100,44100);
-
-    public Casl2SoundGenerator getSoundGenerator() {
-        return soundGenerator;
-    }
-
-
-
     private OutputBuffer() {
 
     }
@@ -94,6 +86,7 @@ public class OutputBuffer extends BaseObservable{
                 color=Color.WHITE;
         }
         drawObjectArray.add(new Casl2Figure(type,o,color));
+        casl2PaintView.setDrawObjectArray(drawObjectArray);
 
     }
     public ArrayList<SoundDto> getSoundList() {

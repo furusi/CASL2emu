@@ -22,21 +22,23 @@ public class OutputScreen extends AppCompatActivity {
 
 
     OutputBuffer outputBuffer;
-    Casl2Emulator emulator = Casl2Emulator.getInstance(getApplicationContext());
+    Casl2Emulator emulator;
+    Casl2PaintView paintView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_output_screen);
-
-
+        emulator = Casl2Emulator.getInstance(getApplicationContext());
+        outputBuffer = OutputBuffer.getInstance();
+        outputBuffer.setCasl2PaintView(getApplicationContext());
+        paintView = outputBuffer.getCasl2PaintView();
         ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
         //binding.output.setText("Casl2emu is LEADY");
-        outputBuffer = OutputBuffer.getInstance();
         //outputBuffer.setData("CASL2Emu is ready!!!!");
         binding.setOutputbuffer(outputBuffer);
         outputBuffer.setCasl2PaintView(getApplicationContext());
-        addContentView(outputBuffer.getCasl2PaintView(), new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        addContentView(paintView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         binding.runbuttonoutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,6 +49,7 @@ public class OutputScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 emulator.stepOver();
+                paintView.invalidate();
             }
         });
         binding.waitbuttonoutput.setOnClickListener(new View.OnClickListener() {
