@@ -714,7 +714,7 @@ public class Casl2Emulator extends EmulatorCore {
                     case 0xFF08://浮動小数点数変換
                         //先頭アドレス:gr7
                         //変換後代入先アドレス:gr6
-                        //仮数部は4*7=28ビットで表す(2word)符号は-の時8。指数部は1word使う。
+                        //仮数部は4*7=28ビットで表す(2word)。符号は-の時F。指数部は1word使う。
                         //演算の種類gr6
                         memory_position = register.getGr()[7];
                         char tr_positon = register.getGr()[6];
@@ -724,8 +724,28 @@ public class Casl2Emulator extends EmulatorCore {
                         memory.setMemory((char) (a1/1),tr_positon);
                         break;
                     case 0xFF0A://rand
-                        Random random = new Random(System.currentTimeMillis());
-                        short randnum = (short) random.nextInt(Short.MAX_VALUE+1);
+                        memory_position = register.getGr()[7];
+                        char random_max = register.getGr()[6];
+                        char random_min = register.getGr()[5];
+                        if(random_max<random_min) {
+                            Random random = new Random(System.currentTimeMillis());
+                            short randnum = (short) (random.nextInt(random_max - random_min + 1) + random_min);
+                            memory.setMemory((char) randnum, memory_position);
+                        }
+                        break;
+                    case 0xFF0C://timer
+                        memory_position = register.getGr()[7];
+                        char sleeptime = memory.getMemory(memory_position);
+                        try {
+                            //Thread.sleep(sleeptime);
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case 0xFF0E://input
+                        memory_position = register.getGr()[7];
+
                 }
                 //FF00 FABCで文字出力できるようにする
                 //実行アドレスに
