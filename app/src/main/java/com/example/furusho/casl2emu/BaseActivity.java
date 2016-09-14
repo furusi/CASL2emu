@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.databinding.repacked.apache.commons.codec.binary.Hex;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +20,9 @@ import java.util.regex.Pattern;
 public class BaseActivity extends AppCompatActivity {
 
     private boolean activityVisible=false;
+    Casl2Memory memory;
+    ArrayList<String> stringArrayList;
+    ArrayAdapter<String> arrayAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +30,7 @@ public class BaseActivity extends AppCompatActivity {
         /**
          *
          */
+        memory = Casl2Memory.getInstance();
 
 
 
@@ -33,6 +40,7 @@ public class BaseActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if(activityVisible){
 
+                    final char position = intent.getCharExtra(context.getString(R.string.memory_position),'a');
 
                     final HexEditText editView = new HexEditText(BaseActivity.this,1);
                     new AlertDialog.Builder(BaseActivity.this)
@@ -45,16 +53,12 @@ public class BaseActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     //入力した文字をトースト出力する
                                     String upperedString =editView.getText().toString().toUpperCase();
-                                    Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
+                                    Pattern pattern = Pattern.compile(getString(R.string.svc_input_pattern));
                                     Matcher matcher = pattern.matcher(upperedString);
                                     if (matcher.matches()) {
                                         //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
-                                        char[] chars = getHexChars(upperedString," ");
-                                        memory.setMemoryArray(chars, position*4);
-                                        stringArrayList.remove(position);
-                                        arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                                                chars[0] & 0xFFFF, chars[1] & 0xFFFF, chars[2] & 0xFFFF, chars[3] & 0xFFFF),position);
-                                        arrayAdapter.notifyDataSetChanged();
+                                        char[] chars = HexEditText.getHexChars(upperedString," ");
+                                        refreshMemory(chars, position);
 
                                     }else {
                                         Toast.makeText(BaseActivity.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
@@ -72,6 +76,10 @@ public class BaseActivity extends AppCompatActivity {
         };
         filter = new IntentFilter(getString(R.string.action_svc_input));
         registerReceiver(receiver,filter);
+    }
+
+    protected void refreshMemory(char[] chars, char position) {
+        memory.setMemoryArray(chars, position);
     }
 
     /**

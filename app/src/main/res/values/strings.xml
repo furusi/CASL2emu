@@ -5,6 +5,7 @@
     <string name="text_run_button">連続実行</string>
     <string name="short_zerofill">0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000</string>
     <string name="memory_row_pattern">\\w\\w\\w\\w \\w\\w\\w\\w \\w\\w\\w\\w \\w\\w\\w\\w</string>
+    <string name="svc_input_pattern">(\\w\\w\\w\\w )*\\w\\w\\w\\w</string>
     <string name="word_pattern">\\w\\w\\w\\w</string>
     <string name="word_pattern_wo_space">\\w\\w\\w\\w</string>
     <string name="byte_pattern">\\w\\w</string>
@@ -47,4 +48,5 @@
     <string name="action_view_invalidate">VIEW_INVALIDATE</string>
     <string name="output_initialize">出力画面を初期化</string>
     <string name="action_svc_input">SVC_INPUT</string>
+    <string name="memory_position">memory_position</string>
 </resources>

@@ -18,7 +18,7 @@ import android.os.Handler;
 import com.example.furusho.casl2emu.databinding.ActivityOutputScreenBinding;
 
 
-public class OutputScreen extends AppCompatActivity {
+public class OutputScreen extends BaseActivity {
 
 
     OutputBuffer outputBuffer;

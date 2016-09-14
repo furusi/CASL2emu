@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.databinding.repacked.apache.commons.codec.binary.Hex;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -55,11 +56,9 @@ import static android.R.layout.simple_list_item_1;
 public class ContextDisplayScreen extends BaseActivity implements LoaderCallbacks,Runnable{
 
     ListView listView;
-    Casl2Memory memory;
+    //Casl2Memory memory;
     Casl2Register register;
     Casl2Emulator emulator;
-    ArrayAdapter<String> arrayAdapter;
-    ArrayList<String> stringArrayList;
     private final static String casl2filedirectory = Environment.getExternalStorageDirectory().getPath()+"CASL2Emu";
     private static final int REQUEST_WRITE_STORAGE = 112;
 
@@ -91,7 +90,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         Matcher matcher = pattern.matcher(upperedString);
                         if (matcher.matches()) {
                             //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
-                            char[] chars = getHexChars(upperedString," ");
+                            char[] chars = HexEditText.getHexChars(upperedString," ");
                             memory.setMemoryArray(chars, position*4);
                             stringArrayList.remove(position);
                             arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
@@ -111,15 +110,25 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 .show();
     }
 
-    private char[] getHexChars(String s,String separeter) {
-        String[] stmp = s.split(separeter);
-        char[] tmp= new char[stmp.length];
-        for(int i=0;i<stmp.length;i++){
-           tmp[i] = (char)Integer.parseInt(stmp[i],16);
+    @Override
+    protected void refreshMemory(char[] chars, char position) {
+        super.refreshMemory(chars, position);
+        char memoryRowPosition = (char) ((position/4)*4);
+        char colmnnumber = (char) (position%4);
+        char[] modifiedmemory = new char[4];
+        for(int i=0;i<4;i++){
+           if(i==colmnnumber) {
+               modifiedmemory[i]=chars[0];
+           }else {
+               modifiedmemory[i]=memory.getMemory(memoryRowPosition+i);
+           }
         }
-        return tmp;
-    }
+        stringArrayList.remove(memoryRowPosition);
+        arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                modifiedmemory[0] & 0xFFFF, modifiedmemory[1] & 0xFFFF, modifiedmemory[2] & 0xFFFF, modifiedmemory[3] & 0xFFFF),memoryRowPosition);
+        arrayAdapter.notifyDataSetChanged();
 
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +136,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         setContentView(R.layout.activity_binary_edit_screen);
         Icepick.restoreInstanceState(this,savedInstanceState);
 
-        memory = Casl2Memory.getInstance();
         register = Casl2Register.getInstance();
         emulator= Casl2Emulator.getInstance(getApplicationContext());
 
@@ -149,6 +157,12 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         //音楽再生デモ
         //initialState = new char[]{0,0,9,8,78,7,1,2};
         //initialString = "F000 FF04 0001 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
+        //STデモ
+        initialState = new char[]{0,0,0,0,0,0,0x000F,2};
+        initialString = "1100 0002 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
+        //INPUTデモ
+        initialState = new char[]{0,0,0,0,0,0,0x000F,2};
+        initialString = "F000 FF0E 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
 
         register.setGr(initialState);
         binding.setCasl2Register(register);
@@ -166,7 +180,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
         //String initialString = "8314 1592 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
-        char[]tmp = getHexChars(initialString," ");
+        char[]tmp = HexEditText.getHexChars(initialString," ");
         memory.setMemory(tmp);
 
 
@@ -554,22 +568,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     @Override
     public void onLoaderReset(Loader loader) {
 
-    }
-}
-
-class HexEditText extends EditText {
-    public HexEditText(Context context, int i) {
-        super(context);
-        this.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        switch (i){
-            case 1:
-                this.setKeyListener(DigitsKeyListener.getInstance(context.getString(R.string.a_to_f_0_to_9)));
-                break;
-            case 2:
-                this.setKeyListener(DigitsKeyListener.getInstance(context.getString(R.string.zero_or_one)));
-                break;
-        }
-        this.setTypeface(Typeface.MONOSPACE);
     }
 }
 

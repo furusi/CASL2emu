@@ -745,6 +745,12 @@ public class Casl2Emulator extends EmulatorCore {
                         break;
                     case 0xFF0E://input
                         memory_position = register.getGr()[7];
+                        Intent inputintent = new Intent(context.getString(R.string.action_svc_input));
+                        inputintent.putExtra(context.getString(R.string.memory_position),memory_position);
+                        context.sendBroadcast(inputintent);
+                        break;
+                    case 0xFFFE:
+                        break;
 
                 }
                 //FF00 FABCで文字出力できるようにする
