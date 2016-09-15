@@ -45,9 +45,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="action_view_invalidate">VIEW_INVALIDATE</string>
+    <string name="action_view_refresh">VIEW_REFRESH</string>
     <string name="output_initialize">出力画面を初期化</string>
     <string name="action_svc_input">SVC_INPUT</string>
     <string name="memory_position">memory_position</string>
     <string name="intervalkey">execution_interval</string>
+    <string name="action_async_input">call_async_input</string>
 </resources>

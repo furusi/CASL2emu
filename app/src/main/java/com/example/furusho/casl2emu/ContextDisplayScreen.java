@@ -56,7 +56,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     ListView listView;
     //Casl2Memory memory;
     Casl2Register register;
-    Casl2Emulator emulator;
     private final static String casl2filedirectory = Environment.getExternalStorageDirectory().getPath()+"CASL2Emu";
     private static final int REQUEST_WRITE_STORAGE = 112;
 
@@ -135,7 +134,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         Icepick.restoreInstanceState(this,savedInstanceState);
 
         register = Casl2Register.getInstance();
-        emulator= Casl2Emulator.getInstance(getApplicationContext());
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
         char[] initialState;

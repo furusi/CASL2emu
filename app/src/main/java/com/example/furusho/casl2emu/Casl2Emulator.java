@@ -6,8 +6,6 @@ import android.graphics.Rect;
 import android.media.JetPlayer;
 import android.os.Handler;
 
-import org.apache.commons.lang.math.RandomUtils;
-
 import java.util.Arrays;
 import java.util.Random;
 
@@ -25,6 +23,7 @@ public class Casl2Emulator extends EmulatorCore {
     private static JetPlayer jetPlayer=JetPlayer.getJetPlayer();
     private static Context context;
     static Intent broadcastIntent= new Intent();
+    boolean interruptflag =false;
 
     private Casl2Emulator() {
     }
@@ -33,7 +32,7 @@ public class Casl2Emulator extends EmulatorCore {
        if(context==null) {
            context = context1;
            jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
-           broadcastIntent.setAction(context.getString(R.string.action_view_invalidate));
+           broadcastIntent.setAction(context.getString(R.string.action_view_refresh));
            outputBuffer.setCasl2PaintView(context);
        }
       return instance;
@@ -45,6 +44,15 @@ public class Casl2Emulator extends EmulatorCore {
     public void setXX (int val){ /* レジスタXXを設定する */
 
     }
+
+    public boolean isInterruptflag() {
+        return interruptflag;
+    }
+
+    public void setInterruptflag(boolean interruptflag) {
+        this.interruptflag = interruptflag;
+    }
+
     public void stepOver(){
         //pcの指すメモリの中身をを見る
         char cpc = register.getPc(); char mem1 = memory.getMemory(cpc);
@@ -744,12 +752,16 @@ public class Casl2Emulator extends EmulatorCore {
                         }
                         break;
                     case 0xFF0E://input
+                        interruptflag=true;
                         memory_position = register.getGr()[7];
                         Intent inputintent = new Intent(context.getString(R.string.action_svc_input));
                         inputintent.putExtra(context.getString(R.string.memory_position),memory_position);
                         context.sendBroadcast(inputintent);
                         break;
-                    case 0xFFFE:
+                    case 0xFF10://非同期入力（ボタン）
+
+                        break;
+                    case 0xFFFE://プログラム終了
                         break;
 
                 }

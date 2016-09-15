@@ -7,14 +7,12 @@ import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.os.Handler;
 
 import com.example.furusho.casl2emu.databinding.ActivityOutputScreenBinding;
 
@@ -70,12 +68,22 @@ public class OutputScreen extends BaseActivity {
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                binding.output.setText(outputBuffer.getData());
-                refresh();
+                if(intent.getAction().equals(getString(R.string.action_view_refresh))){
+                    binding.output.setText(outputBuffer.getData());
+                    refresh();
+                }else{
+                   //ボタンを表示する
+                }
             }
         };
-        filter = new IntentFilter(getString(R.string.action_view_invalidate));
+        filter = new IntentFilter(getString(R.string.action_view_refresh));
         registerReceiver(receiver,filter);
+        registerReceiver(receiver,new IntentFilter(getString(R.string.action_async_input)));
+
+        binding.asyncbutton1.setVisibility(Button.INVISIBLE);
+        binding.asyncbutton2.setVisibility(Button.INVISIBLE);
+        binding.asyncbutton3.setVisibility(Button.INVISIBLE);
+        binding.asyncbutton4.setVisibility(Button.INVISIBLE);
     }
 
     private void refresh(){

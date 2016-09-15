@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private boolean activityVisible=false;
     Casl2Memory memory;
+    Casl2Emulator emulator;
     ArrayList<String> stringArrayList;
     ArrayAdapter<String> arrayAdapter;
     @Override
@@ -29,6 +31,7 @@ public class BaseActivity extends AppCompatActivity {
          *
          */
         memory = Casl2Memory.getInstance();
+        emulator = Casl2Emulator.getInstance(getApplicationContext());
 
 
 
@@ -38,6 +41,10 @@ public class BaseActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if(activityVisible){
 
+
+                    if(emulator.isInterruptflag()){
+                        emulator.waitEmu();
+                    }
                     final char position = intent.getCharExtra(context.getString(R.string.memory_position),'a');
 
                     final Casl2EditText editView = new Casl2EditText(BaseActivity.this,1);
@@ -57,6 +64,7 @@ public class BaseActivity extends AppCompatActivity {
                                         //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
                                         char[] chars = Casl2EditText.getHexChars(upperedString," ");
                                         refreshMemory(chars, position);
+                                        emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
 
                                     }else {
                                         Toast.makeText(BaseActivity.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
