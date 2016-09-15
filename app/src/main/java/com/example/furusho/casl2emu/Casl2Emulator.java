@@ -875,7 +875,7 @@ public class Casl2Emulator extends EmulatorCore {
     }
 
 
-    public void run(){
+    public void run(final int interval){
         if(handler==null){
 
             handler = new Handler();
@@ -884,9 +884,9 @@ public class Casl2Emulator extends EmulatorCore {
                 public void run() {
 
                     stepOver();
-                    handler.postDelayed(this,1000);
+                    handler.postDelayed(this,interval);
                 }
-            }, 1000);
+            }, interval);
         }
     }
 

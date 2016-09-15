@@ -49,4 +49,5 @@
     <string name="output_initialize">出力画面を初期化</string>
     <string name="action_svc_input">SVC_INPUT</string>
     <string name="memory_position">memory_position</string>
+    <string name="intervalkey">execution_interval</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.furusho.casl2emu;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.method.DigitsKeyListener;
 import android.widget.EditText;
@@ -10,8 +11,8 @@ import android.widget.EditText;
  */
 
 
-class HexEditText extends EditText {
-    public HexEditText(Context context, int i) {
+class Casl2EditText extends EditText {
+    public Casl2EditText(Context context, int i) {
         super(context);
         this.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         switch (i){
@@ -21,8 +22,12 @@ class HexEditText extends EditText {
             case 2:
                 this.setKeyListener(DigitsKeyListener.getInstance(context.getString(R.string.zero_or_one)));
                 break;
+            case 3:
+                this.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                break;
         }
         this.setTypeface(Typeface.MONOSPACE);
+        this.setTextColor(Color.BLACK);
     }
     public static char[] getHexChars(String s, String separeter) {
         String[] stmp = s.split(separeter);

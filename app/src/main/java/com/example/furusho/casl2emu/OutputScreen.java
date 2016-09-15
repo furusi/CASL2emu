@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -49,7 +50,7 @@ public class OutputScreen extends BaseActivity {
         binding.runbuttonoutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                emulator.run();
+                emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
             }
         });
         binding.stepbuttonoutput.setOnClickListener(new View.OnClickListener() {

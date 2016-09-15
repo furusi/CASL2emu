@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.databinding.repacked.apache.commons.codec.binary.Hex;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +40,7 @@ public class BaseActivity extends AppCompatActivity {
 
                     final char position = intent.getCharExtra(context.getString(R.string.memory_position),'a');
 
-                    final HexEditText editView = new HexEditText(BaseActivity.this,1);
+                    final Casl2EditText editView = new Casl2EditText(BaseActivity.this,1);
                     new AlertDialog.Builder(BaseActivity.this)
                             .setIcon(android.R.drawable.ic_dialog_info)
                             .setView(R.layout.input_text_dialog)
@@ -57,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
                                     Matcher matcher = pattern.matcher(upperedString);
                                     if (matcher.matches()) {
                                         //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
-                                        char[] chars = HexEditText.getHexChars(upperedString," ");
+                                        char[] chars = Casl2EditText.getHexChars(upperedString," ");
                                         refreshMemory(chars, position);
 
                                     }else {

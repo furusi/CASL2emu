@@ -3,29 +3,29 @@ package com.example.furusho.casl2emu;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.databinding.repacked.apache.commons.codec.binary.Hex;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.method.DigitsKeyListener;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,13 +36,11 @@ import com.google.common.primitives.Chars;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -74,7 +72,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     };
 
     private void showTextDialog(String text, final int position) {
-        final HexEditText editView = new HexEditText(ContextDisplayScreen.this,1);
+        final Casl2EditText editView = new Casl2EditText(ContextDisplayScreen.this,1);
         editView.setText(text);
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -90,7 +88,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         Matcher matcher = pattern.matcher(upperedString);
                         if (matcher.matches()) {
                             //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
-                            char[] chars = HexEditText.getHexChars(upperedString," ");
+                            char[] chars = Casl2EditText.getHexChars(upperedString," ");
                             memory.setMemoryArray(chars, position*4);
                             stringArrayList.remove(position);
                             arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
@@ -180,7 +178,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
         //String initialString = "8314 1592 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
-        char[]tmp = HexEditText.getHexChars(initialString," ");
+        char[]tmp = Casl2EditText.getHexChars(initialString," ");
         memory.setMemory(tmp);
 
 
@@ -191,7 +189,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.runbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                emulator.run();
+                emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
                 startListTask(new char[0],0);
             }
         });
@@ -262,12 +260,36 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         byte[] bytes = new byte[0];
         Intent intent;
         switch(item.getItemId()){
+            case R.id.execution_interval:
+                final Casl2EditText text = new Casl2EditText(getApplicationContext(),3);
+                text.setInputType(InputType.TYPE_CLASS_NUMBER);
+                final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                text.setText(Integer.toString(preferences.getInt(getString(R.string.intervalkey),1000)));
+                new AlertDialog.Builder(this)
+                        .setTitle("実行間隔を入力してください。[ms]")
+                        .setView(R.layout.input_text_dialog)
+                        .setView(text)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //入力した文字をトースト出力する
+                                String data = text.getText().toString();
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putInt(getString(R.string.intervalkey),Integer.parseInt(data));
+                                editor.commit();
+
+                            }
+                        })
+                        .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .show();
             case R.id.output_initialize:
                 OutputBuffer.getInstance().setData("");
                 OutputBuffer.getInstance().setDrawObjectArray(new ArrayList<Casl2Figure>());
                 break;
             case R.id.action_jump:
-                final HexEditText memory_position = new HexEditText(getApplicationContext(),1);
+                final Casl2EditText memory_position = new Casl2EditText(getApplicationContext(),1);
                 memory_position.setTextColor(Color.BLACK);
                 new AlertDialog.Builder(ContextDisplayScreen.this)
                         .setIcon(android.R.drawable.ic_dialog_info)
@@ -279,7 +301,12 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //入力した文字をトースト出力する
                                 String position = memory_position.getText().toString();
-                                listView.setSelection(Integer.parseInt(position,16)/4);
+                                if(position.matches("\\w\\w\\w\\w")) {
+                                    listView.setSelection(Integer.parseInt(position, 16) / 4);
+                                }else{
+                                    Toast.makeText(ContextDisplayScreen.this,"適切な文字列を入力してください",Toast.LENGTH_SHORT).show();
+                                }
+
 
                             }
                         })
@@ -413,25 +440,25 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final HexEditText hexEditText;
+                final Casl2EditText casl2EditText;
                 if(id<10){
-                    hexEditText = new HexEditText(ContextDisplayScreen.this,1);
+                    casl2EditText = new Casl2EditText(ContextDisplayScreen.this,1);
                 }else {
-                    hexEditText = new HexEditText(ContextDisplayScreen.this,2);
+                    casl2EditText = new Casl2EditText(ContextDisplayScreen.this,2);
                 }
                 TextView textview = (TextView) v;
                 //Log.d("dbg",textview.getAccessibilityClassName().toString());
-                hexEditText.setText(textview.getText());
+                casl2EditText.setText(textview.getText());
                 new AlertDialog.Builder(ContextDisplayScreen.this)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(R.layout.input_text_dialog)
                         .setTitle("レジスタを編集")
                         //setViewにてビューを設定します。
-                        .setView(hexEditText)
+                        .setView(casl2EditText)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //入力した文字をトースト出力する
-                                String upperedString = hexEditText.getText().toString().toUpperCase();
+                                String upperedString = casl2EditText.getText().toString().toUpperCase();
                                 Pattern pattern;
                                 if(id<10) {
                                     pattern = Pattern.compile(getString(R.string.word_pattern_wo_space));
