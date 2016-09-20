@@ -64,27 +64,8 @@ public class OutputScreen extends BaseActivity {
                 emulator.waitEmu();
             }
         });
-
-        BroadcastReceiver opsreceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(intent.getAction().equals(getString(R.string.action_view_refresh))){
-                    binding.output.setText(outputBuffer.getData());
-                    refresh();
-                }
-            }
-        };
-        filter = new IntentFilter(getString(R.string.action_view_refresh));
-        registerReceiver(opsreceiver,filter);
-
-    }
-
-    @SuppressWarnings("WrongConstant")
-    @Override
-    protected void onResume() {
-        super.onResume();
-        final ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
         final Intent intent = new Intent(getString(R.string.action_memory_refresh));
+        //TODO:ボタンの可視性を即時反映させる
         binding.asyncbutton1.setVisibility(Button.GONE);
         binding.asyncbutton1.setVisibility(outputBuffer.getButtonconfig(0).getVisibility());
         binding.asyncbutton1.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +110,25 @@ public class OutputScreen extends BaseActivity {
                 getApplicationContext().sendBroadcast(intent);
             }
         });
+
+        BroadcastReceiver opsreceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.getAction().equals(getString(R.string.action_view_refresh))){
+                    binding.output.setText(outputBuffer.getData());
+                    refresh();
+                }
+            }
+        };
+        filter = new IntentFilter(getString(R.string.action_view_refresh));
+        registerReceiver(opsreceiver,filter);
+
+    }
+
+    @SuppressWarnings("WrongConstant")
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void refresh(){
