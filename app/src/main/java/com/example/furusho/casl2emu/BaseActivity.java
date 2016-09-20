@@ -23,6 +23,7 @@ public class BaseActivity extends AppCompatActivity {
     Casl2Emulator emulator;
     ArrayList<String> stringArrayList;
     ArrayAdapter<String> arrayAdapter;
+    BroadcastReceiver receiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +37,7 @@ public class BaseActivity extends AppCompatActivity {
 
 
         IntentFilter filter;
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(activityVisible){
@@ -84,8 +85,8 @@ public class BaseActivity extends AppCompatActivity {
         registerReceiver(receiver,filter);
     }
 
-    protected void refreshMemory(char[] chars, char position) {
-        memory.setMemoryArray(chars, position);
+    protected void refreshMemory(char[] data, char position) {
+        memory.setMemoryArray(data, position);
     }
 
     /**
@@ -110,5 +111,11 @@ public class BaseActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         activityVisible=false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 }

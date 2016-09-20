@@ -3,8 +3,11 @@ package com.example.furusho.casl2emu;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -70,13 +73,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
     };
 
-    private void showTextDialog(String text, final int position) {
+    private void showTextDialog(String text, final int rownum) {
         final Casl2EditText editView = new Casl2EditText(ContextDisplayScreen.this,1);
         editView.setText(text);
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(R.layout.input_text_dialog)
-                .setTitle("メモリを編集: "+String.format(Locale.US,"0x%04X",position*4 & 0xFFFF)+" - "+String.format(Locale.US,"0x%04X",position*4+3& 0xFFFF))
+                .setTitle("メモリを編集: "+String.format(Locale.US,"0x%04X",rownum*4 & 0xFFFF)+" - "+String.format(Locale.US,"0x%04X",rownum*4+3& 0xFFFF))
                 //setViewにてビューを設定します。
                 .setView(editView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -88,11 +91,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         if (matcher.matches()) {
                             //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
-                            memory.setMemoryArray(chars, position*4);
-                            stringArrayList.remove(position);
-                            arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                                    chars[0] & 0xFFFF, chars[1] & 0xFFFF, chars[2] & 0xFFFF, chars[3] & 0xFFFF),position);
-                            arrayAdapter.notifyDataSetChanged();
+                            memory.setMemoryArray(chars, rownum*4);
+                            refreshMemoryPane(rownum);
 
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
@@ -107,23 +107,19 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 .show();
     }
 
-    @Override
-    protected void refreshMemory(char[] chars, char position) {
-        super.refreshMemory(chars, position);
-        char memoryRowPosition = (char) ((position/4)*4);
-        char colmnnumber = (char) (position%4);
-        char[] modifiedmemory = new char[4];
-        for(int i=0;i<4;i++){
-           if(i==colmnnumber) {
-               modifiedmemory[i]=chars[0];
-           }else {
-               modifiedmemory[i]=memory.getMemory(memoryRowPosition+i);
-           }
-        }
-        stringArrayList.remove(memoryRowPosition);
+    private void refreshMemoryPane(int rownum) {
+        stringArrayList.remove(rownum);
         arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                modifiedmemory[0] & 0xFFFF, modifiedmemory[1] & 0xFFFF, modifiedmemory[2] & 0xFFFF, modifiedmemory[3] & 0xFFFF),memoryRowPosition);
+                memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
+                memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
         arrayAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void refreshMemory(char[] data, char position) {
+        super.refreshMemory(data, position);
+        char memoryRowPosition = (char) ((position/4)*4);
+        refreshMemoryPane(memoryRowPosition);
 
     }
 
@@ -159,6 +155,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         //INPUTデモ
         initialState = new char[]{0,0,0,0,0,0,0x000F,2};
         initialString = "F000 FF0E 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
+        //ASYNCINPUTデモ
+        initialState = new char[]{0,0,0,0,0,1,0x0001,2};
+        initialString = "F000 FF10 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
 
         register.setGr(initialState);
         binding.setCasl2Register(register);
@@ -213,6 +212,14 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 startActivity(intent);
             }
         });
+        BroadcastReceiver refreshReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                refreshMemoryPane(intent.getCharExtra(getString(R.string.BUTTON_INPUT_ADDRESS),(char)0)/4);
+            }
+        };
+        IntentFilter filter = new IntentFilter(getString(R.string.action_memory_refresh));
+        registerReceiver(refreshReceiver,filter);
 
     }
 

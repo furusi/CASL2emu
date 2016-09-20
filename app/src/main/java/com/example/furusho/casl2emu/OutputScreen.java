@@ -23,11 +23,11 @@ public class OutputScreen extends BaseActivity {
     OutputBuffer outputBuffer;
     Casl2Emulator emulator;
     Casl2PaintView paintView;
-    BroadcastReceiver receiver ;
     IntentFilter filter;
     RelativeLayout relativeLayout;
     Handler handler;
 
+    @SuppressWarnings("WrongConstant")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,25 +65,70 @@ public class OutputScreen extends BaseActivity {
             }
         });
 
-        receiver = new BroadcastReceiver() {
+        BroadcastReceiver opsreceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(intent.getAction().equals(getString(R.string.action_view_refresh))){
                     binding.output.setText(outputBuffer.getData());
                     refresh();
-                }else{
-                   //ボタンを表示する
                 }
             }
         };
         filter = new IntentFilter(getString(R.string.action_view_refresh));
-        registerReceiver(receiver,filter);
-        registerReceiver(receiver,new IntentFilter(getString(R.string.action_async_input)));
+        registerReceiver(opsreceiver,filter);
 
-        binding.asyncbutton1.setVisibility(Button.INVISIBLE);
-        binding.asyncbutton2.setVisibility(Button.INVISIBLE);
-        binding.asyncbutton3.setVisibility(Button.INVISIBLE);
-        binding.asyncbutton4.setVisibility(Button.INVISIBLE);
+    }
+
+    @SuppressWarnings("WrongConstant")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
+        final Intent intent = new Intent(getString(R.string.action_memory_refresh));
+        binding.asyncbutton1.setVisibility(Button.GONE);
+        binding.asyncbutton1.setVisibility(outputBuffer.getButtonconfig(0).getVisibility());
+        binding.asyncbutton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                char address = outputBuffer.getButtonconfig(0).getInputAddress();
+                memory.setMemory((char) 1,address);
+                intent.putExtra(getString(R.string.BUTTON_INPUT_ADDRESS),address);
+                getApplicationContext().sendBroadcast(intent);
+            }
+        });
+        binding.asyncbutton2.setVisibility(Button.GONE);
+        binding.asyncbutton2.setVisibility(outputBuffer.getButtonconfig(1).getVisibility());
+        binding.asyncbutton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                char address = outputBuffer.getButtonconfig(1).getInputAddress();
+                memory.setMemory((char) 1,address);
+                intent.putExtra(getString(R.string.BUTTON_INPUT_ADDRESS),address);
+                getApplicationContext().sendBroadcast(intent);
+            }
+        });
+        binding.asyncbutton3.setVisibility(Button.GONE);
+        binding.asyncbutton3.setVisibility(outputBuffer.getButtonconfig(2).getVisibility());
+        binding.asyncbutton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                char address = outputBuffer.getButtonconfig(2).getInputAddress();
+                memory.setMemory((char) 1,address);
+                intent.putExtra(getString(R.string.BUTTON_INPUT_ADDRESS),address);
+                getApplicationContext().sendBroadcast(intent);
+            }
+        });
+        binding.asyncbutton4.setVisibility(Button.GONE);
+        binding.asyncbutton4.setVisibility(outputBuffer.getButtonconfig(3).getVisibility());
+        binding.asyncbutton4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                char address = outputBuffer.getButtonconfig(3).getInputAddress();
+                memory.setMemory((char) 1,address);
+                intent.putExtra(getString(R.string.BUTTON_INPUT_ADDRESS),address);
+                getApplicationContext().sendBroadcast(intent);
+            }
+        });
     }
 
     private void refresh(){

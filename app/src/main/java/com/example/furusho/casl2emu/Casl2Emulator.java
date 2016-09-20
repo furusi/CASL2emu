@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.media.JetPlayer;
 import android.os.Handler;
+import android.widget.Button;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -759,7 +760,18 @@ public class Casl2Emulator extends EmulatorCore {
                         context.sendBroadcast(inputintent);
                         break;
                     case 0xFF10://非同期入力（ボタン）
-
+                        /**
+                         * gr7:入力を受け取るアドレス
+                         * gr6:1なら表示、0なら非表示
+                         * gr5:1~4で表示するボタンを選択
+                         * 押したら+1する。すべてのボタンで共通。
+                         * 押したらボタンに応じて1,2,3,4をアドレスに代入する。
+                         */
+                        memory_position = register.getGr()[7];
+                        int visibility;
+                        visibility = register.getGr()[6]>0 ? Button.VISIBLE : Button.INVISIBLE;
+                        int buttonnum = register.getGr()[5];
+                        outputBuffer.setButtonconfig(buttonnum-1,visibility,memory_position);
                         break;
                     case 0xFFFE://プログラム終了
                         break;

@@ -46,9 +46,14 @@
         completions."
     </string>
     <string name="action_view_refresh">VIEW_REFRESH</string>
+    <string name="action_memory_refresh">MEMORY_REFRESH</string>
     <string name="output_initialize">出力画面を初期化</string>
     <string name="action_svc_input">SVC_INPUT</string>
     <string name="memory_position">memory_position</string>
     <string name="intervalkey">execution_interval</string>
     <string name="action_async_input">call_async_input</string>
+    <string name="svc_async_input">SVC_ASYNC_INPUT</string>
+    <string name="BUTTON_NUMBER">button_number</string>
+    <string name="BUTTON_VISIBILITY">button_visibility</string>
+    <string name="BUTTON_INPUT_ADDRESS">button_input_address</string>
 </resources>

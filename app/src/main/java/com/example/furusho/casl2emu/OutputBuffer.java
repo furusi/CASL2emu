@@ -5,6 +5,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +20,12 @@ public class OutputBuffer extends BaseObservable{
     private static OutputBuffer instance = new OutputBuffer();
     private Casl2PaintView casl2PaintView;
     private ArrayList<Casl2Figure> drawObjectArray = new ArrayList<Casl2Figure>();
-    private ArrayList<SoundDto> soundList = new ArrayList<SoundDto>();
+    private ArrayList<Casl2AsyncInputConfig> buttonconfig = new ArrayList<Casl2AsyncInputConfig>();
     private OutputBuffer() {
+
+        for(int i=0;i<4;i++){
+            buttonconfig.add(new Casl2AsyncInputConfig(i));
+        }
 
     }
 
@@ -39,6 +44,14 @@ public class OutputBuffer extends BaseObservable{
         stringBuilder.append(this.data);
         stringBuilder.append(data);
         setData(stringBuilder.toString());
+    }
+
+    public Casl2AsyncInputConfig getButtonconfig(int num) {
+        return buttonconfig.get(num);
+    }
+
+    public void setButtonconfig(int buttonnum, int visibility, char position ) {
+        buttonconfig.get(buttonnum).setVisibility(visibility).setInputAddress(position);
     }
 
     public static OutputBuffer getInstance(){
@@ -94,16 +107,6 @@ public class OutputBuffer extends BaseObservable{
         drawObjectArray.add(figure);
         casl2PaintView.setDrawObjectArray(drawObjectArray);
 
-    }
-    public ArrayList<SoundDto> getSoundList() {
-        return soundList;
-    }
-
-    public void setSoundList(ArrayList<SoundDto> soundList) {
-        this.soundList = soundList;
-    }
-    public void addSoundList(SoundDto soundList) {
-        this.soundList.add(soundList);
     }
 }
 
