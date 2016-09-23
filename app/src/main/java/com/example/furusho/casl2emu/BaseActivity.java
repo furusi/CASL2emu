@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +47,8 @@ public class BaseActivity extends AppCompatActivity {
                     if(emulator.isInterruptflag()){
                         emulator.waitEmu();
                     }
-                    final char position = intent.getCharExtra(context.getString(R.string.memory_position),'a');
+                    final char position = intent.getCharExtra(context.getString(R.string.memory_position), (char) 0x0000);
+                    final char input_length = intent.getCharExtra(context.getString(R.string.input_length), (char) 0x0001);
 
                     final Casl2EditText editView = new Casl2EditText(BaseActivity.this,1);
                     new AlertDialog.Builder(BaseActivity.this)
@@ -63,9 +65,17 @@ public class BaseActivity extends AppCompatActivity {
                                     Matcher matcher = pattern.matcher(upperedString);
                                     if (matcher.matches()) {
                                         //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
-                                        char[] chars = Casl2EditText.getHexChars(upperedString," ");
-                                        refreshMemory(chars, position);
-                                        emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
+                                        char[] input = Casl2EditText.getHexChars(upperedString," ");
+                                        char[] chars = new char[input_length];
+                                        if(chars.length>=input.length) {
+                                            Arrays.fill(chars, (char) 0x0);
+                                            for (int i = 0; i < input.length; i++) {
+
+                                                chars[i] = input[i];
+                                            }
+                                            refreshMemory(chars, position);
+                                            emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey), 1000));
+                                        }
 
                                     }else {
                                         Toast.makeText(BaseActivity.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
