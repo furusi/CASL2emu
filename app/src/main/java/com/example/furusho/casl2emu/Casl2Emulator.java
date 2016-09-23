@@ -576,7 +576,7 @@ public class Casl2Emulator extends EmulatorCore {
                         }
                         outputBuffer.addData(new String(bytes));
                         break;
-                    case 0xFF02://描画
+                    case 0xFF30://描画
                         //先頭アドレス:gr7
                         memory_position = register.getGr()[7];
                         int color;
@@ -679,45 +679,7 @@ public class Casl2Emulator extends EmulatorCore {
                                 r=(float)0;
                         }
 
-                        char sign=0;
-                        if (r < 0){
-                            sign = 8;
-                            r= Math.abs(r);
-                        }
-                        short r_sisu=0;
-
-                        float abs_r =Math.abs(r);
-                       if(abs_r<1) {
-                           for (short i = 0; i < 37; i++) {
-                               if (Math.abs(r) >= 1) {
-                                   r_sisu = (short) (i*-1);
-                                   break;
-                               }else{
-                                   r = r * 10;
-
-                               }
-                           }
-                       }else if (abs_r>=10){
-                           for (short i = 0; i < 37; i++) {
-                               if (Math.abs(r) < 10){
-                                   r_sisu = i;
-                                   break;
-                               }else {
-                                   r = r / 10;
-                               }
-                           }
-                       }
-
-                        char[] r_array = new char[3];
-                        char[] _r={48,48,48,48,48,48,48,48};
-                        char[] cs = String.valueOf(r).toCharArray();
-                        for(int i=0;i<cs.length;i++){
-                            _r[i]=cs[i];
-                        }
-                        //'0'=48,'1'=49   '1'-48=1
-                        r_array[0]= (char) ((sign <<12) + ((_r[0]-48) <<8) +((_r[2]-48)<<4)+((_r[3]-48)));
-                        r_array[1]= (char) (((_r[4]-48) <<12) + ((_r[5]-48) <<8) +((_r[6]-48)<<4)+((_r[7]-48)));
-                        r_array[2]= (char) r_sisu;
+                        char[] r_array = getCasl2Hex(r);
                         memory.setMemoryArray(r_array,r_position);
                         break;
                     case 0xFF08://浮動小数点数変換
@@ -788,6 +750,49 @@ public class Casl2Emulator extends EmulatorCore {
 
     }
 
+    private char[] getCasl2Hex(float r) {
+        char sign=0;
+        if (r < 0){
+            sign = 0xF;
+            r= Math.abs(r);
+        }
+        short r_sisu=0;
+
+        float abs_r =Math.abs(r);
+        if(abs_r<0.1) {
+            for (short i = 0; i < 37; i++) {
+                if (Math.abs(r) >= 0.1) {
+                    r_sisu = (short) (i*-1);
+                    break;
+                }else{
+                    r = r * 10;
+
+                }
+            }
+        }else if (abs_r>=1){
+            for (short i = 0; i < 37; i++) {
+                if (Math.abs(r) < 1){
+                    r_sisu = i;
+                    break;
+                }else {
+                    r = r / 10;
+                }
+            }
+        }
+
+        char[] r_array = new char[3];
+        char[] _r={48,48,48,48,48,48,48,48};
+        char[] cs = String.valueOf(r).toCharArray();
+        for(int i=0;i<cs.length;i++){
+            _r[i]=cs[i];
+        }
+        //'0'=48,'1'=49   '1'-48=1
+        r_array[0]= (char) ((sign <<12) + ((_r[0]-48) <<8) +((_r[2]-48)<<4)+((_r[3]-48)));
+        r_array[1]= (char) (((_r[4]-48) <<12) + ((_r[5]-48) <<8) +((_r[6]-48)<<4)+((_r[7]-48)));
+        r_array[2]= (char) r_sisu;
+        return r_array;
+    }
+
     private double getFloat(char c, char[] a_kasu) {
         int[] _array = new int[7];
         int sign=1;
@@ -802,7 +807,7 @@ public class Casl2Emulator extends EmulatorCore {
         _array[5]= (a_kasu[1]&0x00F0)>>4;
         _array[6]= a_kasu[1]&0x000F;
         short a_sisu = (short)c;
-        double flt = (double) ((_array[0]+_array[1]*0.1+_array[2]*0.01+_array[3]*0.001+_array[4]*0.0001+_array[5]*0.00001+_array[6]*0.000001)*sign*(Math.pow(10,a_sisu)));
+        double flt = (double) ((_array[0]*0.1+_array[1]*0.01+_array[2]*0.001+_array[3]*0.0001+_array[4]*0.00001+_array[5]*0.000001+_array[6]*0.0000001)*sign*(Math.pow(10,a_sisu)));
         return flt;
     }
 
