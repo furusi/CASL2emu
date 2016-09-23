@@ -62,7 +62,9 @@ public class Casl2Emulator extends EmulatorCore {
         int wordCount=0;
         char[] tmp;
         int r1_position;
+        char ans;
         short sans;
+        int ians;
         short sr1;
         short sr2;
         char r1;
@@ -576,6 +578,50 @@ public class Casl2Emulator extends EmulatorCore {
                         }
                         outputBuffer.addData(new String(bytes));
                         break;
+                    case 0xFF10://算術乗算
+                        /**
+                         * GR6:掛けられる数
+                         * GR7:掛ける数
+                         */
+                        sr1 = (short) register.getGr()[7];
+                        smember = (short) register.getGr()[6];
+                        ians = (int) checkShortRange(sr1*smember);
+                        register.setGr((char) ((ians&0xFFFF0000)>>16),6);
+                        register.setGr((char) ((ians&0x0000FFFF)),7);
+                        break;
+                    case 0xFF11://論理乗算
+                        /**
+                         * GR6:掛けられる数
+                         * GR7:掛ける数
+                         */
+                        r1 = register.getGr()[7];
+                        cmember = register.getGr()[6];
+                        ians = (int) checkCharRange(r1*cmember);
+                        register.setGr((char) ((ians&0xFFFF0000)>>16),6);
+                        register.setGr((char) ((ians&0x00FFFF)),7);
+                        break;
+                    case 0xFF12://算術除算
+                        /**
+                         * GR6:割られる数
+                         * GR7:割る数
+                         */
+                        sr1 = (short) register.getGr()[7];
+                        smember = (short) register.getGr()[6];
+                        ians = (int) checkShortRange(sr1/smember);
+                        register.setGr((char) ((ians&0xFFFF0000)>>16),6);
+                        register.setGr((char) ((ians&0x0000FFFF)),7);
+                        break;
+                    case 0xFF13://論理除算
+                        /**
+                         * GR6:割られる数
+                         * GR7:割る数
+                         */
+                        r1 = register.getGr()[7];
+                        cmember = register.getGr()[6];
+                        ians = (int) checkCharRange(r1/cmember);
+                        register.setGr((char) ((ians&0xFFFF0000)>>16),6);
+                        register.setGr((char) ((ians&0x00FFFF)),7);
+                        break;
                     case 0xFF30://描画
                         //先頭アドレス:gr7
                         memory_position = register.getGr()[7];
@@ -717,11 +763,13 @@ public class Casl2Emulator extends EmulatorCore {
                     case 0xFF0E://input
                         interruptflag=true;
                         memory_position = register.getGr()[7];
+                        char length = register.getGr()[6];
                         Intent inputintent = new Intent(context.getString(R.string.action_svc_input));
                         inputintent.putExtra(context.getString(R.string.memory_position),memory_position);
+                        inputintent.putExtra(context.getString(R.string.input_length),length);
                         context.sendBroadcast(inputintent);
                         break;
-                    case 0xFF10://非同期入力（ボタン）
+                    case 0xFF70://非同期入力（ボタン）
                         /**
                          * gr7:入力を受け取るアドレス
                          * gr6:1なら表示、0なら非表示
