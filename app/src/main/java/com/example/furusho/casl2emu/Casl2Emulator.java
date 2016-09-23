@@ -558,8 +558,8 @@ public class Casl2Emulator extends EmulatorCore {
                 char[] subarray;
                 //spの指すアドレスを取得
                 switch(jikkou){
-                    case 0xFF00://OUT
-                        //r7を文字数(wordの数ではない)、r6を先頭アドレスとする。
+                    case 0xFF03://OUT
+                        //r7を先頭アドレス、r6を文字数(wordの数ではない)とする。
                         memory_position = register.getGr()[7];
                         count = register.getGr()[6];
                         //文字数分のデータを読み取りStringに変換。
@@ -668,7 +668,7 @@ public class Casl2Emulator extends EmulatorCore {
 
                         }
                         break;
-                    case 0xFF04://音を鳴らす
+                    case 0xFF40://音を鳴らす
                         //先頭アドレス:gr7 データ数:gr6
                         memory_position = register.getGr()[7];
                         count = register.getGr()[6];
@@ -760,7 +760,7 @@ public class Casl2Emulator extends EmulatorCore {
                             e.printStackTrace();
                         }
                         break;
-                    case 0xFF0E://input
+                    case 0xFF02://input
                         interruptflag=true;
                         memory_position = register.getGr()[7];
                         char length = register.getGr()[6];
