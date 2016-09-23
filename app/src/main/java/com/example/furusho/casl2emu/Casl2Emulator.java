@@ -636,7 +636,7 @@ public class Casl2Emulator extends EmulatorCore {
                             jetPlayer.play();
                         }
                         break;
-                    case 0xFF06://浮動小数点数演算
+                    case 0xFF20://浮動小数点数演算
                         //先頭アドレス:gr7
                         //有効桁数7桁 指数部-37~37
                         //仮数部は4*7=28ビットで表す(2word)符号は-の時8。指数部は1word使う。
@@ -651,28 +651,28 @@ public class Casl2Emulator extends EmulatorCore {
                         char r_position = (char) (memory_position+7);
                         float r;
                         switch (op){
-                            case 1://足し算
+                            case 0x0://足し算
                                 r=(float)checkFloatRange(a+b);
                                 break;
-                            case 2://引き算
+                            case 0x1://引き算
                                 r=(float)checkFloatRange(a-b);
                                 break;
-                            case 3://掛け算
+                            case 0x2://掛け算
                                 r=(float)checkFloatRange(a*b);
                                 break;
-                            case 4://割り算
+                            case 0x3://割り算
                                 r=(float)checkFloatRange(a/b);
                                 break;
-                            case 5://べき乗
+                            case 0x4://べき乗
                                 r=(float)checkFloatRange(Math.pow(a,b));
                                 break;
-                            case 6://正弦
+                            case 0x5://正弦
                                 r=(float)checkFloatRange(Math.sin(a));
                                 break;
-                            case 7://余弦
+                            case 0x6://余弦
                                 r=(float)checkFloatRange(Math.cos(a));
                                 break;
-                            case 8://正接
+                            case 0x7://正接
                                 r=(float)checkFloatRange(Math.tan(a));
                                 break;
                             default:
