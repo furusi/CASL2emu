@@ -29,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,11 +199,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        return email.contains("tl");
+        return email.contains("TL") || email.contains("tl");
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+        return password.length() > 5;
     }
 
     /**
@@ -311,23 +312,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            boolean result = false;
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
+                //Thread.sleep(2000);
+                String remoteserver = getString(R.string.server_address);                 //FTPサーバーアドレス
+                int remoteport = 21;    //FTPサーバーポート
+                String userid = mEmail.toUpperCase();                       //ログインユーザID
+                String passwd = mPassword;                       //ログインパスワード
+                Casl2Ftp ftp = new Casl2Ftp(getApplicationContext());
+                result = ftp.login(remoteserver, remoteport, userid, passwd);
             } catch (InterruptedException e) {
                 return false;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
 
-            return true;
+            return result;
         }
 
         @Override
@@ -339,8 +342,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 finish();
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                //mPasswordView.setError(getString(R.string.error_incorrect_password));
+                Toast.makeText(LoginActivity.this,"ログインできませんでした。",Toast.LENGTH_SHORT).show();
+                //mPasswordView.requestFocus();
             }
         }
 

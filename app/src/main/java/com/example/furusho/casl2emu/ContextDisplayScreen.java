@@ -232,7 +232,21 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==5657&&resultCode==RESULT_OK){
+        if(requestCode==1114&&resultCode==RESULT_OK) {
+            Intent intent = new Intent(getApplicationContext(),DataSendTask.class);
+            List<String> openfilename=data.getData().getPathSegments();
+            ArrayList<String> localfile= new ArrayList<String >();
+            localfile.add(getString(R.string.server_address));
+            localfile.add("21");
+            localfile.add(openfilename.get(1).split(":")[1]);
+            localfile.add(getString(R.string.username));
+            localfile.add(getString(R.string.passwd));
+            localfile.add("true");
+            localfile.add(Environment.getExternalStorageDirectory().getPath()+"/"+openfilename.get(1).split(":")[1]);
+            intent.putExtra("data",localfile);
+            startService(intent);
+        }
+        else if(requestCode==5657&&resultCode==RESULT_OK){
 
             List<String> openfilename=data.getData().getPathSegments();
             byte[] loaddata = new byte[131098];
@@ -327,31 +341,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 startActivityForResult(intent,5657);
                 break;
             case R.id.action_teishutu:
-                /*ステップ1 :接続URLを決める。
-                    ステップ5 :リクエストボディの書き込みを行う。(POSTのみ行う)
-                    ステップ6 :レスポンスの読み出しを行う。
-                    ステップ7 :コネクションを閉じる。*/
-                intent = new Intent(getApplicationContext(),DataSendTask.class);
-                ArrayList<String> localfile= new ArrayList<String >();
-                localfile.add(getString(R.string.server_address));
-                localfile.add("21");
-                localfile.add("~/test1111.cl2");
-                localfile.add(getString(R.string.username));
-                localfile.add(getString(R.string.passwd));
-                localfile.add("false");
-                localfile.add(Environment.getExternalStorageDirectory().getPath()+getString(R.string.app_directory_name)+"/data.cl2");
-                intent.putExtra("data",localfile);
-                startService(intent);
-
-                /*
-                ProgressDialog myProgressDialog = new ProgressDialog(this);
-                myProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                myProgressDialog.setCancelable(true);
-                myProgressDialog.setTitle("データ送信");
-                myProgressDialog.setMessage("アップロード中");
-                myProgressDialog.show();
-                */
-
+                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("*/*");
+                startActivityForResult(intent,1114);
                 break;
             case R.id.action_save:
                 editView.setText(filename);
