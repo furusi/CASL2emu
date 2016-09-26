@@ -11,11 +11,17 @@ import android.os.Environment;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by furusho on 2016/09/02.
@@ -58,78 +64,11 @@ public class DataSendTask extends IntentService{
         boolean passive = Boolean.valueOf(params.get(5));    //パッシブモード使用
         String localFile = params.get(6);
         //ＦＴＰファイル送信
-        FTP ftp = new FTP(myContext);
+        Casl2Ftp ftp = new Casl2Ftp(myContext);
         String result = ftp.putData(remoteserver, remoteport, userid, passwd, passive, remotefile, localFile);
         ftp = null;
 
     }
 
 
-    // インナークラス　ＦＴＰクライアント commons net使用
-    private class FTP extends ContextWrapper {
-        public FTP(Context base) {
-            super(base);
-        }
-
-        private String putData(String remoteserver, int remoteport,
-                               String userid, String passwd, boolean passive, String remotefile, String localFile) {
-            int reply = 0;
-            boolean isLogin = false;
-            myFTPClient = new FTPClient();
-
-            try {
-                myFTPClient.setConnectTimeout(5000);
-                //接続
-                myFTPClient.connect(remoteserver, remoteport);
-                reply = myFTPClient.getReplyCode();
-                if (!FTPReply.isPositiveCompletion(reply)) {
-                    throw new Exception("Connect Status:" + String.valueOf(reply));
-                }
-                //ログイン
-                if (!myFTPClient.login(userid, passwd)) {
-                    throw new Exception("Invalid user/password");
-                }
-                isLogin = true;
-                //転送モード
-                if (passive) {
-                    myFTPClient.enterLocalPassiveMode(); //パッシブモード
-                } else {
-                    myFTPClient.enterLocalActiveMode();  //アクティブモード
-                }//ファイル送信
-                myFTPClient.setDataTimeout(15000);
-                myFTPClient.setSoTimeout(15000);
-                //FileInputStream fileInputStream = this.openFileInput(localFile);
-                FileInputStream fileInputStream = new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath()+getString(R.string.app_directory_name),"data.cl2"));
-                myFTPClient.storeFile(remotefile, fileInputStream);
-                reply = myFTPClient.getReplyCode();
-                if (!FTPReply.isPositiveCompletion(reply)) {
-                    throw new Exception("Send Status:" + String.valueOf(reply));
-                }
-                fileInputStream.close();
-                fileInputStream = null;
-                //ログアウト
-                myFTPClient.logout();
-                isLogin = false;
-                //切断
-                myFTPClient.disconnect();
-            } catch (Exception e) {
-                return e.getMessage();
-            } finally {
-                if (isLogin) {
-                    try {
-                        myFTPClient.logout();
-                    } catch (IOException e) {
-                    }
-                }
-                if (myFTPClient.isConnected()) {
-                    try {
-                        myFTPClient.disconnect();
-                    } catch (IOException e) {
-                    }
-                }
-                myFTPClient = null;
-            }
-            return null;
-        }
-    }
 }
