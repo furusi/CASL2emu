@@ -1,4 +1,4 @@
-package com.example.furusho.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -34,7 +34,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.furusho.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 import com.google.common.primitives.Chars;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -51,6 +50,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import icepick.Icepick;
+import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 
 import static android.R.layout.simple_list_item_1;
 

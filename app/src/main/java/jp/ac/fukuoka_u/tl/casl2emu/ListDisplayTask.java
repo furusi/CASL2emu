@@ -1,4 +1,4 @@
-package com.example.furusho.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;

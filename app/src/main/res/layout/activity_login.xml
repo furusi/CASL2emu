@@ -8,7 +8,7 @@
               android:paddingLeft="@dimen/activity_horizontal_margin"
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
-              tools:context="com.example.furusho.casl2emu.LoginActivity">
+              tools:context="jp.ac.fukuoka_u.tl.casl2emu.LoginActivity">
 
     <!-- Login progress -->
     <ProgressBar

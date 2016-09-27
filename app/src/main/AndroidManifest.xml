@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.example.furusho.casl2emu">
+          package="jp.ac.fukuoka_u.tl.casl2emu">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -18,7 +18,7 @@
         android:theme="@style/MyTheme">
         <activity android:name=".OutputScreen">
             <intent-filter>
-                <action android:name="com.example.furusho.casl2sim.output"/>
+                <action android:name="jp.ac.fukuoka_u.tl.casl2emu.output"/>
             </intent-filter>
         </activity>
         <activity android:name=".ContextDisplayScreen">

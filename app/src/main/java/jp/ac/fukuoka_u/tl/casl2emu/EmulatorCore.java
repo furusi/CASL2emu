@@ -1,4 +1,4 @@
-package com.example.furusho.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu;
 
 /**
  * Created by furusho on 2016/07/09.

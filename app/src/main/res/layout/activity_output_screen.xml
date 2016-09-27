@@ -3,7 +3,7 @@
    <data>
        <variable
            name="outputbuffer"
-           type="com.example.furusho.casl2emu.OutputBuffer"/>
+           type="jp.ac.fukuoka_u.tl.casl2emu.OutputBuffer"/>
    </data>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,7 +14,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.furusho.casl2emu.OutputScreen"
+    tools:context="jp.ac.fukuoka_u.tl.casl2emu.OutputScreen"
     android:background="@color/background_material_dark">
 
 

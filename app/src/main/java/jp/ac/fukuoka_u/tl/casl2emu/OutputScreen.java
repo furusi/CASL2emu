@@ -1,4 +1,4 @@
-package com.example.furusho.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.example.furusho.casl2emu.databinding.ActivityOutputScreenBinding;
+import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityOutputScreenBinding;
 
 
 public class OutputScreen extends BaseActivity {
