@@ -103,10 +103,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         guestButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
+                if(preferences.contains("userid")){
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.remove("userid");
+                    editor.remove("password");
+                    editor.commit();
+                    mEmailView.setText("");
+                    mPasswordView.setText("");
+                    Toast.makeText(LoginActivity.this,"ログイン情報を消去しました。",Toast.LENGTH_SHORT).show();
+                }
             }
         });
-        guestButton.setVisibility(Button.INVISIBLE);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);

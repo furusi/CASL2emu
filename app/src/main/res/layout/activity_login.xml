@@ -74,7 +74,7 @@
             <Button
                 android:id="@+id/guest_button"
                 style="?android:textAppearanceSmall"
-                android:text="ゲストログイン"
+                android:text="ログイン情報消去"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
