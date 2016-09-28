@@ -901,6 +901,7 @@ public class Casl2Emulator extends EmulatorCore {
         }else if(ld==0x0000){
             fr[2]=1;
         }
+        register.setFr(fr);
     }
 
     private void getCompareResultL(char r, char jikkou) {
@@ -911,6 +912,7 @@ public class Casl2Emulator extends EmulatorCore {
         }else {
             fr[1] = 1; fr[2] = 0;
         }
+        register.setFr(fr);
     }
 
     private void getCompareResultA(short r, short jikkou) {
@@ -921,11 +923,16 @@ public class Casl2Emulator extends EmulatorCore {
         }else {
             fr[1] = 1; fr[2] = 0;
         }
+        register.setFr(fr);
+
     }
 
     private char getJikkouAddress(char[] tmp) {
         int sihyou = getGr2Number(tmp);
-        char sihyou_nakami = register.getGr()[sihyou];
+        char sihyou_nakami=0;
+        if (sihyou != 0) {
+            sihyou_nakami = register.getGr()[sihyou];
+        }
         return (char) ((int)tmp[1]+(int)sihyou_nakami);
     }
 
