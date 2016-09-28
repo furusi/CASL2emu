@@ -12,18 +12,18 @@
     <item
         android:id="@+id/action_jump"
         android:title="@string/menu_action_jump"
-        android:orderInCategory="102"/>
+        android:orderInCategory="99"/>
     <item
         android:id="@+id/action_teishutu"
         android:title="@string/menu_teishutu"
-        android:orderInCategory="103"/>
+        android:orderInCategory="104"/>
     <item
         android:id="@+id/output_initialize"
         android:title="@string/output_initialize"
-        android:orderInCategory="104"/>
+        android:orderInCategory="105"/>
     <item
         android:id="@+id/execution_interval"
         android:title="実行間隔の設定"
-        android:orderInCategory="105"
+        android:orderInCategory="106"
         />
 </menu>

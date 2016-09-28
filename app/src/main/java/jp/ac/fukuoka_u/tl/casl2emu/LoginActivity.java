@@ -106,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
             }
         });
+        guestButton.setVisibility(Button.INVISIBLE);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);

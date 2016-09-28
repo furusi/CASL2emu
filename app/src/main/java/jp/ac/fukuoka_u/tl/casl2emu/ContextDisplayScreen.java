@@ -135,8 +135,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         char[] initialState;
         String initialString;
         //OUTデモ
-        initialState = new char[]{0,0,0,0,0,0,0x000F,2};
-        initialString = "F000 FF00 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
+        //initialState = new char[]{0,0,0,0,0,0,0x000F,2};
+        //initialString = "F000 FF00 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
 
         //図形描画デモ
         //initialState = new char[]{0,0,0,0,0x001D,0x0016,0x0010,0x000b};
@@ -150,14 +150,17 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         //initialState = new char[]{0,0,9,8,78,7,1,2};
         //initialString = "F000 FF04 0001 1592 0000 8100 0000 0003 0001 0001 0020 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         //STデモ
-        initialState = new char[]{0,0,0,0,0,0,0x000F,2};
-        initialString = "1100 0002 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
+        //initialState = new char[]{0,0,0,0,0,0,0x000F,2};
+        //initialString = "1100 0002 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
         //INPUTデモ
-        initialState = new char[]{0,0,0,0,0,0,0x000F,2};
-        initialString = "F000 FF0E 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
+        //initialState = new char[]{0,0,0,0,0,0,0x000F,2};
+        //initialString = "F000 FF0E 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
         //ASYNCINPUTデモ
-        initialState = new char[]{0,0,0,0,0,1,0x0001,2};
-        initialString = "F000 FF10 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
+        //initialState = new char[]{0,0,0,0,0,1,0x0001,2};
+        //initialString = "F000 FF10 4675 6B75 6461 690A 2837 3930 213F 2900"+" "+getString(R.string.short_zerofill);
+
+        initialState = new char[]{0,0,0,0,0,0,0,0};
+        initialString = "0000 0000 0000 0000";
 
         register.setGr(initialState);
         binding.setCasl2Register(register);
