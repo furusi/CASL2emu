@@ -253,28 +253,29 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         }
         else if(requestCode==5657&&resultCode==RESULT_OK){
 
-            String dirname =Environment.getExternalStorageDirectory().getPath()+
-                    getString(R.string.app_directory_name)+
-                    "/"+ sharedPreferences.getString("userid","null");
             List<String> openfilename=data.getData().getPathSegments();
-            byte[] loaddata = new byte[131098];
-            FileInputStream fileInputStream = null;
-            try {
-                fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
-                        openfilename.get(1).split(":")[1]));
-                fileInputStream.read(loaddata);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if(openfilename.get(1).contains(sharedPreferences.getString("userid","null"))){
+                byte[] loaddata = new byte[131098];
+                FileInputStream fileInputStream = null;
+                try {
+                    fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
+                            openfilename.get(1).split(":")[1]));
+                    fileInputStream.read(loaddata);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            for(int i = 0;i<8;i++) register.setGr(Chars.fromBytes(loaddata[2*i], loaddata[2*i+1]), i);
-            register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
-            register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
-            for(int i = 0;i<3;i++) register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
-            for(int i =0;i<65536;i++) memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
-            localSetMemoryAdapter(memory.getMemory(),0);
+                for(int i = 0;i<8;i++) register.setGr(Chars.fromBytes(loaddata[2*i], loaddata[2*i+1]), i);
+                register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
+                register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
+                for(int i = 0;i<3;i++) register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
+                for(int i =0;i<65536;i++) memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
+                localSetMemoryAdapter(memory.getMemory(),0);
+            }else{
+                Toast.makeText(this,"["+sharedPreferences.getString("userid","USERID")+"]フォルダ内のファイルを指定してください。",Toast.LENGTH_SHORT).show();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
