@@ -927,20 +927,20 @@ public class Casl2Emulator extends EmulatorCore {
 
     }
 
-    private char getJikkouAddress(char[] tmp) {
-        int sihyou = getGr2Number(tmp);
+    private char getJikkouAddress(char[] cordstr) {
+        int sihyou = getGr2Number(cordstr);
         char sihyou_nakami=0;
         if (sihyou != 0) {
             sihyou_nakami = register.getGr()[sihyou];
         }
-        return (char) ((int)tmp[1]+(int)sihyou_nakami);
+        return (char) ((int)cordstr[1]+(int)sihyou_nakami);
     }
 
-    private int getGrNumber(char[] data){
-        return (data[0]>>4) & 0x000F;
+    private int getGrNumber(char[] cordstr){
+        return (cordstr[0]>>4) & 0x000F;
     }
-    private int getGr2Number(char[] data){
-        return data[0] & 0x000F;
+    private int getGr2Number(char[] cordstr){
+        return cordstr[0] & 0x000F;
     }
     private long checkShortRange(int value){
         if(value > Short.MAX_VALUE||value < Short.MIN_VALUE)
