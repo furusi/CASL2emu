@@ -24,6 +24,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -237,43 +238,51 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         SharedPreferences sharedPreferences = PreferenceManager.
                 getDefaultSharedPreferences(getApplicationContext());
-        if(requestCode==1114&&resultCode==RESULT_OK) {
-            Intent intent = new Intent(getApplicationContext(),DataSendTask.class);
-            List<String> openfilename=data.getData().getPathSegments();
-            ArrayList<String> localfile= new ArrayList<String >();
-            localfile.add(getString(R.string.server_address));
-            localfile.add("21");
-            localfile.add(openfilename.get(1).split(":")[1]);
-            localfile.add(sharedPreferences.getString("userid","null"));
-            localfile.add(sharedPreferences.getString("password","null"));
-            localfile.add("true");
-            localfile.add(Environment.getExternalStorageDirectory().getPath()+"/"+openfilename.get(1).split(":")[1]);
-            intent.putExtra("data",localfile);
-            startService(intent);
-        }
-        else if(requestCode==5657&&resultCode==RESULT_OK){
+        if(data!=null){
+            if(data.getData().getPathSegments().get(1).contains(sharedPreferences.getString("userid","null"))) {
+                if(requestCode==1114&&resultCode==RESULT_OK) {
+                    Log.d("furusho",Build.MODEL);
+                    if(Build.MODEL.matches("^KF.*")||(sharedPreferences.getString("userid","null").equals("TLGUEST"))){
+                        Intent intent = new Intent(getApplicationContext(),DataSendTask.class);
+                        List<String> openfilename=data.getData().getPathSegments();
+                        ArrayList<String> localfile= new ArrayList<String >();
+                        localfile.add(getString(R.string.server_address));
+                        localfile.add("21");
+                        localfile.add(openfilename.get(1).split(":")[1]);
+                        localfile.add(sharedPreferences.getString("userid","null"));
+                        localfile.add(sharedPreferences.getString("password","null"));
+                        localfile.add("true");
+                        localfile.add(Environment.getExternalStorageDirectory().getPath()+"/"+openfilename.get(1).split(":")[1]);
+                        intent.putExtra("data",localfile);
+                        startService(intent);
+                    }else{
+                        Toast.makeText(this,"所定の端末から提出してください。",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else if(requestCode==5657&&resultCode==RESULT_OK){
 
-            List<String> openfilename=data.getData().getPathSegments();
-            if(openfilename.get(1).contains(sharedPreferences.getString("userid","null"))){
-                byte[] loaddata = new byte[131098];
-                FileInputStream fileInputStream = null;
-                try {
-                    fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
-                            openfilename.get(1).split(":")[1]));
-                    fileInputStream.read(loaddata);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    List<String> openfilename=data.getData().getPathSegments();
+                    byte[] loaddata = new byte[131098];
+                    FileInputStream fileInputStream = null;
+                    try {
+                        fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
+                                openfilename.get(1).split(":")[1]));
+                        fileInputStream.read(loaddata);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    for(int i = 0;i<8;i++) register.setGr(Chars.fromBytes(loaddata[2*i], loaddata[2*i+1]), i);
+                    register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
+                    register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
+                    for(int i = 0;i<3;i++) register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
+                    for(int i =0;i<65536;i++) memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
+                    localSetMemoryAdapter(memory.getMemory(),0);
                 }
 
-                for(int i = 0;i<8;i++) register.setGr(Chars.fromBytes(loaddata[2*i], loaddata[2*i+1]), i);
-                register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
-                register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
-                for(int i = 0;i<3;i++) register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
-                for(int i =0;i<65536;i++) memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
-                localSetMemoryAdapter(memory.getMemory(),0);
-            }else{
+            }else {
                 Toast.makeText(this,"["+sharedPreferences.getString("userid","USERID")+"]フォルダ内のファイルを指定してください。",Toast.LENGTH_SHORT).show();
             }
         }
