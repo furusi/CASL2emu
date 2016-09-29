@@ -235,6 +235,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        SharedPreferences sharedPreferences = PreferenceManager.
+                getDefaultSharedPreferences(getApplicationContext());
         if(requestCode==1114&&resultCode==RESULT_OK) {
             Intent intent = new Intent(getApplicationContext(),DataSendTask.class);
             List<String> openfilename=data.getData().getPathSegments();
@@ -242,8 +244,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             localfile.add(getString(R.string.server_address));
             localfile.add("21");
             localfile.add(openfilename.get(1).split(":")[1]);
-            localfile.add(getString(R.string.username));
-            localfile.add(getString(R.string.passwd));
+            localfile.add(sharedPreferences.getString("userid","null"));
+            localfile.add(sharedPreferences.getString("password","null"));
             localfile.add("true");
             localfile.add(Environment.getExternalStorageDirectory().getPath()+"/"+openfilename.get(1).split(":")[1]);
             intent.putExtra("data",localfile);
@@ -251,6 +253,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         }
         else if(requestCode==5657&&resultCode==RESULT_OK){
 
+            String dirname =Environment.getExternalStorageDirectory().getPath()+
+                    getString(R.string.app_directory_name)+
+                    "/"+ sharedPreferences.getString("userid","null");
             List<String> openfilename=data.getData().getPathSegments();
             byte[] loaddata = new byte[131098];
             FileInputStream fileInputStream = null;
@@ -367,7 +372,12 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                 FileOutputStream fileOutputStream;
 
                                 try {
-                                    File dir = new File(Environment.getExternalStorageDirectory().getPath()+getString(R.string.app_directory_name));
+                                    SharedPreferences sharedPreferences = PreferenceManager.
+                                            getDefaultSharedPreferences(getApplicationContext());
+                                    String dirname =Environment.getExternalStorageDirectory().getPath()+
+                                            getString(R.string.app_directory_name)+
+                                            "/"+ sharedPreferences.getString("userid","null");
+                                    File dir = new File(dirname);
                                     boolean hasPermission = (ContextCompat.checkSelfPermission(ContextDisplayScreen.this,
                                             Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
                                     if (!hasPermission) {
@@ -376,9 +386,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                                 REQUEST_WRITE_STORAGE);
                                     }
                                     if(!dir.exists()){
-                                        dir.mkdir();
+                                        dir.mkdirs();
                                     }
-                                    File file = new File(Environment.getExternalStorageDirectory().getPath()+"/CASL2Emu",save_filename);
+                                    File file = new File(dirname,save_filename);
                                     fileOutputStream = new FileOutputStream(file);
                                     fileOutputStream.write(savedata);
                                 } catch (FileNotFoundException e) {
