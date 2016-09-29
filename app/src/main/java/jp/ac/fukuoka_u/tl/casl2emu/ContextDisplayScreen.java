@@ -17,7 +17,6 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -58,9 +57,7 @@ import static android.R.layout.simple_list_item_1;
 public class ContextDisplayScreen extends BaseActivity implements LoaderCallbacks,Runnable{
 
     ListView listView;
-    //Casl2Memory memory;
     Casl2Register register;
-    private final static String casl2filedirectory = Environment.getExternalStorageDirectory().getPath()+"CASL2Emu";
     private static final int REQUEST_WRITE_STORAGE = 112;
 
 
@@ -90,7 +87,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
                         Matcher matcher = pattern.matcher(upperedString);
                         if (matcher.matches()) {
-                            //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
                             memory.setMemoryArray(chars, rownum*4);
                             refreshMemoryPane(rownum);
@@ -166,15 +162,25 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         register.setGr(initialState);
         binding.setCasl2Register(register);
         binding.gr0.setOnClickListener(showWordDialog(binding,0));
+        binding.gr0.setOnLongClickListener(jumpAddress(binding,0));
         binding.gr1.setOnClickListener(showWordDialog(binding,1));
+        binding.gr1.setOnLongClickListener(jumpAddress(binding,1));
         binding.gr2.setOnClickListener(showWordDialog(binding,2));
+        binding.gr2.setOnLongClickListener(jumpAddress(binding,2));
         binding.gr3.setOnClickListener(showWordDialog(binding,3));
+        binding.gr3.setOnLongClickListener(jumpAddress(binding,3));
         binding.gr4.setOnClickListener(showWordDialog(binding,4));
+        binding.gr4.setOnLongClickListener(jumpAddress(binding,4));
         binding.gr5.setOnClickListener(showWordDialog(binding,5));
+        binding.gr5.setOnLongClickListener(jumpAddress(binding,5));
         binding.gr6.setOnClickListener(showWordDialog(binding,6));
+        binding.gr6.setOnLongClickListener(jumpAddress(binding,6));
         binding.gr7.setOnClickListener(showWordDialog(binding,7));
+        binding.gr7.setOnLongClickListener(jumpAddress(binding,7));
         binding.pc.setOnClickListener(showWordDialog(binding,8));
+        binding.pc.setOnLongClickListener(jumpAddress(binding,8));
         binding.sp.setOnClickListener(showWordDialog(binding,9));
+        binding.sp.setOnLongClickListener(jumpAddress(binding,9));
         binding.of.setOnClickListener(showWordDialog(binding,10));
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
@@ -455,6 +461,47 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     //}
     private void showToast(String offset) {
         Toast.makeText(ContextDisplayScreen.this,offset+" is touched!!",Toast.LENGTH_SHORT).show();
+    }
+    private View.OnLongClickListener jumpAddress(final ActivityBinaryEditScreenBinding binding, final int id){
+
+        return new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                switch (id){
+                    case 0:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr0.getText()), 16) / 4);
+                        break;
+                    case 1:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr1.getText()), 16) / 4);
+                        break;
+                    case 2:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr2.getText()), 16) / 4);
+                        break;
+                    case 3:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr3.getText()), 16) / 4);
+                        break;
+                    case 4:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr4.getText()), 16) / 4);
+                        break;
+                    case 5:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr5.getText()), 16) / 4);
+                        break;
+                    case 6:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr6.getText()), 16) / 4);
+                        break;
+                    case 7:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr7.getText()), 16) / 4);
+                        break;
+                    case 8:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.pc.getText()), 16) / 4);
+                        break;
+                    case 9:
+                        listView.setSelection(Integer.parseInt(String.valueOf(binding.sp.getText()), 16) / 4);
+                        break;
+                }
+                return true;
+            }
+        };
     }
     private View.OnClickListener showWordDialog(final ActivityBinaryEditScreenBinding binding, final int id) {
         return new View.OnClickListener() {
