@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          android:versionCode="2"
+          android:versionName="1.0.1"
           package="jp.ac.fukuoka_u.tl.casl2emu">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -21,13 +23,16 @@
                 <action android:name="jp.ac.fukuoka_u.tl.casl2emu.output"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ContextDisplayScreen">
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name=".ContextDisplayScreen">
         </activity>
         <activity android:name=".BaseActivity"/>
 
         <service android:name=".DataSendTask"/>
 
         <activity
+            android:configChanges="orientation|screenSize"
             android:name=".LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
