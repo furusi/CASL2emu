@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,7 +34,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -117,6 +122,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        if(Build.MODEL.matches("^KF.*")){
+           VerifyLoginTimeTask loginTimeTask = new VerifyLoginTimeTask();
+            loginTimeTask.execute();
+        }
     }
 
     private void populateAutoComplete() {
@@ -313,6 +322,58 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
+    private class VerifyLoginTimeTask extends AsyncTask<Void,Void,Date>{
+
+        VerifyLoginTimeTask(){
+
+        }
+
+        /**
+         * Override this method to perform a computation on a background thread. The
+         * specified parameters are the parameters passed to {@link #execute}
+         * by the caller of this task.
+         * <p>
+         * This method can call {@link #publishProgress} to publish updates
+         * on the UI thread.
+         *
+         * @param params The parameters of the task.
+         * @return A result, defined by the subclass of this task.
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+        @Override
+        protected Date doInBackground(Void... params) {
+            Casl2Ftp ftp = new Casl2Ftp(getApplicationContext());
+            Date date = ftp.getDate();
+            return date;
+        }
+
+
+
+        @Override
+        protected void onPostExecute(Date o) {
+            super.onPostExecute(o);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            if(preferences.contains("LastLoginDate")){
+                Date date = (Date)o;
+                SimpleDateFormat s = new SimpleDateFormat("yyyyMMdd");
+                Date olddate = null;
+                Log.d("Lastlogin",s.toString());
+                try {
+                    date = new SimpleDateFormat("yyyyMMdd").parse(android.text.format.DateFormat.format("yyyyMMdd",date).toString());
+                    olddate = s.parse(preferences.getString("LastLoginDate",""));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                if(Math.abs(date.compareTo(olddate))>0){
+                    mEmailView.setText("");
+                    mPasswordView.setText("");
+                    Toast.makeText(LoginActivity.this,"ログイン情報を消去しました。",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.

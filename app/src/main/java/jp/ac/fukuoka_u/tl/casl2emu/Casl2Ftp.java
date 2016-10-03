@@ -2,7 +2,11 @@ package jp.ac.fukuoka_u.tl.casl2emu;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
+import android.text.format.DateFormat;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -13,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Date;
 
 /**
@@ -30,7 +35,8 @@ public class Casl2Ftp extends ContextWrapper {
             int reply = 0;
             boolean isLogin = false;
             if(myFTPClient==null) myFTPClient = new FTPClient();
-            NTPUDPClient ntpudpClient = new NTPUDPClient();
+            Date date;
+            date = getDate();
 
 
             try {
@@ -43,9 +49,6 @@ public class Casl2Ftp extends ContextWrapper {
                 }//ファイル送信
                 myFTPClient.setDataTimeout(15000);
                 myFTPClient.setSoTimeout(15000);
-                ntpudpClient.open();
-                TimeInfo timeInfo = ntpudpClient.getTime(InetAddress.getByName("ntp.nict.jp"));
-                Date date = new Date(timeInfo.getReturnTime());
                 String s_date = android.text.format.DateFormat.format("yyyyMMddkkmmss",date).toString();
                 //FileInputStream fileInputStream = this.openFileInput(localFile);
                 FileInputStream fileInputStream = new FileInputStream(new File(localFile));
@@ -77,12 +80,29 @@ public class Casl2Ftp extends ContextWrapper {
                     }
                 }
                 myFTPClient = null;
-                if(ntpudpClient!=null){
-                    ntpudpClient.close();
-                }
             }
             return null;
         }
+
+    public Date getDate() {
+        Date date = null;
+        NTPUDPClient ntpudpClient = null;
+        try {
+            ntpudpClient = new NTPUDPClient();
+            TimeInfo timeInfo;
+            ntpudpClient.open();
+            timeInfo = ntpudpClient.getTime(InetAddress.getByName("ntp.nict.jp"));
+            date = new Date(timeInfo.getReturnTime());
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(ntpudpClient!=null)
+            ntpudpClient.close();
+        }
+        return date;
+    }
 
     public boolean login(String remoteserver, int remoteport, String userid, String passwd) throws Exception {
         int reply;
@@ -99,6 +119,10 @@ public class Casl2Ftp extends ContextWrapper {
         if (!myFTPClient.login(userid, passwd)) {
             throw new Exception("Invalid user/password");
         }
+        Date date = getDate();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+        editor.putString("LastLoginDate", DateFormat.format("yyyyMMdd",date).toString());
+        editor.commit();
         //myFTPClient.logout();
         return true;
     }
