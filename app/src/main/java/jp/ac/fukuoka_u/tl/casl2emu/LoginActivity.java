@@ -122,6 +122,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        //if(Build.MODEL.matches("^KF.*")||!mEmailView.getText().toString().matches("TLGUEST")){
         if(Build.MODEL.matches("^KF.*")){
            VerifyLoginTimeTask loginTimeTask = new VerifyLoginTimeTask();
             loginTimeTask.execute();
@@ -369,6 +370,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if(Math.abs(date.compareTo(olddate))>0){
                     mEmailView.setText("");
                     mPasswordView.setText("");
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.remove("userid");
+                    editor.remove("password");
+                    editor.commit();
                     Toast.makeText(LoginActivity.this,"ログイン情報を消去しました。",Toast.LENGTH_SHORT).show();
                 }
             }
