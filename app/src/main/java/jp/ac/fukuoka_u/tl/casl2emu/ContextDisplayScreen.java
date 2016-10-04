@@ -286,6 +286,10 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     for(int i = 0;i<3;i++) register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
                     for(int i =0;i<65536;i++) memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
                     localSetMemoryAdapter(memory.getMemory(),0);
+                    String[] lastopenedfilenamestr= openfilename.get(1).split("(.*/)([^/].)");
+                    String lastopenedfilename= lastopenedfilenamestr[lastopenedfilenamestr.length-1];
+                    Log.d("asa",lastopenedfilename);
+
                 }
 
             }else {
@@ -302,11 +306,12 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         final EditText editView = new EditText(getApplicationContext());
         byte[] bytes = new byte[0];
         Intent intent;
+        final SharedPreferences preferences;
         switch(item.getItemId()){
             case R.id.execution_interval:
                 final Casl2EditText text = new Casl2EditText(getApplicationContext(),3);
                 text.setInputType(InputType.TYPE_CLASS_NUMBER);
-                final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                preferences = PreferenceManager.getDefaultSharedPreferences(this);
                 text.setText(Integer.toString(preferences.getInt(getString(R.string.intervalkey),1000)));
                 new AlertDialog.Builder(this)
                         .setTitle("実行間隔を入力してください。[ms]")
@@ -370,7 +375,12 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 startActivityForResult(intent,1114);
                 break;
             case R.id.action_save:
-                editView.setText(filename);
+                preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                if(preferences.contains("LastSavedFileName")){
+                    editView.setText(preferences.getString("LastSavedFileName",""));
+                }else{
+                    editView.setText(filename);
+                }
                 editView.setTextColor(Color.BLACK);
                 new AlertDialog.Builder(ContextDisplayScreen.this)
                         .setIcon(android.R.drawable.ic_dialog_info)
@@ -407,6 +417,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                     File file = new File(dirname,save_filename);
                                     fileOutputStream = new FileOutputStream(file);
                                     fileOutputStream.write(savedata);
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.putString("LastSavedFileName",save_filename);
+                                    editor.commit();
                                 } catch (FileNotFoundException e) {
                                     e.printStackTrace();
                                 } catch (IOException e) {
