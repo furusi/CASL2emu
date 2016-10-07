@@ -35,8 +35,7 @@ public class Casl2Ftp extends ContextWrapper {
             int reply = 0;
             boolean isLogin = false;
             if(myFTPClient==null) myFTPClient = new FTPClient();
-            Date date;
-            date = getDate();
+            Date uploaddate = getDate();
 
 
             try {
@@ -49,7 +48,7 @@ public class Casl2Ftp extends ContextWrapper {
                 }//ファイル送信
                 myFTPClient.setDataTimeout(15000);
                 myFTPClient.setSoTimeout(15000);
-                String s_date = android.text.format.DateFormat.format("yyyyMMddkkmmss",date).toString();
+                String s_date = android.text.format.DateFormat.format("yyyyMMddkkmmss",uploaddate).toString();
                 //FileInputStream fileInputStream = this.openFileInput(localFile);
                 FileInputStream fileInputStream = new FileInputStream(new File(localFile));
                 myFTPClient.storeFile("~/"+s_date+remotefile.split("/")[1], fileInputStream);
