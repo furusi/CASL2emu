@@ -14,7 +14,7 @@
         android:title="@string/menu_action_jump"
         android:orderInCategory="99"/>
     <item
-        android:id="@+id/action_teishutu"
+        android:id="@+id/action_submit"
         android:title="@string/menu_teishutu"
         android:orderInCategory="104"/>
     <item

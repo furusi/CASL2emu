@@ -1,6 +1,7 @@
 package jp.ac.fukuoka_u.tl.casl2emu;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
@@ -20,6 +21,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -31,6 +33,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -247,20 +250,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         if(data!=null){
             if(data.getData().getPathSegments().get(1).contains(sharedPreferences.getString("userid","null"))) {
                 if(requestCode==1114&&resultCode==RESULT_OK) {
-                    Log.d("furusho",Build.MODEL);
                     if(Build.MODEL.matches("^KF.*")||(sharedPreferences.getString("userid","null").equals("TLGUEST"))){
-                        Intent intent = new Intent(getApplicationContext(),DataSendTask.class);
-                        List<String> openfilename=data.getData().getPathSegments();
-                        ArrayList<String> localfile= new ArrayList<String >();
-                        localfile.add(getString(R.string.server_address));
-                        localfile.add("21");
-                        localfile.add(openfilename.get(1).split(":")[1]);
-                        localfile.add(sharedPreferences.getString("userid","null"));
-                        localfile.add(sharedPreferences.getString("password","null"));
-                        localfile.add("true");
-                        localfile.add(Environment.getExternalStorageDirectory().getPath()+"/"+openfilename.get(1).split(":")[1]);
-                        intent.putExtra("data",localfile);
-                        startService(intent);
+                        startDataSendTask(data, sharedPreferences);
                     }else{
                         Toast.makeText(this,"所定の端末から提出してください。",Toast.LENGTH_SHORT).show();
                     }
@@ -297,6 +288,21 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void startDataSendTask(Intent data, SharedPreferences sharedPreferences) {
+        Intent intent = new Intent(getApplicationContext(),DataSendTask.class);
+        List<String> openfilename=data.getData().getPathSegments();
+        ArrayList<String> localfile= new ArrayList<String >();
+        localfile.add(getString(R.string.server_address));
+        localfile.add("21");
+        localfile.add(openfilename.get(1).split(":")[1]);
+        localfile.add(sharedPreferences.getString("userid","null"));
+        localfile.add(sharedPreferences.getString("password","null"));
+        localfile.add("true");
+        localfile.add(Environment.getExternalStorageDirectory().getPath()+"/"+openfilename.get(1).split(":")[1]);
+        intent.putExtra("data",localfile);
+        startService(intent);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -358,7 +364,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
                             }
                         })
-                        .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                             }
                         })
@@ -369,7 +375,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 intent.setType("*/*");
                 startActivityForResult(intent,5657);
                 break;
-            case R.id.action_teishutu:
+            case R.id.action_submit:
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("*/*");
                 startActivityForResult(intent,1114);
