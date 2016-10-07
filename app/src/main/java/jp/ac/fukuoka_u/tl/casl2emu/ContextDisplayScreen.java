@@ -250,11 +250,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         if(data!=null){
             if(data.getData().getPathSegments().get(1).contains(sharedPreferences.getString("userid","null"))) {
                 if(requestCode==1114&&resultCode==RESULT_OK) {
-                    if(Build.MODEL.matches("^KF.*")||(sharedPreferences.getString("userid","null").equals("TLGUEST"))){
                         startDataSendTask(data, sharedPreferences);
-                    }else{
-                        Toast.makeText(this,"所定の端末から提出してください。",Toast.LENGTH_SHORT).show();
-                    }
                 }
                 else if(requestCode==5657&&resultCode==RESULT_OK){
 
