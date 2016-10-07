@@ -740,15 +740,13 @@ public class Casl2Emulator extends EmulatorCore {
                         double a1 = getFloat(subarray[2], a_kasu1);
                         memory.setMemory((char) (a1/1),tr_positon);
                         break;
-                    case 0xFF0A://rand
+                    case 0xFF14://rand
                         memory_position = register.getGr()[7];
-                        char random_max = register.getGr()[6];
-                        char random_min = register.getGr()[5];
-                        if(random_max<random_min) {
-                            Random random = new Random(System.currentTimeMillis());
-                            short randnum = (short) (random.nextInt(random_max - random_min + 1) + random_min);
-                            memory.setMemory((char) randnum, memory_position);
-                        }
+                        short random_max = Short.MAX_VALUE;
+                        short random_min = Short.MIN_VALUE;
+                        Random random = new Random(System.currentTimeMillis());
+                        short randnum = (short) (random.nextInt(random_max - random_min + 1) + random_min);
+                        register.setGr((char)randnum,7);
                         break;
                     case 0xFF0C://timer
                         memory_position = register.getGr()[7];
