@@ -37,4 +37,18 @@ class Casl2EditText extends EditText {
         }
         return tmp;
     }
+    public static char getChar(String s) throws NumberFormatException{
+        char result;
+        result = Character.forDigit(Integer.parseInt(s,16),16);
+
+        return result;
+
+    }
+    public static short getShort(String s) throws NumberFormatException{
+        short result;
+        result = Short.parseShort(s,16);
+
+        return result;
+
+    }
 }

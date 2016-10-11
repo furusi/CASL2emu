@@ -49,6 +49,7 @@ public class BaseActivity extends AppCompatActivity {
                     }
                     final char position = intent.getCharExtra(context.getString(R.string.memory_position), (char) 0x0000);
                     final char input_length = intent.getCharExtra(context.getString(R.string.input_length), (char) 0x0001);
+                    final int valueType = intent.getIntExtra("ValueType",0);
 
                     final Casl2EditText editView = new Casl2EditText(BaseActivity.this,1);
                     new AlertDialog.Builder(BaseActivity.this)
@@ -61,7 +62,17 @@ public class BaseActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     //入力した文字をトースト出力する
                                     String upperedString =editView.getText().toString().toUpperCase();
-                                    Pattern pattern = Pattern.compile(getString(R.string.svc_input_pattern));
+                                    String patternstr="";
+                                    switch(valueType){
+                                        case 0xFF00:
+                                            break;
+                                        case 0xFF01:
+                                            break;
+                                        default:
+                                            patternstr = getString(R.string.svc_input_pattern);
+
+                                    }
+                                    Pattern pattern = Pattern.compile(patternstr);
                                     Matcher matcher = pattern.matcher(upperedString);
                                     if (matcher.matches()) {
                                         //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
