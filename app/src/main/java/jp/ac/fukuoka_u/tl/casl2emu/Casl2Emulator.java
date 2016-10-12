@@ -521,15 +521,17 @@ public class Casl2Emulator extends EmulatorCore {
             case 0x7100://POP
                 //データに基づいて処理する
                 wordCount = 1;
-                tmp = memory.getMemoryArray(register.getPc(), wordCount);
-                //spの指すアドレスを取得
-                spaddr = register.getSp();
-                //そのアドレスが指す値をgrへ格納
-                register.setGr(memory.getMemory(spaddr),getGrNumber(tmp));
-                //spに1を加算して格納
-                register.setSp((char) (spaddr+1));
+                if(register.getSp()>0xFEFF) {
+                    tmp = memory.getMemoryArray(register.getPc(), wordCount);
+                    //spの指すアドレスを取得
+                    spaddr = register.getSp();
+                    //そのアドレスが指す値をgrへ格納
+                    register.setGr(memory.getMemory(spaddr), getGrNumber(tmp));
+                    //spに1を加算して格納
+                    register.setSp((char) (spaddr + 1));
 
-                register.setPc((char) (cpc + wordCount));
+                    register.setPc((char) (cpc + wordCount));
+                }
                 break;
             case 0x8000://CALL
                 //データに基づいて処理する
