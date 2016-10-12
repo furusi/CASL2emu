@@ -21,6 +21,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private boolean activityVisible=false;
     Casl2Memory memory;
+    Casl2Register register;
     Casl2Emulator emulator;
     ArrayList<String> stringArrayList;
     ArrayAdapter<String> arrayAdapter;
@@ -34,6 +35,7 @@ public class BaseActivity extends AppCompatActivity {
          */
         memory = Casl2Memory.getInstance();
         emulator = Casl2Emulator.getInstance(getApplicationContext());
+        register = Casl2Register.getInstance();
 
 
 
@@ -49,9 +51,17 @@ public class BaseActivity extends AppCompatActivity {
                     }
                     final char position = intent.getCharExtra(context.getString(R.string.memory_position), (char) 0x0000);
                     final char input_length = intent.getCharExtra(context.getString(R.string.input_length), (char) 0x0001);
-                    final int valueType = intent.getIntExtra("ValueType",0);
+                    final int valueType = intent.getIntExtra(getString(R.string.ValueType),0);
 
                     final Casl2EditText editView = new Casl2EditText(BaseActivity.this,1);
+                    switch (valueType){
+                        case 0xFF00:
+                            editView.setInputType(context,4);
+                            break;
+                        case 0xFF01:
+                            editView.setInputType(context,3);
+                            break;
+                    }
                     new AlertDialog.Builder(BaseActivity.this)
                             .setIcon(android.R.drawable.ic_dialog_info)
                             .setView(R.layout.input_text_dialog)
@@ -64,11 +74,11 @@ public class BaseActivity extends AppCompatActivity {
                                     String upperedString =editView.getText().toString().toUpperCase();
                                     String patternstr="";
                                     switch(valueType){
-                                        case 0xFF00:
+                                        case 0xFF00://符号付き
+                                        case 0xFF01://符号無し
+                                            patternstr = "-?\\d*";
                                             break;
-                                        case 0xFF01:
-                                            break;
-                                        default:
+                                        case 0xFF02:
                                             patternstr = getString(R.string.svc_input_pattern);
 
                                     }
@@ -78,13 +88,34 @@ public class BaseActivity extends AppCompatActivity {
                                         //Toast.makeText(ContextDisplayScreen.this, upperedString, Toast.LENGTH_LONG).show();
                                         char[] input = Casl2EditText.getHexChars(upperedString," ");
                                         char[] chars = new char[input_length];
-                                        if(chars.length>=input.length) {
-                                            Arrays.fill(chars, (char) 0x0);
-                                            for (int i = 0; i < input.length; i++) {
+                                        switch(valueType){
+                                            case 0xFF00://符号付き
+                                                short s = Short.parseShort(upperedString);
+                                                if (s >= Short.MIN_VALUE&&s<=Short.MAX_VALUE) {
+                                                    register.setGr((char) s, position);
+                                                }
+                                                break;
 
-                                                chars[i] = input[i];
-                                            }
-                                            refreshMemory(chars, position);
+                                            case 0xFF01://符号無し
+                                                input[0] = (char) Integer.parseInt(upperedString);
+                                                if (input[0] >= Character.MIN_VALUE&&input[0]<=Character.MAX_VALUE){
+                                                    register.setGr(input[0],position);
+                                                }
+                                                break;
+                                            case 0xFF02:
+                                                if(chars.length>=input.length) {
+                                                    Arrays.fill(chars, (char) 0x0);
+                                                    for (int i = 0; i < input.length; i++) {
+
+                                                        chars[i] = input[i];
+                                                    }
+                                                }
+                                                refreshMemory(chars, position);
+                                                break;
+                                        }
+                                        if(emulator.isInterruptflag()){
+                                            emulator.setRunflag(true);
+                                            emulator.setInterruptflag(false);
                                             emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey), 1000));
                                         }
 

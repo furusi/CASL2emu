@@ -57,4 +57,5 @@
     <string name="BUTTON_VISIBILITY">button_visibility</string>
     <string name="BUTTON_INPUT_ADDRESS">button_input_address</string>
     <string name="input_length">input_length</string>
+    <string name="ValueType">ValueType</string>
 </resources>

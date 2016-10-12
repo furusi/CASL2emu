@@ -25,6 +25,7 @@ public class Casl2Emulator extends EmulatorCore {
     private static Context context;
     static Intent broadcastIntent= new Intent();
     boolean interruptflag =false;
+    boolean runflag = false;
 
     private Casl2Emulator() {
     }
@@ -50,7 +51,16 @@ public class Casl2Emulator extends EmulatorCore {
         return interruptflag;
     }
 
+    public boolean isRunflag() {
+        return runflag;
+    }
+
+    public void setRunflag(boolean runflag) {
+        this.runflag = runflag;
+    }
+
     public void setInterruptflag(boolean interruptflag) {
+        runflag = false;
         this.interruptflag = interruptflag;
     }
 
@@ -556,8 +566,42 @@ public class Casl2Emulator extends EmulatorCore {
                 char memory_position;
                 char count;
                 char[] subarray;
+                Intent inputintent = new Intent(context.getString(R.string.action_svc_input));
                 //spの指すアドレスを取得
                 switch(jikkou){
+                    case 0xFF00://符号付き値input
+                        if(isRunflag()){
+                            setRunflag(false);
+                            setInterruptflag(true);
+                        }
+                        memory_position = 7;
+                        inputintent.putExtra(context.getString(R.string.memory_position),memory_position);
+                        inputintent.putExtra(context.getString(R.string.ValueType),0xFF00);
+                        context.sendBroadcast(inputintent);
+                        break;
+                    case 0xFF01://符号なし値input
+                        if(isRunflag()){
+                            setRunflag(false);
+                            setInterruptflag(true);
+                        }
+                        memory_position = 7;
+                        inputintent.putExtra(context.getString(R.string.memory_position),memory_position);
+                        inputintent.putExtra(context.getString(R.string.ValueType),0xFF01);
+                        context.sendBroadcast(inputintent);
+                        break;
+                    case 0xFF02://input
+                        if(isRunflag()){
+                            setRunflag(false);
+                            setInterruptflag(true);
+                        }
+                        memory_position = register.getGr()[7];
+                        char length = register.getGr()[6];
+                        inputintent.putExtra(context.getString(R.string.memory_position),memory_position);
+                        inputintent.putExtra(context.getString(R.string.input_length),length);
+                        inputintent.putExtra(context.getString(R.string.ValueType),0xFF02);
+                        context.sendBroadcast(inputintent);
+                        break;
+
                     case 0xFF03://OUT
                         //r7を先頭アドレス、r6を文字数(wordの数ではない)とする。
                         memory_position = register.getGr()[7];
@@ -629,7 +673,7 @@ public class Casl2Emulator extends EmulatorCore {
                         int width;
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+7);
                         switch (subarray[0]){//種類別の処理
-                            case 1://circle
+                            case 3://circle
                                 float cx = (short)subarray[1];
                                 float cy = (short)subarray[2];
                                 float radius = (short)subarray[3];
@@ -646,7 +690,7 @@ public class Casl2Emulator extends EmulatorCore {
                                 color = subarray[5];
                                 outputBuffer.addDrawObjectArray(2,rect,color,1);
                                 break;
-                            case 3://line
+                            case 1://line
                                 float sx=(short)subarray[1];
                                 float sy=(short)subarray[2];
                                 float ex=(short)subarray[3];
@@ -656,7 +700,7 @@ public class Casl2Emulator extends EmulatorCore {
                                 width = subarray[6];
                                 outputBuffer.addDrawObjectArray(3,lp,color,width);
                                 break;
-                            case 4://point
+                            case 0://point
                                 float x=(short)subarray[1];
                                 float y=(short)subarray[2];
                                 float[]pp = {x,y};
@@ -678,7 +722,7 @@ public class Casl2Emulator extends EmulatorCore {
                         for(int i =0;i<subarray.length;i++){
                             //outputBuffer.getSoundList().add(new SoundDto(generateSound(outputBuffer.getSoundGenerator(),subarray[2*i], subarray[2*i+1]), subarray[2*i+1]));
 
-                            jetPlayer.queueJetSegment(subarray[i], -1, 0, 0, 0, (byte) 0);
+                            jetPlayer.queueJetSegment(memory_position, -1, 0, 0, 0, (byte) 0);
                             jetPlayer.play();
                         }
                         break;
@@ -757,15 +801,6 @@ public class Casl2Emulator extends EmulatorCore {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        break;
-                    case 0xFF02://input
-                        interruptflag=true;
-                        memory_position = register.getGr()[7];
-                        char length = register.getGr()[6];
-                        Intent inputintent = new Intent(context.getString(R.string.action_svc_input));
-                        inputintent.putExtra(context.getString(R.string.memory_position),memory_position);
-                        inputintent.putExtra(context.getString(R.string.input_length),length);
-                        context.sendBroadcast(inputintent);
                         break;
                     case 0xFF70://非同期入力（ボタン）
                         /**
@@ -960,6 +995,7 @@ public class Casl2Emulator extends EmulatorCore {
     public void run(final int interval){
         if(handler==null){
 
+            runflag = true;
             handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
