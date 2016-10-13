@@ -19,6 +19,9 @@ public class Casl2Register extends BaseObservable{
     private char fr[] = new char[3];
 
 
+    static public void initializeInstance() {
+        instance = new Casl2Register();
+    }
     public static Casl2Register getInstance() {
         return instance;
     }

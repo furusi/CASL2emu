@@ -34,8 +34,8 @@ public class BaseActivity extends AppCompatActivity {
          *
          */
         memory = Casl2Memory.getInstance();
-        emulator = Casl2Emulator.getInstance(getApplicationContext());
         register = Casl2Register.getInstance();
+        emulator = Casl2Emulator.getInstance(getApplicationContext());
 
 
 

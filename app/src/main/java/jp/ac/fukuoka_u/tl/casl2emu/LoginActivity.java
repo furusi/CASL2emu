@@ -428,6 +428,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 editor.putString("userid",mEmail.toUpperCase());
                 editor.putString("password",mPassword);
                 editor.commit();
+                Casl2Register.initializeInstance();
+                Casl2Emulator.initializeInstance();
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
             } else {
                 //mPasswordView.setError(getString(R.string.error_incorrect_password));

@@ -14,7 +14,7 @@ import java.util.Random;
 /**
  * Created by furusho on 2016/07/09.
  */
-public class Casl2Emulator extends EmulatorCore {
+public class Casl2Emulator {
     private static Casl2Emulator instance = new Casl2Emulator();
     Casl2Memory memory = Casl2Memory.getInstance();
     static OutputBuffer outputBuffer = OutputBuffer.getInstance();
@@ -28,6 +28,10 @@ public class Casl2Emulator extends EmulatorCore {
     boolean runflag = false;
 
     private Casl2Emulator() {
+    }
+
+    static public void initializeInstance() {
+        instance = new Casl2Emulator();
     }
 
    static public Casl2Emulator getInstance(Context context1){

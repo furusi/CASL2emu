@@ -23,6 +23,15 @@ public class Casl2Memory extends BaseObservable{
         Arrays.fill(memory,'0');
     }
 
+
+    static public void initializeInstance() {
+        instance = new Casl2Memory();
+    }
+
+    static Casl2Memory getInstance(){
+        return instance;
+    }
+
     public char[] getMemory() {
         return memory;
     }
@@ -57,8 +66,5 @@ public class Casl2Memory extends BaseObservable{
         memory[position]=data;
     }
 
-    static Casl2Memory getInstance(){
-       return instance;
-    }
 
 }
