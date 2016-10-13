@@ -51,7 +51,7 @@ public class Casl2Ftp extends ContextWrapper {
                 String s_date = android.text.format.DateFormat.format("yyyyMMddkkmmss",uploaddate).toString();
                 //FileInputStream fileInputStream = this.openFileInput(localFile);
                 FileInputStream fileInputStream = new FileInputStream(new File(localFile));
-                myFTPClient.storeFile("~/"+s_date+remotefile.split("/")[1], fileInputStream);
+                myFTPClient.storeFile("~/"+s_date+remotefile.split("/")[2], fileInputStream);
                 reply = myFTPClient.getReplyCode();
                 if (!FTPReply.isPositiveCompletion(reply)) {
                     throw new Exception("Send Status:" + String.valueOf(reply));

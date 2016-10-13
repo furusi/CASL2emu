@@ -34,8 +34,10 @@ public class Casl2Register extends BaseObservable{
         notifyPropertyChanged(BR.gr);
     }
     public void setGr(char data,int position){
-        gr[position]= data;
-        notifyPropertyChanged(BR.gr);
+        if(position<gr.length){
+            gr[position]= data;
+            notifyPropertyChanged(BR.gr);
+        }
     }
 
     public char getPc() {

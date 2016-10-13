@@ -521,7 +521,7 @@ public class Casl2Emulator extends EmulatorCore {
             case 0x7100://POP
                 //データに基づいて処理する
                 wordCount = 1;
-                if(register.getSp()>0xFEFF) {
+                if(register.getSp()<0xFEFF) {
                     tmp = memory.getMemoryArray(register.getPc(), wordCount);
                     //spの指すアドレスを取得
                     spaddr = register.getSp();
@@ -721,12 +721,8 @@ public class Casl2Emulator extends EmulatorCore {
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
                         jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
                         jetPlayer.clearQueue();
-                        for(int i =0;i<subarray.length;i++){
-                            //outputBuffer.getSoundList().add(new SoundDto(generateSound(outputBuffer.getSoundGenerator(),subarray[2*i], subarray[2*i+1]), subarray[2*i+1]));
-
-                            jetPlayer.queueJetSegment(memory_position, -1, 0, 0, 0, (byte) 0);
-                            jetPlayer.play();
-                        }
+                        jetPlayer.queueJetSegment(memory_position, -1, 0, 0, 0, (byte) 0);
+                        jetPlayer.play();
                         break;
                     case 0xFF20://浮動小数点数演算
                         //先頭アドレス:gr7
