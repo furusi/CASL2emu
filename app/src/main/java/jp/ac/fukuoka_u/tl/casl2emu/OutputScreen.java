@@ -65,7 +65,6 @@ public class OutputScreen extends BaseActivity {
             }
         });
         final Intent intent = new Intent(getString(R.string.action_memory_refresh));
-        //TODO:ボタンの可視性を即時反映させる
         binding.asyncbutton1.setVisibility(Button.GONE);
         binding.asyncbutton1.setVisibility(outputBuffer.getButtonconfig(0).getVisibility());
         binding.asyncbutton1.setOnClickListener(new View.OnClickListener() {
