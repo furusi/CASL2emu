@@ -26,6 +26,7 @@ public class OutputScreen extends BaseActivity {
     IntentFilter filter;
     RelativeLayout relativeLayout;
     Handler handler;
+    BroadcastReceiver opsreceiver;
 
     @SuppressWarnings("WrongConstant")
     @Override
@@ -110,10 +111,21 @@ public class OutputScreen extends BaseActivity {
             }
         });
 
-        BroadcastReceiver opsreceiver = new BroadcastReceiver() {
+
+    }
+
+
+
+
+    @SuppressWarnings("WrongConstant")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        opsreceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(intent.getAction().equals(getString(R.string.action_view_refresh))){
+                if(intent.getAction().equals(getString(jp.ac.fukuoka_u.tl.casl2emu.R.string.action_view_refresh))){
+                    final ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(OutputScreen.this, jp.ac.fukuoka_u.tl.casl2emu.R.layout.activity_output_screen);
                     binding.output.setText(outputBuffer.getData());
                     refresh();
                 }
@@ -121,13 +133,15 @@ public class OutputScreen extends BaseActivity {
         };
         filter = new IntentFilter(getString(R.string.action_view_refresh));
         registerReceiver(opsreceiver,filter);
-
     }
 
-    @SuppressWarnings("WrongConstant")
+    /**
+     * Dispatch onPause() to fragments.
+     */
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(opsreceiver);
     }
 
     private void refresh(){
