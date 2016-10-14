@@ -649,9 +649,10 @@ public class Casl2Emulator {
                          */
                         sr[0] = (short) register.getGr()[7];
                         smember = (short) register.getGr()[6];
-                        ians = (int) checkShortRange(sr[0]/smember);
-                        register.setGr((char) ((ians&0xFFFF0000)>>16),6);
-                        register.setGr((char) ((ians&0x0000FFFF)),7);
+                        ians = (short) checkShortRange(smember/sr[0]);
+                        int amari = smember%sr[0];
+                        register.setGr((char) ians,6);
+                        register.setGr((char) amari,7);
                         break;
                     case 0xFF13://論理除算
                         /**
@@ -660,9 +661,10 @@ public class Casl2Emulator {
                          */
                         r1 = register.getGr()[7];
                         cmember = register.getGr()[6];
-                        ians = (int) checkCharRange(r1/cmember);
-                        register.setGr((char) ((ians&0xFFFF0000)>>16),6);
-                        register.setGr((char) ((ians&0x00FFFF)),7);
+                        ians = (char) checkCharRange(cmember/r1);
+                        char amari1 = (char) (cmember%r1);
+                        register.setGr((char) ians,6);
+                        register.setGr(amari1,7);
                         break;
                     case 0xFF30://描画
                         //先頭アドレス:gr7
