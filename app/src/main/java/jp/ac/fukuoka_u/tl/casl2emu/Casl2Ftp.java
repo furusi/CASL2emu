@@ -108,6 +108,9 @@ public class Casl2Ftp extends ContextWrapper {
         if(myFTPClient==null)
             myFTPClient=new FTPClient();
         myFTPClient.setConnectTimeout(5000);
+        if(userid.equals("")){
+            return false;
+        }
         //接続
         myFTPClient.connect(remoteserver, remoteport);
         reply = myFTPClient.getReplyCode();

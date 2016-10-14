@@ -431,7 +431,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Casl2Register.initializeInstance();
                 Casl2Emulator.initializeInstance();
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
-            } else {
+            } else if (mEmail.toUpperCase().equals("TLGUEST")){
+                finish();
+                final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("userid",mEmail.toUpperCase());
+                editor.putString("password",mPassword);
+                editor.commit();
+                Casl2Register.initializeInstance();
+                Casl2Emulator.initializeInstance();
+                startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
+
+            }
+            else {
                 //mPasswordView.setError(getString(R.string.error_incorrect_password));
                 Toast.makeText(LoginActivity.this,"ログインできませんでした。",Toast.LENGTH_SHORT).show();
                 //mPasswordView.requestFocus();
