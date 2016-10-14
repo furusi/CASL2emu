@@ -26,10 +26,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -62,6 +64,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     ListView listView;
     Casl2Register register;
     private static final int REQUEST_WRITE_STORAGE = 112;
+    BroadcastReceiver refreshReceiver;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -76,7 +79,21 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
     private void showTextDialog(String text, final int rownum) {
         final Casl2EditText editView = new Casl2EditText(ContextDisplayScreen.this,1);
+        final InputMethodManager inputMethodManager =  (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         editView.setText(text);
+        editView.setMaxLines(1);
+        editView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                    //キーボードを閉じる
+                    inputMethodManager.hideSoftInputFromWindow(editView.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+
+                    return true;
+                }
+                return false;
+            }
+        });
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(R.layout.input_text_dialog)
@@ -225,7 +242,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 startActivity(intent);
             }
         });
-        BroadcastReceiver refreshReceiver = new BroadcastReceiver() {
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 refreshMemoryPane(intent.getCharExtra(getString(R.string.BUTTON_INPUT_ADDRESS),(char)0)/4);
@@ -233,7 +256,12 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         };
         IntentFilter filter = new IntentFilter(getString(R.string.action_memory_refresh));
         registerReceiver(refreshReceiver,filter);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(refreshReceiver);
     }
 
     @Override
@@ -523,6 +551,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             @Override
             public void onClick(View v) {
                 final Casl2EditText casl2EditText;
+                final InputMethodManager inputMethodManager =  (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 if(id<10){
                     casl2EditText = new Casl2EditText(ContextDisplayScreen.this,1);
                 }else {
@@ -531,6 +560,18 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 TextView textview = (TextView) v;
                 //Log.d("dbg",textview.getAccessibilityClassName().toString());
                 casl2EditText.setText(textview.getText());
+                casl2EditText.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        if((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                            //キーボードを閉じる
+                            inputMethodManager.hideSoftInputFromWindow(casl2EditText.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+
+                            return true;
+                        }
+                        return false;
+                    }
+                });
                 new AlertDialog.Builder(ContextDisplayScreen.this)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(R.layout.input_text_dialog)
