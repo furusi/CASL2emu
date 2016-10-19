@@ -233,6 +233,15 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 emulator.waitEmu();
             }
         });
+        binding.waitbutton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                emulator.waitEmu();
+                register.setPc((char) 0x0000);
+                Toast.makeText(ContextDisplayScreen.this,"PRを0x0000にしました。",Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         binding.outputscreenbutton.setOnClickListener(new View.OnClickListener() {
             @Override
