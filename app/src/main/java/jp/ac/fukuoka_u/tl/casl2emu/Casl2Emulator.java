@@ -428,7 +428,7 @@ public class Casl2Emulator {
                 jikkou = getJikkouAddress(instArray);
 
                 //SFが1であれば実行アドレスをPCに代入
-                if(fr[1]==1){
+                if(register.getFr()[1]==1){
                     register.setPc(jikkou);
                 }else {//0ならば次へ進む
                     register.setPc((char)(cpc+wordCount));
@@ -442,7 +442,7 @@ public class Casl2Emulator {
                 jikkou = getJikkouAddress(instArray);
 
                 //ZFが0であれば実行アドレスをPCに代入
-                if (fr[2] == 0) {
+                if (register.getFr()[2] == 0) {
                     register.setPc(jikkou);
                 } else {//1ならば次へ進む
                     register.setPc((char) (cpc + wordCount));
@@ -456,7 +456,7 @@ public class Casl2Emulator {
                 jikkou = getJikkouAddress(instArray);
 
                 //ZFが1であれば実行アドレスをPCに代入
-                if (fr[2] == 1) {
+                if (register.getFr()[2] == 1) {
                     register.setPc(jikkou);
                 } else {//0ならば次へ進む
                     register.setPc((char) (cpc + wordCount));
@@ -480,7 +480,7 @@ public class Casl2Emulator {
                 jikkou = getJikkouAddress(instArray);
 
                 //SFZFがともに1であれば実行アドレスをPCに代入
-                if (fr[1]==1&&fr[2] == 1) {
+                if (register.getFr()[1]==0&&register.getFr()[2] == 0) {
                     register.setPc(jikkou);
                 } else {//0ならば次へ進む
                     register.setPc((char) (cpc + wordCount));
@@ -494,7 +494,7 @@ public class Casl2Emulator {
                 jikkou = getJikkouAddress(instArray);
 
                 //OFが1であれば実行アドレスをPCに代入
-                if (fr[0] == 1) {
+                if (register.getFr()[0] == 1) {
                     register.setPc(jikkou);
                 } else {//0ならば次へ進む
                     register.setPc((char) (cpc + wordCount));
