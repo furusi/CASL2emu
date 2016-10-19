@@ -344,7 +344,7 @@ public class Casl2Emulator {
                 //実行アドレスを取得
                 jikkou = getJikkouAddress(instArray);
                 //加算数を取得
-                smember = (short) memory.getMemory(jikkou);
+                smember = (short) jikkou;
                 //grの中身を取得
                 sr[0] = (short) register.getGr()[getGrNumber(instArray)];
                 //rの記号を保持
@@ -367,7 +367,7 @@ public class Casl2Emulator {
                 //実行アドレスを取得
                 jikkou = getJikkouAddress(instArray);
                 //加算数を取得
-                smember = (short) memory.getMemory(jikkou);
+                smember = (short) jikkou;
                 //grの中身を取得
                 sr[0] = (short) register.getGr()[getGrNumber(instArray)];
                 //rの記号を保持
@@ -380,14 +380,14 @@ public class Casl2Emulator {
                 //pcが更新される
                 setRegisterAfterClaculation(cpc,wordCount,instArray, (char) sans);
                 break;
-            case 0x5200://SLA
+            case 0x5200://SLL
                 //データに基づいて処理する
                 wordCount=2;
                 instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 jikkou = getJikkouAddress(instArray);
                 //加算数を取得
-                cmember = memory.getMemory(jikkou);
+                cmember = jikkou;
                 //grの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 //rの記号を保持
@@ -399,14 +399,14 @@ public class Casl2Emulator {
                 fr[0]= (char) ((r_before>>(15-cmember))&0x0001);
                 setRegisterAfterClaculation(cpc,wordCount,instArray,data);
                 break;
-            case 0x5300://SRA
+            case 0x5300://SRL
                 //データに基づいて処理する
                 wordCount=2;
                 instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 jikkou = getJikkouAddress(instArray);
                 //加算数を取得
-                cmember = memory.getMemory(jikkou);
+                cmember = jikkou;
                 //grの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 //rの記号を保持
@@ -753,13 +753,13 @@ public class Casl2Emulator {
                                 r=(float)checkFloatRange(Math.pow(a,b));
                                 break;
                             case 0x5://正弦
-                                r=(float)checkFloatRange(Math.sin(a));
+                                r=(float)checkFloatRange(Math.sin((a/180)*Math.PI));
                                 break;
                             case 0x6://余弦
-                                r=(float)checkFloatRange(Math.cos(a));
+                                r=(float)checkFloatRange(Math.cos((a/180)*Math.PI));
                                 break;
                             case 0x7://正接
-                                r=(float)checkFloatRange(Math.tan(a));
+                                r=(float)checkFloatRange(Math.tan((a/180)*Math.PI));
                                 break;
                             default:
                                 r=(float)0;
