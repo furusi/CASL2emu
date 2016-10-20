@@ -602,6 +602,7 @@ public class Casl2Emulator {
 
                     case 0xFF03://OUT
                         //r7を先頭アドレス、r6を文字数(wordの数ではない)とする。
+                        //TODO:1wordにつき1文字へ変更
                         memory_position = register.getGr()[7];
                         count = register.getGr()[6];
                         //文字数分のデータを読み取りStringに変換。
