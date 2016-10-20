@@ -66,7 +66,9 @@ public class Casl2Register extends BaseObservable{
     }
 
     public void setFr(char[] fr) {
-        this.fr = fr;
+        this.fr[0] = fr[0];
+        this.fr[1] = fr[1];
+        this.fr[2] = fr[2];
         notifyPropertyChanged(BR.fr);
     }
     public void setFr(char data,int position) {
