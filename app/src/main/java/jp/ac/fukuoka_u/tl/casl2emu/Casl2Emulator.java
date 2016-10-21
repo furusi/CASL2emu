@@ -602,24 +602,20 @@ public class Casl2Emulator {
 
                     case 0xFF03://OUT
                         //r7を先頭アドレス、r6を文字数(wordの数ではない)とする。
-                        //TODO:1wordにつき1文字へ変更
                         memory_position = register.getGr()[7];
                         count = register.getGr()[6];
                         //文字数分のデータを読み取りStringに変換。
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
-                        byte[] bytes = new byte[subarray.length*2];
+                        byte[] chardataStr = new byte[subarray.length];
+                        byte chardata = 0;
                         for(int i =0;i<subarray.length;i++){
 
-                            byte[] _bytes = new byte[2];
-                            _bytes[0] = (byte) (subarray[i]>>8);
-                            _bytes[1] = (byte) (subarray[i]&0x00FF);
-                            for(int j=0;j<2;j++){
-                                if((_bytes[j]>=0x20&&_bytes[j]<=0x7E)||_bytes[j]==0x0a){
-                                   bytes[2*i+j]=_bytes[j];
-                                }
+                            chardata = (byte) (subarray[i]&0x00FF);
+                            if((chardata>=0x20&&chardata<=0x7E)||chardata==0x0a){
+                               chardataStr[i]=chardata;
                             }
                         }
-                        outputBuffer.addData(new String(bytes));
+                        outputBuffer.addData(new String(chardataStr));
                         break;
                     case 0xFF10://算術乗算
                         /**
