@@ -20,11 +20,16 @@ public class OutputBuffer extends BaseObservable{
     private static OutputBuffer instance = new OutputBuffer();
     private Casl2PaintView casl2PaintView;
     private ArrayList<Casl2Figure> drawObjectArray = new ArrayList<Casl2Figure>();
-    private ArrayList<Casl2AsyncInputConfig> buttonconfig = new ArrayList<Casl2AsyncInputConfig>();
+    private ArrayList<Casl2AsyncInputConfig> buttonconfig;
+
     private OutputBuffer() {
 
-        for(int i=0;i<4;i++){
-            buttonconfig.add(new Casl2AsyncInputConfig(i));
+
+        if(buttonconfig==null){
+            buttonconfig = new ArrayList<Casl2AsyncInputConfig>();
+            for(int i=0;i<4;i++){
+                buttonconfig.add(new Casl2AsyncInputConfig(i));
+            }
         }
 
     }

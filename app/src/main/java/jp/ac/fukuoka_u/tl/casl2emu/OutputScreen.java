@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityOutputScreenBinding;
 
@@ -39,17 +40,19 @@ public class OutputScreen extends BaseActivity {
         paintView = outputBuffer.getCasl2PaintView();
         handler = new Handler();
         relativeLayout = (RelativeLayout) findViewById(R.id.out_relativelayout);
-        final ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
-        final RelativeLayout layout = binding.outRelativelayout;
+        final ActivityOutputScreenBinding binding =
+                DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
         //binding.output.setText("Casl2emu is LEADY");
         //outputBuffer.setData("CASL2Emu is ready!!!!");
         binding.setOutputbuffer(outputBuffer);
         outputBuffer.setCasl2PaintView(getApplicationContext());
-        addContentView(paintView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        addContentView(paintView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
         binding.runbuttonoutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
+                emulator.run(PreferenceManager.getDefaultSharedPreferences(
+                        getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
             }
         });
         binding.stepbuttonoutput.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +114,6 @@ public class OutputScreen extends BaseActivity {
             }
         });
 
-
     }
 
 
@@ -125,7 +127,9 @@ public class OutputScreen extends BaseActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(intent.getAction().equals(getString(jp.ac.fukuoka_u.tl.casl2emu.R.string.action_view_refresh))){
-                    final ActivityOutputScreenBinding binding = DataBindingUtil.setContentView(OutputScreen.this, jp.ac.fukuoka_u.tl.casl2emu.R.layout.activity_output_screen);
+                    final ActivityOutputScreenBinding binding =
+                            DataBindingUtil.setContentView(OutputScreen.this,
+                                    jp.ac.fukuoka_u.tl.casl2emu.R.layout.activity_output_screen);
                     binding.output.setText(outputBuffer.getData());
                     refresh();
                 }
@@ -152,14 +156,10 @@ public class OutputScreen extends BaseActivity {
 
                 RelativeLayout layout= (RelativeLayout)findViewById(R.id.out_relativelayout);
                 layout.invalidate();
+
             }
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //textView.setText(Joiner.on("\n").skipNulls().join(code));
-    }
 
 }
