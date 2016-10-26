@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityOutputScreenBinding;
@@ -123,20 +124,20 @@ public class OutputScreen extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         opsreceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(intent.getAction().equals(getString(jp.ac.fukuoka_u.tl.casl2emu.R.string.action_view_refresh))){
-                    final ActivityOutputScreenBinding binding =
-                            DataBindingUtil.setContentView(OutputScreen.this,
-                                    jp.ac.fukuoka_u.tl.casl2emu.R.layout.activity_output_screen);
-                    binding.output.setText(outputBuffer.getData());
-                    refresh();
+                    TextView output = (TextView)findViewById(R.id.output);
+                    output.setText(outputBuffer.getData());
+                    output.invalidate();
                 }
             }
         };
         filter = new IntentFilter(getString(R.string.action_view_refresh));
         registerReceiver(opsreceiver,filter);
+
     }
 
     /**
@@ -146,19 +147,6 @@ public class OutputScreen extends BaseActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(opsreceiver);
-    }
-
-    private void refresh(){
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                RelativeLayout layout= (RelativeLayout)findViewById(R.id.out_relativelayout);
-                layout.invalidate();
-
-            }
-        });
     }
 
 
