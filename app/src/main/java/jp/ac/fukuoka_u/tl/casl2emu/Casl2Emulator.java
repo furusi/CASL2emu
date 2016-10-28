@@ -848,6 +848,7 @@ public class Casl2Emulator {
                 register.setPc((char) (cpc + wordCount));
                 break;
             default:
+                //Toast("不正な命令です。");
         }
         context.sendBroadcast(broadcastIntent);
 
@@ -862,7 +863,7 @@ public class Casl2Emulator {
         short r_sisu=0;
 
         float abs_r =Math.abs(r);
-        if(abs_r<0.1) {
+        if(abs_r<0.1) {//絶対値が0.1以上1未満になるまで乗除を繰り返す
             for (short i = 0; i < 37; i++) {
                 if (Math.abs(r) >= 0.1) {
                     r_sisu = (short) (i*-1);

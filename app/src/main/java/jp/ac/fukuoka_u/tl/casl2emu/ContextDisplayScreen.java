@@ -371,7 +371,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         .show();
             case R.id.output_initialize:
                 OutputBuffer.getInstance().setData("");
-                OutputBuffer.getInstance().setDrawObjectArray(new ArrayList<Casl2Figure>());
+                OutputBuffer.getInstance().clearDrawObjectArray();
                 break;
             case R.id.action_jump:
                 final Casl2EditText memory_position = new Casl2EditText(getApplicationContext(),1);

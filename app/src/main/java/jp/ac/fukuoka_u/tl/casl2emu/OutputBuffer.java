@@ -78,6 +78,9 @@ public class OutputBuffer extends BaseObservable{
         return drawObjectArray;
     }
 
+    public void clearDrawObjectArray() {
+        this.drawObjectArray.clear();
+    }
     public void setDrawObjectArray(ArrayList<Casl2Figure> drawObjectArray) {
         this.drawObjectArray = drawObjectArray;
     }
