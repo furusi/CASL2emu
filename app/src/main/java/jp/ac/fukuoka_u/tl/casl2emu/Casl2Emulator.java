@@ -744,7 +744,7 @@ public class Casl2Emulator {
                         jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
                         jetPlayer.clearQueue();
                         if(ontei<7){
-                            jetPlayer.queueJetSegment(memory_position, -1, 0, 0, 0, (byte) 0);
+                            jetPlayer.queueJetSegment(ontei, -1, 0, 0, 0, (byte) 0);
                             jetPlayer.play();
                         }
                         break;
@@ -760,7 +760,7 @@ public class Casl2Emulator {
                         double a = getFloat(subarray[2], a_kasu);
                         char[] b_kasu = Arrays.copyOfRange(subarray,3,5);
                         double b = getFloat(subarray[5], b_kasu);
-                        char r_position = (char) (memory_position+7);
+                        char r_position = (char) (memory_position+6);
                         float r;
                         switch (op){
                             case 0x0://足し算
@@ -794,7 +794,7 @@ public class Casl2Emulator {
                         char[] r_array = getFloatArray(r);
                         memory.setMemoryArray(r_array,r_position);
                         break;
-                    case 0xFF08://浮動小数点数変換
+                    case 0xFF22://浮動小数点数変換
                         //先頭アドレス:gr7
                         //変換後代入先アドレス:gr6
                         //仮数部は4*7=28ビットで表す(2word)。符号は-の時F。指数部は1word使う。
@@ -803,7 +803,7 @@ public class Casl2Emulator {
                         char tr_positon = register.getGr()[6];
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
                         char[] a_kasu1 = Arrays.copyOfRange(subarray,0,2);
-                        double a1 = getFloat(subarray[2], a_kasu1);
+                        float a1 = (float) getFloat(subarray[2], a_kasu1);
                         memory.setMemory((char) (a1/1),tr_positon);
                         break;
                     case 0xFF14://rand
@@ -884,7 +884,7 @@ public class Casl2Emulator {
         }
 
         char[] r_array = new char[3];
-        char[] _r={48,48,48,48,48,48,48,48};
+        char[] _r={48,48,48,48,48,48,48,48,48};
         char[] cs = String.valueOf(r).toCharArray();
         for(int i=0;i<cs.length;i++){
             _r[i]=cs[i];
