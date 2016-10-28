@@ -658,6 +658,7 @@ public class Casl2Emulator {
                          */
                         r1 = register.getGr()[7];
                         cmember = register.getGr()[6];
+
                         ians = (char) checkCharRange(cmember/r1);
                         char amari1 = (char) (cmember%r1);
                         register.setGr((char) ians,6);
@@ -714,10 +715,38 @@ public class Casl2Emulator {
                         memory_position = register.getGr()[7];
                         count = register.getGr()[6];
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
+                        int ontei=9;
+                        switch(memory_position){
+                            case 60:
+                                ontei = 0;
+                                break;
+                            case 62:
+                                ontei = 1;
+                                break;
+                            case 64:
+                                ontei = 2;
+                                break;
+                            case 65:
+                                ontei = 3;
+                                break;
+                            case 67:
+                                ontei = 4;
+                                break;
+                            case 69:
+                                ontei = 5;
+                                break;
+                            case 71:
+                                ontei = 6;
+                                break;
+                            default:
+                                ontei = memory_position;
+                        }
                         jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
                         jetPlayer.clearQueue();
-                        jetPlayer.queueJetSegment(memory_position, -1, 0, 0, 0, (byte) 0);
-                        jetPlayer.play();
+                        if(ontei<7){
+                            jetPlayer.queueJetSegment(memory_position, -1, 0, 0, 0, (byte) 0);
+                            jetPlayer.play();
+                        }
                         break;
                     case 0xFF20://浮動小数点数演算
                         //先頭アドレス:gr7
