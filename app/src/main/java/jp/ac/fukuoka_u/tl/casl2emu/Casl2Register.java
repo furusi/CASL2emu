@@ -59,8 +59,8 @@ public class Casl2Register extends BaseObservable{
     public void setSp(char sp) {
         if(sp<0xFF00){
             this.sp = sp;
-            notifyPropertyChanged(BR.sp);
         }
+        notifyPropertyChanged(BR.sp);
     }
 
     public char[] getFr() {
