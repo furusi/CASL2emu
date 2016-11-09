@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.media.JetPlayer;
 import android.os.Handler;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -550,10 +551,15 @@ public class Casl2Emulator {
                 instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //spの指すアドレスを取得
                 spaddr = register.getSp();
-                //そのアドレスが指す値をPCへ格納
-                register.setPc(memory.getMemory(spaddr));
-                //spに1を加算して格納
-                register.setSp((char) (spaddr+1));
+                if(spaddr == 0xFEFF){
+                    waitEmu();
+                    Toast.makeText(context,"RET命令によって停止しました。",Toast.LENGTH_SHORT).show();
+                }else {
+                    //そのアドレスが指す値をPCへ格納
+                    register.setPc(memory.getMemory(spaddr));
+                    //spに1を加算して格納
+                    register.setSp((char) (spaddr+1));
+                }
 
                 break;
             case 0xF000://SVC
@@ -1035,7 +1041,10 @@ public class Casl2Emulator {
                 public void run() {
 
                     stepOver();
-                    handler.postDelayed(this,interval);
+
+                    if(handler!=null) {
+                        handler.postDelayed(this, interval);
+                    }
                 }
             }, interval);
         }
