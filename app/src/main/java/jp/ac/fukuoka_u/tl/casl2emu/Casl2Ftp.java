@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.text.format.DateFormat;
+import android.widget.Toast;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -36,6 +39,7 @@ public class Casl2Ftp extends ContextWrapper {
             boolean isLogin = false;
             if(myFTPClient==null) myFTPClient = new FTPClient();
             Date uploaddate = getDate();
+            Handler handler = new Handler(Looper.getMainLooper());
 
 
             try {
@@ -64,6 +68,12 @@ public class Casl2Ftp extends ContextWrapper {
                 //切断
                 myFTPClient.disconnect();
             } catch (Exception e) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"アップロードに失敗しました。再度実行してください。",Toast.LENGTH_LONG).show();
+                    }
+                });
                 return e.getMessage();
             } finally {
                 if (isLogin) {
@@ -80,6 +90,12 @@ public class Casl2Ftp extends ContextWrapper {
                 }
                 myFTPClient = null;
             }
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),"アップロード成功",Toast.LENGTH_LONG).show();
+                }
+            });
             return null;
         }
 
