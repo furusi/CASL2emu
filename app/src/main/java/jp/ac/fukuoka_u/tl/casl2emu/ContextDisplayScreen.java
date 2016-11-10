@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +28,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,6 +68,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     Casl2Register register;
     private static final int REQUEST_WRITE_STORAGE = 112;
     BroadcastReceiver refreshReceiver;
+    ActionMode mActionMode = null;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -75,6 +78,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             String msg = String.valueOf(listView.getItemAtPosition(position));
             showTextDialog(msg,position);
         }
+
+
 
     };
 
@@ -213,11 +218,98 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         listView = binding.memoryList;
         localSetMemoryAdapter(memory.getMemory(),0);
         listView.setOnItemClickListener(showTextEditDialog);
-        listView.setOnLongClickListener(new View.OnLongClickListener() {
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
             @Override
-            public boolean onLongClick(View v) {
-                ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                return false;
+            public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
+                if (mActionMode != null) {
+                    return false;
+                }
+
+                // Start the CAB using the ActionMode.Callback defined above
+                mActionMode = ContextDisplayScreen.this.startActionMode(new ActionMode.Callback() {
+                    /**
+                     * Called when action mode is first created. The menu supplied will be used to
+                     * generate action buttons for the action mode.
+                     *
+                     * @param mode ActionMode being created
+                     * @param menu Menu used to populate action buttons
+                     * @return true if the action mode should be created, false if entering this
+                     * mode should be aborted.
+                     */
+                    @Override
+                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                        MenuInflater inflater = getMenuInflater();
+                        inflater.inflate(R.menu.menu_memory, menu);
+                        return true;
+                    }
+
+                    /**
+                     * Called to refresh an action mode's action menu whenever it is invalidated.
+                     *
+                     * @param mode ActionMode being prepared
+                     * @param menu Menu used to populate action buttons
+                     * @return true if the menu or action mode was updated, false otherwise.
+                     */
+                    @Override
+                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                        return false;
+                    }
+
+                    /**
+                     * Called to report a user click on an action button.
+                     *
+                     * @param mode The current ActionMode
+                     * @param item The item that was clicked
+                     * @return true if this callback handled the event, false if the standard MenuItem
+                     * invocation should continue.
+                     */
+                    @Override
+                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                        ClipboardManager clipboardManager = (ClipboardManager) getApplicationContext()
+                                .getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clipData;
+                        ClipData.Item memorystring = new ClipData.Item(
+                                String.valueOf(listView.getItemAtPosition(position)));
+                        switch(item.getItemId()) {
+                            case R.id.action_copy:
+                                clipData = new ClipData(new ClipDescription("text_data",
+                                        new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN}),memorystring);
+                                clipboardManager.setPrimaryClip(clipData);
+
+                                break;
+                            case R.id.action_paste:
+                                clipData = clipboardManager.getPrimaryClip();
+                                String text = (String) clipData.getItemAt(0).getText();
+                                Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
+                                Matcher matcher = pattern.matcher(text);
+                                if (matcher.matches()) {
+                                    char[] chars = Casl2EditText.getHexChars(text," ");
+                                    memory.setMemoryArray(chars, position*4);
+                                    refreshMemoryPane(position);
+
+                                }else {
+                                    Toast.makeText(ContextDisplayScreen.this, "貼り付けに失敗しました", Toast.LENGTH_LONG).show();
+                                }
+                                break;
+                        }
+                        mode.finish();
+
+                        return true;
+                    }
+
+                    /**
+                     * Called when an action mode is about to be exited and destroyed.
+                     *
+                     * @param mode The current ActionMode being destroyed
+                     */
+                    @Override
+                    public void onDestroyActionMode(ActionMode mode) {
+                        mActionMode = null;
+                    }
+                });
+                view.setSelected(true);
+                return true;
             }
         });
 
