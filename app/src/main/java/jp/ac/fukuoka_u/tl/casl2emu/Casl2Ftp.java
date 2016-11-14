@@ -3,11 +3,9 @@ package jp.ac.fukuoka_u.tl.casl2emu;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.text.format.DateFormat;
 import android.widget.Toast;
 
@@ -55,7 +53,7 @@ public class Casl2Ftp extends ContextWrapper {
                 String s_date = android.text.format.DateFormat.format("yyyyMMddkkmmss",uploaddate).toString();
                 //FileInputStream fileInputStream = this.openFileInput(localFile);
                 FileInputStream fileInputStream = new FileInputStream(new File(localFile));
-                myFTPClient.storeFile("~/"+s_date+remotefile.split("/")[2], fileInputStream);
+                myFTPClient.storeFile("~/"+s_date+remotefile, fileInputStream);
                 reply = myFTPClient.getReplyCode();
                 if (!FTPReply.isPositiveCompletion(reply)) {
                     throw new Exception("Send Status:" + String.valueOf(reply));
@@ -79,13 +77,13 @@ public class Casl2Ftp extends ContextWrapper {
                 if (isLogin) {
                     try {
                         myFTPClient.logout();
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
                     }
                 }
                 if (myFTPClient.isConnected()) {
                     try {
                         myFTPClient.disconnect();
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
                     }
                 }
                 myFTPClient = null;

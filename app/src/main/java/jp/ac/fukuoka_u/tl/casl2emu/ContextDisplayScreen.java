@@ -67,8 +67,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     ListView listView;
     Casl2Register register;
     private static final int REQUEST_WRITE_STORAGE = 112;
-    BroadcastReceiver refreshReceiver;
-    ActionMode mActionMode = null;
+    private BroadcastReceiver refreshReceiver;
+    private ActionMode mActionMode = null;
+    String kadaiFileName=null;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -404,15 +405,15 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         e.printStackTrace();
                     }
 
-                    for(int i = 0;i<8;i++) register.setGr(Chars.fromBytes(loaddata[2*i], loaddata[2*i+1]), i);
-                    register.setPc(Chars.fromBytes(loaddata[8*2],loaddata[8*2+1]));
-                    register.setSp(Chars.fromBytes(loaddata[9*2],loaddata[9*2+1]));
-                    for(int i = 0;i<3;i++) register.setFr(Chars.fromBytes(loaddata[2*(10+i)],loaddata[2*(10+i)+1]),i);
-                    for(int i =0;i<65536;i++) memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2*(13+i)],loaddata[2*(13+i)+1]),i);
+                    for (int i = 0; i < 8; i++)
+                        register.setGr(Chars.fromBytes(loaddata[2 * i], loaddata[2 * i + 1]), i);
+                    register.setPc(Chars.fromBytes(loaddata[8 * 2], loaddata[8 * 2 + 1]));
+                    register.setSp(Chars.fromBytes(loaddata[9 * 2], loaddata[9 * 2 + 1]));
+                    for (int i = 0; i < 3; i++)
+                        register.setFr(Chars.fromBytes(loaddata[2 * (10 + i)], loaddata[2 * (10 + i) + 1]), i);
+                    for (int i = 0; i < 65536; i++)
+                        memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2 * (13 + i)], loaddata[2 * (13 + i) + 1]), i);
                     localSetMemoryAdapter(memory.getMemory(),0);
-                    String[] lastopenedfilenamestr= openfilename.get(1).split("(.*/)([^/].)");
-                    String lastopenedfilename= lastopenedfilenamestr[lastopenedfilenamestr.length-1];
-                    Log.d("asa",lastopenedfilename);
 
                 }
 
@@ -433,9 +434,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         localfile.add(sharedPreferences.getString("userid","null"));
         localfile.add(sharedPreferences.getString("password","null"));
         localfile.add("true");
-        localfile.add(Environment.getExternalStorageDirectory().getPath()+"/"+openfilename.get(1).split(":")[1]);
-        intent.putExtra("data",localfile);
+        localfile.add(Environment.getExternalStorageDirectory().getPath() + "/" + openfilename.get(1).split(":")[1]);
+        intent.putExtra("data", localfile);
+        if (kadaiFileName != null) {
+            intent.putExtra("kadaifilename", kadaiFileName);
+        }
         startService(intent);
+        kadaiFileName =null;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -509,9 +514,25 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 startActivityForResult(intent,5657);
                 break;
             case R.id.action_submit:
-                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.setType("*/*");
-                startActivityForResult(intent,1114);
+                // リスト表示用のアラートダイアログ
+                final CharSequence[] items = {"ex01", "ex02", "ex03", "ex04", "ex05", "ex06", "ex07"};
+                AlertDialog.Builder listDlg = new AlertDialog.Builder(this);
+                listDlg.setTitle("課題番号を選択");
+                listDlg.setItems(
+                        items,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // リスト選択時の処理
+                                // which は、選択されたアイテムのインデックス
+                                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                                intent.setType("*/*");
+                                kadaiFileName = items[which]+".bin";
+                                startActivityForResult(intent, 1114);
+                            }
+                        });
+
+                // 表示
+                listDlg.create().show();
                 break;
             case R.id.action_save:
                 preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -608,13 +629,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    //private void showToast() {
-    //    Toast.makeText(ContextDisplayScreen.this,"is touched!!",Toast.LENGTH_SHORT).show();
-    //}
-    private void showToast(String offset) {
-        Toast.makeText(ContextDisplayScreen.this,offset+" is touched!!",Toast.LENGTH_SHORT).show();
-    }
-    private View.OnLongClickListener jumpAddress(final ActivityBinaryEditScreenBinding binding, final int id){
+    private View.OnLongClickListener jumpAddress(final ActivityBinaryEditScreenBinding binding, final int id) {
 
         return new View.OnLongClickListener() {
             @Override

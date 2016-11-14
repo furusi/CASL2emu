@@ -58,7 +58,8 @@ public class DataSendTask extends IntentService{
         myContext = getApplicationContext();
         String remoteserver = params.get(0);                 //FTPサーバーアドレス
         int remoteport = Integer.parseInt(params.get(1));    //FTPサーバーポート
-        String remotefile = params.get(2);                   //サーバーフォルダ
+        String remotefile = String.valueOf(
+                intent.getCharSequenceExtra("kadaifilename"));                   //サーバーフォルダ
         String userid = params.get(3);                       //ログインユーザID
         String passwd = params.get(4);                       //ログインパスワード
         boolean passive = Boolean.valueOf(params.get(5));    //パッシブモード使用
