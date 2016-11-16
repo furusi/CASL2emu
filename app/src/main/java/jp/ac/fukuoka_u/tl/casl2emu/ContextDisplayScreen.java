@@ -435,13 +435,12 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         localfile.add("true");
         localfile.add(Environment.getExternalStorageDirectory().getPath() + "/" + openfilename.get(1).split(":")[1]);
         intent.putExtra("data", localfile);
-        if (kadaiFileName != null) {
+        if (exercise != null) {
             intent.putExtra("kadaifilename", exercise.getFileName());
             intent.putExtra("kadainum",exercise.getNumber());
         }
         startService(intent);
-        kadaiFileName =null;
-        kadaiNum=0;
+        exercise =null;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -517,16 +516,24 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             case R.id.action_submit:
                 // リスト表示用のアラートダイアログ
                 final CharSequence[] items = {"ex01", "ex02", "ex03", "ex04", "ex05", "ex06", "ex07"};
+                //TODO:提出時刻が存在すれば課題名の後につける
+                preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                String userId = preferences.getString("userid","null");
+                String[] itemsText = new String[items.length];
+                for (int i =0;i<items.length;i++){
+                       itemsText[i] = items[i]+" 提出日時: "+preferences.getString(userId+"-"+i,"この端末からは提出していません。");
+                }
                 AlertDialog.Builder listDlg = new AlertDialog.Builder(this);
                 listDlg.setTitle("課題番号を選択");
                 listDlg.setItems(
-                        items,
+                        itemsText,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // リスト選択時の処理
                                 // which は、選択されたアイテムのインデックス
-                                exercise.setFileName(items[which]+".bin");
-                                exercise.setNumber(which);
+                                if(exercise==null){
+                                    exercise=new Casl2Exercise(items[which]+".bin",which);
+                                }
                                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                                 intent.setType("*/*");
                                 startActivityForResult(intent, 1114);

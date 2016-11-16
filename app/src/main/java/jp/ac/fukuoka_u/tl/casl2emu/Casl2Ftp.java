@@ -62,7 +62,7 @@ public class Casl2Ftp extends ContextWrapper {
                 }else{
                     Date date = getDate();
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-                    editor.putString("LastSubmit-"+kadaiNum, DateFormat.format("yyyyMMddkkmm",date).toString());
+                    editor.putString(userid+"-"+kadaiNum, DateFormat.format("yyyy年MM月dd日kk時mm分",date).toString());
                     editor.commit();
                 }
                 fileInputStream.close();
