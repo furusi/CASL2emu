@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,13 +61,14 @@ public class DataSendTask extends IntentService{
         int remoteport = Integer.parseInt(params.get(1));    //FTPサーバーポート
         String remotefile = String.valueOf(
                 intent.getCharSequenceExtra("kadaifilename"));                   //サーバーフォルダ
+        int kadaiNum = intent.getIntExtra("kadainum",-1);
         String userid = params.get(3);                       //ログインユーザID
         String passwd = params.get(4);                       //ログインパスワード
         boolean passive = Boolean.valueOf(params.get(5));    //パッシブモード使用
         String localFile = params.get(6);
         //ＦＴＰファイル送信
         Casl2Ftp ftp = new Casl2Ftp(myContext);
-        String result = ftp.putData(remoteserver, remoteport, userid, passwd, passive, remotefile, localFile);
+        String result = ftp.putData(new InetSocketAddress(remoteserver,remoteport), userid, passwd, passive, remotefile, localFile,kadaiNum);
         ftp = null;
 
     }

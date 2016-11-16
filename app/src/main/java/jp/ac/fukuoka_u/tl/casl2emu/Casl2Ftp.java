@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.widget.Toast;
 
+import org.apache.commons.codec.StringEncoder;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ntp.NTPUDPClient;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Date;
 
@@ -31,8 +33,8 @@ public class Casl2Ftp extends ContextWrapper {
             super(base);
         }
 
-        public String putData(String remoteserver, int remoteport,
-                              String userid, String passwd, boolean passive, String remotefile, String localFile) {
+        public String putData(InetSocketAddress remoteserver,
+                              String userid, String passwd, boolean passive, String remotefile, String localFile,int kadaiNum) {
             int reply = 0;
             boolean isLogin = false;
             if(myFTPClient==null) myFTPClient = new FTPClient();
@@ -41,7 +43,7 @@ public class Casl2Ftp extends ContextWrapper {
 
 
             try {
-                isLogin = login(remoteserver, remoteport, userid, passwd);
+                isLogin = login(remoteserver, userid, passwd);
                 //転送モード
                 if (passive) {
                     myFTPClient.enterLocalPassiveMode(); //パッシブモード
@@ -58,7 +60,10 @@ public class Casl2Ftp extends ContextWrapper {
                 if (!FTPReply.isPositiveCompletion(reply)) {
                     throw new Exception("Send Status:" + String.valueOf(reply));
                 }else{
-                     //TODO:アップロード時間の保存
+                    Date date = getDate();
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+                    editor.putString("LastSubmit-"+kadaiNum, DateFormat.format("yyyyMMddkkmm",date).toString());
+                    editor.commit();
                 }
                 fileInputStream.close();
                 fileInputStream = null;
@@ -119,7 +124,7 @@ public class Casl2Ftp extends ContextWrapper {
         return date;
     }
 
-    public boolean login(String remoteserver, int remoteport, String userid, String passwd) throws Exception {
+    public boolean login(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
         int reply;
         if(myFTPClient==null)
             myFTPClient=new FTPClient();
@@ -128,7 +133,7 @@ public class Casl2Ftp extends ContextWrapper {
             return false;
         }
         //接続
-        myFTPClient.connect(remoteserver, remoteport);
+        myFTPClient.connect(remoteserver.getHostName(),remoteserver.getPort());
         reply = myFTPClient.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
             throw new Exception("Connect Status:" + String.valueOf(reply));

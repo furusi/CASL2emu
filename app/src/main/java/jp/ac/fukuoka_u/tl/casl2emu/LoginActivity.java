@@ -34,6 +34,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.InetSocketAddress;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -405,7 +406,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 String userid = mEmail.toUpperCase();                       //ログインユーザID
                 String passwd = mPassword;                       //ログインパスワード
                 Casl2Ftp ftp = new Casl2Ftp(getApplicationContext());
-                result = ftp.login(remoteserver, remoteport, userid, passwd);
+                result = ftp.login(new InetSocketAddress(remoteserver, remoteport), userid, passwd);
             } catch (InterruptedException e) {
                 return false;
             } catch (Exception e) {

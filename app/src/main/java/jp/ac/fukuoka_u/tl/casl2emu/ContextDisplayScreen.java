@@ -1,7 +1,6 @@
 package jp.ac.fukuoka_u.tl.casl2emu;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.BroadcastReceiver;
@@ -27,7 +26,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -35,7 +33,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -70,6 +67,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     private BroadcastReceiver refreshReceiver;
     private ActionMode mActionMode = null;
     String kadaiFileName=null;
+    static int kadaiNum =0;
+    Casl2Exercise exercise =null;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -437,10 +436,12 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         localfile.add(Environment.getExternalStorageDirectory().getPath() + "/" + openfilename.get(1).split(":")[1]);
         intent.putExtra("data", localfile);
         if (kadaiFileName != null) {
-            intent.putExtra("kadaifilename", kadaiFileName);
+            intent.putExtra("kadaifilename", exercise.getFileName());
+            intent.putExtra("kadainum",exercise.getNumber());
         }
         startService(intent);
         kadaiFileName =null;
+        kadaiNum=0;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -524,9 +525,10 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                             public void onClick(DialogInterface dialog, int which) {
                                 // リスト選択時の処理
                                 // which は、選択されたアイテムのインデックス
+                                exercise.setFileName(items[which]+".bin");
+                                exercise.setNumber(which);
                                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                                 intent.setType("*/*");
-                                kadaiFileName = items[which]+".bin";
                                 startActivityForResult(intent, 1114);
                             }
                         });

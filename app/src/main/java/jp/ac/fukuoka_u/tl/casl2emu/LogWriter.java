@@ -2,6 +2,7 @@ package jp.ac.fukuoka_u.tl.casl2emu;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.RequiresPermission;
 
 import org.apache.commons.io.output.WriterOutputStream;
 
@@ -20,5 +21,6 @@ public class LogWriter {
         this.context = context;
     }
 
+    WriterOutputStream writerOutputStream;
 
 }
