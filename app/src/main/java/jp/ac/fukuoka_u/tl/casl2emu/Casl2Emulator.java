@@ -858,6 +858,7 @@ public class Casl2Emulator {
         }
         context.sendBroadcast(broadcastIntent);
 
+        //TODO:ステップ実行回数の記録
     }
 
     private char[] getFloatArray(float r) {
@@ -1042,6 +1043,7 @@ public class Casl2Emulator {
 
                     stepOver();
 
+                    //TODO:連続実行回数の記録
                     if(handler!=null) {
                         handler.postDelayed(this, interval);
                     }

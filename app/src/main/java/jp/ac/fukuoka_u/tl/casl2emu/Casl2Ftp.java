@@ -57,6 +57,8 @@ public class Casl2Ftp extends ContextWrapper {
                 reply = myFTPClient.getReplyCode();
                 if (!FTPReply.isPositiveCompletion(reply)) {
                     throw new Exception("Send Status:" + String.valueOf(reply));
+                }else{
+                     //TODO:アップロード時間の保存
                 }
                 fileInputStream.close();
                 fileInputStream = null;
