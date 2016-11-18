@@ -153,6 +153,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         Icepick.restoreInstanceState(this,savedInstanceState);
 
         register = Casl2Register.getInstance();
+        boolean hasPermission = (ContextCompat.checkSelfPermission(ContextDisplayScreen.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(ContextDisplayScreen.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_STORAGE);
+        }
 
         final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
         char[] initialState;
