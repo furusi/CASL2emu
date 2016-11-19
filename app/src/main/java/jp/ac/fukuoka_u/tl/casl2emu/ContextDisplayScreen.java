@@ -115,7 +115,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         if (matcher.matches()) {
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
                             memory.setMemoryArray(chars, rownum*4);
-                            refreshMemoryPane(rownum);
+                            refreshMemoryPane(rownum,false);
 
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
@@ -130,11 +130,18 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 .show();
     }
 
-    private void refreshMemoryPane(int rownum) {
-        stringArrayList.remove(rownum);
-        arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
-                memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
+    private void refreshMemoryPane(int rownum,boolean isInsert) {
+        if(isInsert){
+            arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                    memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
+                    memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
+            stringArrayList.remove(arrayAdapter.getCount()-1);
+        }else{
+            stringArrayList.remove(rownum);
+            arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                    memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
+                    memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
+        }
         arrayAdapter.notifyDataSetChanged();
     }
 
@@ -142,7 +149,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     protected void refreshMemory(char[] data, char position) {
         super.refreshMemory(data, position);
         char memoryRowPosition = (char) ((position/4)*4);
-        refreshMemoryPane(memoryRowPosition);
+        refreshMemoryPane(memoryRowPosition,false);
 
     }
 
@@ -272,6 +279,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         ClipData.Item memorystring = new ClipData.Item(
                                 String.valueOf(listView.getItemAtPosition(position)));
                         switch(item.getItemId()) {
+                            //TODO:行挿入機能、削除機能を追加
+                            case R.id.action_insert:
+                                char[] zero = {0x0000,0x0000,0x0000,0x0000};
+                                memory.insertMemoryArray(zero, position*4);
+                                refreshMemoryPane(position,true);
+                                break;
+                            //TODO:複数行選択機能を追加
                             case R.id.action_copy:
                                 clipData = new ClipData(new ClipDescription("text_data",
                                         new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN}),memorystring);
@@ -286,7 +300,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                 if (matcher.matches()) {
                                     char[] chars = Casl2EditText.getHexChars(text," ");
                                     memory.setMemoryArray(chars, position*4);
-                                    refreshMemoryPane(position);
+                                    refreshMemoryPane(position,false);
 
                                 }else {
                                     Toast.makeText(ContextDisplayScreen.this, "貼り付けに失敗しました", Toast.LENGTH_LONG).show();
@@ -360,7 +374,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         refreshReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                refreshMemoryPane(intent.getCharExtra(getString(R.string.BUTTON_INPUT_ADDRESS),(char)0)/4);
+                refreshMemoryPane(intent.getCharExtra(getString(R.string.BUTTON_INPUT_ADDRESS),(char)0)/4,false);
             }
         };
         IntentFilter filter = new IntentFilter(getString(R.string.action_memory_refresh));
