@@ -115,7 +115,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         if (matcher.matches()) {
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
                             memory.setMemoryArray(chars, rownum*4);
-                            refreshMemoryPane(rownum,false);
+                            refreshMemoryPane(rownum,0);
 
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
@@ -130,17 +130,26 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 .show();
     }
 
-    private void refreshMemoryPane(int rownum,boolean isInsert) {
-        if(isInsert){
-            arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                    memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
-                    memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
-            stringArrayList.remove(arrayAdapter.getCount()-1);
-        }else{
-            stringArrayList.remove(rownum);
-            arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                    memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
-                    memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
+    private void refreshMemoryPane(int rownum,int refreshMode) {
+        switch(refreshMode){
+            case 0://通常の更新
+                stringArrayList.remove(rownum);
+                arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                        memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
+                        memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
+                break;
+            case 1://挿入の更新
+                arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                        memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
+                        memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
+                stringArrayList.remove(arrayAdapter.getCount()-1);
+                break;
+            case 2://削除の更新
+                stringArrayList.remove(rownum);
+                arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                        memory.getMemory(0xFFFC) & 0xFFFF, memory.getMemory(0xFFFD) & 0xFFFF,
+                        memory.getMemory(0xFFFE) & 0xFFFF, memory.getMemory(0xFFFF) & 0xFFFF),arrayAdapter.getCount()-1);
+                break;
         }
         arrayAdapter.notifyDataSetChanged();
     }
@@ -149,7 +158,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     protected void refreshMemory(char[] data, char position) {
         super.refreshMemory(data, position);
         char memoryRowPosition = (char) ((position/4)*4);
-        refreshMemoryPane(memoryRowPosition,false);
+        refreshMemoryPane(memoryRowPosition,0);
 
     }
 
@@ -278,12 +287,16 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         ClipData clipData;
                         ClipData.Item memorystring = new ClipData.Item(
                                 String.valueOf(listView.getItemAtPosition(position)));
+                        char[] zero = {0x0000,0x0000,0x0000,0x0000};
                         switch(item.getItemId()) {
-                            //TODO:行挿入機能、削除機能を追加
-                            case R.id.action_insert:
-                                char[] zero = {0x0000,0x0000,0x0000,0x0000};
+                            //TODO:削除機能を追加
+                            case R.id.action_pop:
                                 memory.insertMemoryArray(zero, position*4);
-                                refreshMemoryPane(position,true);
+                                refreshMemoryPane(position,2);
+                                break;
+                            case R.id.action_insert:
+                                memory.insertMemoryArray(zero, position*4);
+                                refreshMemoryPane(position,1);
                                 break;
                             //TODO:複数行選択機能を追加
                             case R.id.action_copy:
@@ -300,7 +313,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                 if (matcher.matches()) {
                                     char[] chars = Casl2EditText.getHexChars(text," ");
                                     memory.setMemoryArray(chars, position*4);
-                                    refreshMemoryPane(position,false);
+                                    refreshMemoryPane(position,0);
 
                                 }else {
                                     Toast.makeText(ContextDisplayScreen.this, "貼り付けに失敗しました", Toast.LENGTH_LONG).show();
@@ -374,7 +387,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         refreshReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                refreshMemoryPane(intent.getCharExtra(getString(R.string.BUTTON_INPUT_ADDRESS),(char)0)/4,false);
+                refreshMemoryPane(intent.getCharExtra(getString(R.string.BUTTON_INPUT_ADDRESS),(char)0)/4,0);
             }
         };
         IntentFilter filter = new IntentFilter(getString(R.string.action_memory_refresh));
@@ -530,7 +543,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             case R.id.action_submit:
                 // リスト表示用のアラートダイアログ
                 final CharSequence[] items = {"ex01", "ex02", "ex03", "ex04", "ex05", "ex06", "ex07"};
-                //TODO:提出時刻が存在すれば課題名の後につける
                 preferences = PreferenceManager.getDefaultSharedPreferences(this);
                 String userId = preferences.getString("userid","null");
                 String[] itemsText = new String[items.length];
