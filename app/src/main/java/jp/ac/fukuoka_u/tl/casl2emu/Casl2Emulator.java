@@ -534,6 +534,7 @@ public class Casl2Emulator {
                 //データに基づいて処理する
                 wordCount = 2;
                 instArray = memory.getMemoryArray(register.getPc(), wordCount);
+                register.setPc((char) (cpc + wordCount));
                 //実行アドレスを取得
                 jikkou = getJikkouAddress(instArray);
 
@@ -548,7 +549,6 @@ public class Casl2Emulator {
             case 0x8100://RET
                 //データに基づいて処理する
                 wordCount = 1;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //spの指すアドレスを取得
                 spaddr = register.getSp();
                 if(spaddr == 0xFEFF){
@@ -804,7 +804,7 @@ public class Casl2Emulator {
                         //先頭アドレス:gr7
                         //変換後代入先アドレス:gr6
                         //仮数部は4*7=28ビットで表す(2word)。符号は-の時F。指数部は1word使う。
-                        //演算の種類gr6
+                        //メモリアドレスgr6
                         memory_position = register.getGr()[7];
                         char tr_positon = register.getGr()[6];
                         subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
