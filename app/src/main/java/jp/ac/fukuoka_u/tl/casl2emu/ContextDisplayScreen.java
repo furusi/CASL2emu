@@ -298,7 +298,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         switch(item.getItemId()) {
                             //TODO:削除機能を追加
                             case R.id.action_pop:
-                                memory.insertMemoryArray(zero, position*4);
+                                memory.deleteMemoryArray(zero, position*4);
                                 refreshMemoryPane(position,2);
                                 break;
                             case R.id.action_insert:

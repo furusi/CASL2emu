@@ -66,7 +66,7 @@ public class Casl2Memory extends BaseObservable{
     public void insertMemoryArray(char[] data, int position){
 
         //コピーの必要な部分はpositionから65535-dataまで
-        for(int i=position;i<65535-data.length;i++){
+        for(int i=65535-data.length;i>=position;i--){
            memory[i+data.length]=memory[i];
         }
         setMemoryArray(data,position);
