@@ -27,6 +27,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.ActionMode;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -163,6 +164,59 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_memory,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        ClipboardManager clipboardManager = (ClipboardManager) getApplicationContext()
+                .getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clipData;
+        ClipData.Item memorystring = new ClipData.Item(
+                String.valueOf(listView.getItemAtPosition(info.position)));
+        char[] zero = {0x0000,0x0000,0x0000,0x0000};
+        switch(item.getItemId()) {
+            //TODO:削除機能を追加
+            case R.id.action_pop:
+                memory.deleteMemoryArray(zero, info.position*4);
+                refreshMemoryPane(info.position,2);
+                break;
+            case R.id.action_insert:
+                memory.insertMemoryArray(zero, info.position*4);
+                refreshMemoryPane(info.position,1);
+                break;
+            //TODO:複数行選択機能を追加
+            case R.id.action_copy:
+                clipData = new ClipData(new ClipDescription("text_data",
+                        new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN}),memorystring);
+                clipboardManager.setPrimaryClip(clipData);
+
+                break;
+            case R.id.action_paste:
+                clipData = clipboardManager.getPrimaryClip();
+                String text = (String) clipData.getItemAt(0).getText();
+                Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
+                Matcher matcher = pattern.matcher(text);
+                if (matcher.matches()) {
+                    char[] chars = Casl2EditText.getHexChars(text," ");
+                    memory.setMemoryArray(chars, info.position*4);
+                    refreshMemoryPane(info.position,0);
+
+                }else {
+                    Toast.makeText(ContextDisplayScreen.this, "貼り付けに失敗しました", Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_binary_edit_screen);
@@ -242,110 +296,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         localSetMemoryAdapter(memory.getMemory(),0);
         listView.setOnItemClickListener(showTextEditDialog);
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
-                if (mActionMode != null) {
-                    return false;
-                }
-
-                // Start the CAB using the ActionMode.Callback defined above
-                mActionMode = ContextDisplayScreen.this.startActionMode(new ActionMode.Callback() {
-                    /**
-                     * Called when action mode is first created. The menu supplied will be used to
-                     * generate action buttons for the action mode.
-                     *
-                     * @param mode ActionMode being created
-                     * @param menu Menu used to populate action buttons
-                     * @return true if the action mode should be created, false if entering this
-                     * mode should be aborted.
-                     */
-                    @Override
-                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        MenuInflater inflater = getMenuInflater();
-                        inflater.inflate(R.menu.menu_memory, menu);
-                        return true;
-                    }
-
-                    /**
-                     * Called to refresh an action mode's action menu whenever it is invalidated.
-                     *
-                     * @param mode ActionMode being prepared
-                     * @param menu Menu used to populate action buttons
-                     * @return true if the menu or action mode was updated, false otherwise.
-                     */
-                    @Override
-                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                        return false;
-                    }
-
-                    /**
-                     * Called to report a user click on an action button.
-                     *
-                     * @param mode The current ActionMode
-                     * @param item The item that was clicked
-                     * @return true if this callback handled the event, false if the standard MenuItem
-                     * invocation should continue.
-                     */
-                    @Override
-                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        ClipboardManager clipboardManager = (ClipboardManager) getApplicationContext()
-                                .getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clipData;
-                        ClipData.Item memorystring = new ClipData.Item(
-                                String.valueOf(listView.getItemAtPosition(position)));
-                        char[] zero = {0x0000,0x0000,0x0000,0x0000};
-                        switch(item.getItemId()) {
-                            //TODO:削除機能を追加
-                            case R.id.action_pop:
-                                memory.deleteMemoryArray(zero, position*4);
-                                refreshMemoryPane(position,2);
-                                break;
-                            case R.id.action_insert:
-                                memory.insertMemoryArray(zero, position*4);
-                                refreshMemoryPane(position,1);
-                                break;
-                            //TODO:複数行選択機能を追加
-                            case R.id.action_copy:
-                                clipData = new ClipData(new ClipDescription("text_data",
-                                        new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN}),memorystring);
-                                clipboardManager.setPrimaryClip(clipData);
-
-                                break;
-                            case R.id.action_paste:
-                                clipData = clipboardManager.getPrimaryClip();
-                                String text = (String) clipData.getItemAt(0).getText();
-                                Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
-                                Matcher matcher = pattern.matcher(text);
-                                if (matcher.matches()) {
-                                    char[] chars = Casl2EditText.getHexChars(text," ");
-                                    memory.setMemoryArray(chars, position*4);
-                                    refreshMemoryPane(position,0);
-
-                                }else {
-                                    Toast.makeText(ContextDisplayScreen.this, "貼り付けに失敗しました", Toast.LENGTH_LONG).show();
-                                }
-                                break;
-                        }
-                        mode.finish();
-
-                        return true;
-                    }
-
-                    /**
-                     * Called when an action mode is about to be exited and destroyed.
-                     *
-                     * @param mode The current ActionMode being destroyed
-                     */
-                    @Override
-                    public void onDestroyActionMode(ActionMode mode) {
-                        mActionMode = null;
-                    }
-                });
-                view.setSelected(true);
-                return true;
-            }
-        });
+        registerForContextMenu(listView);
 
         binding.runbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -724,7 +675,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     casl2EditText = new Casl2EditText(ContextDisplayScreen.this,2);
                 }
                 TextView textview = (TextView) v;
-                //Log.d("dbg",textview.getAccessibilityClassName().toString());
                 casl2EditText.setText(textview.getText());
                 casl2EditText.setOnKeyListener(new View.OnKeyListener() {
                     @Override
