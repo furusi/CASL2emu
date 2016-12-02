@@ -617,10 +617,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         Icepick.saveInstanceState(this,outState);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
     private View.OnLongClickListener jumpAddress(final ActivityBinaryEditScreenBinding binding, final int id) {
 

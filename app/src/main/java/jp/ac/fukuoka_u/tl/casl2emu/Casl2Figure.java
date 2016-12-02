@@ -1,6 +1,5 @@
 package jp.ac.fukuoka_u.tl.casl2emu;
 
-import android.graphics.Color;
 
 /**
  * Created by furusho on 16/08/26.
