@@ -21,7 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -66,10 +65,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     Casl2Register register;
     private static final int REQUEST_WRITE_STORAGE = 112;
     private BroadcastReceiver refreshReceiver;
-    private ActionMode mActionMode = null;
-    String kadaiFileName=null;
-    static int kadaiNum =0;
     Casl2Exercise exercise =null;
+    LogWriter logWriter;
 
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
@@ -222,6 +219,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         setContentView(R.layout.activity_binary_edit_screen);
         Icepick.restoreInstanceState(this,savedInstanceState);
 
+        logWriter=new LogWriter(getApplicationContext());
         register = Casl2Register.getInstance();
         boolean hasPermission = (ContextCompat.checkSelfPermission(ContextDisplayScreen.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
@@ -379,9 +377,11 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     List<String> openfilename=data.getData().getPathSegments();
                     byte[] loaddata = new byte[131098];
                     FileInputStream fileInputStream = null;
+                    String loadfilename = openfilename.get(1).split(":")[1];
                     try {
-                        fileInputStream=new FileInputStream(new File(Environment.getExternalStorageDirectory().getPath(),
-                                openfilename.get(1).split(":")[1]));
+                        fileInputStream=new FileInputStream(
+                                new File(Environment.getExternalStorageDirectory().getPath(),
+                                        loadfilename));
                         fileInputStream.read(loaddata);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -398,6 +398,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     for (int i = 0; i < 65536; i++)
                         memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2 * (13 + i)], loaddata[2 * (13 + i) + 1]), i);
                     localSetMemoryAdapter(memory.getMemory(),0);
+                    logWriter.recordLogData("load,"+loadfilename);
 
                 }
 
@@ -469,7 +470,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 final Casl2EditText memory_position = new Casl2EditText(getApplicationContext(),1);
                 memory_position.setTextColor(Color.BLACK);
                 new AlertDialog.Builder(ContextDisplayScreen.this)
-                        .setIcon(android.R.drawable.ic_dialog_info)
+
                         .setView(R.layout.input_text_dialog)
                         .setTitle(getString(R.string.jump_dialog_text))
                         //setViewにてビューを設定します。
@@ -568,8 +569,10 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                         dir.mkdirs();
                                     }
                                     File file = new File(dirname,save_filename);
+
                                     fileOutputStream = new FileOutputStream(file);
                                     fileOutputStream.write(savedata);
+                                    logWriter.recordLogData("save,"+save_filename);
                                     SharedPreferences.Editor editor = preferences.edit();
                                     editor.putString("LastSavedFileName",save_filename);
                                     editor.commit();

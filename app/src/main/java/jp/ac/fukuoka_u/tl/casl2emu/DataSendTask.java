@@ -30,8 +30,6 @@ import java.util.Date;
 
 public class DataSendTask extends IntentService{
     private Context myContext;
-    private ProgressDialog myProgressDialog;
-    private FTPClient myFTPClient;
     private ArrayList<String> params;
 
 
@@ -68,7 +66,9 @@ public class DataSendTask extends IntentService{
         String localFile = params.get(6);
         //ＦＴＰファイル送信
         Casl2Ftp ftp = new Casl2Ftp(myContext);
-        String result = ftp.putData(new InetSocketAddress(remoteserver,remoteport), userid, passwd, passive, remotefile, localFile,kadaiNum);
+        boolean result = ftp.putData(new InetSocketAddress(remoteserver,remoteport), userid, passwd, passive, remotefile, localFile,kadaiNum);
+        if(result){
+        }
         ftp = null;
 
     }

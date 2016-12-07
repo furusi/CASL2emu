@@ -32,7 +32,7 @@ public class Casl2Ftp extends ContextWrapper {
             super(base);
         }
 
-        public String putData(InetSocketAddress remoteserver,
+        public boolean putData(InetSocketAddress remoteserver,
                               String userid, String passwd, boolean passive, String remotefile, String localFile,int kadaiNum) {
             int reply = 0;
             boolean isLogin = false;
@@ -78,7 +78,7 @@ public class Casl2Ftp extends ContextWrapper {
                         Toast.makeText(getApplicationContext(),"アップロードに失敗しました。再度実行してください。",Toast.LENGTH_LONG).show();
                     }
                 });
-                return e.getMessage();
+                return false;
             } finally {
                 if (isLogin) {
                     try {
@@ -100,7 +100,7 @@ public class Casl2Ftp extends ContextWrapper {
                     Toast.makeText(getApplicationContext(),"アップロード成功",Toast.LENGTH_LONG).show();
                 }
             });
-            return null;
+            return true;
         }
 
     public Date getDate() {
@@ -142,10 +142,14 @@ public class Casl2Ftp extends ContextWrapper {
             throw new Exception("Invalid user/password");
         }
         Date date = getDate();
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-        editor.putString("LastLoginDate", DateFormat.format("yyyyMMdd",date).toString());
-        editor.commit();
+        if(date !=null){
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+            editor.putString("LastLoginDate", DateFormat.format("yyyyMMdd",date).toString());
+            editor.commit();
+            return true;
+
+        }
         //myFTPClient.logout();
-        return true;
+        return false;
     }
 }
