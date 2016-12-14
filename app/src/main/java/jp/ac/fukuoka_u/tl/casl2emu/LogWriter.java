@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 
-import org.apache.commons.io.output.WriterOutputStream;
 
 import java.io.BufferedWriter;
 import java.io.File;
