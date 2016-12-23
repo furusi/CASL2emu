@@ -3,6 +3,8 @@ package jp.ac.fukuoka_u.tl.casl2emu;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
+import java.util.Arrays;
+
 /**
  * Created by furus on 2016/08/15.
  */
@@ -71,6 +73,14 @@ public class Casl2Register extends BaseObservable{
         this.fr[0] = fr[0];
         this.fr[1] = fr[1];
         this.fr[2] = fr[2];
+        notifyPropertyChanged(BR.fr);
+    }
+    public void initializeRegister(){
+
+        pc=0x0000;
+        sp=0xFEFF;
+        Arrays.fill(gr,(char)0);
+        Arrays.fill(fr,(char)0);
         notifyPropertyChanged(BR.fr);
     }
     public void setFr(char data,int position) {

@@ -78,7 +78,11 @@ public class Casl2Memory extends BaseObservable{
         notifyPropertyChanged(BR.casl2Memory);
     }
     public void setMemory(char data, int position) {
-            memory[position]=data;
+        memory[position]=data;
+        notifyPropertyChanged(BR.casl2Memory);
+    }
+    public void initializeMemory(){
+        Arrays.fill(this.memory,(char)0);
         notifyPropertyChanged(BR.casl2Memory);
     }
     public void setMemoryWithoutNotifying(char data, int position) {
