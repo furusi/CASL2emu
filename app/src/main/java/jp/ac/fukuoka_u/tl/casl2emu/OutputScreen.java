@@ -35,7 +35,11 @@ public class OutputScreen extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_output_screen);
-        emulator = Casl2Emulator.getInstance(getApplicationContext());
+        try {
+            emulator = Casl2Emulator.getInstance("Casl2EmulatorAndroid");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         outputBuffer = OutputBuffer.getInstance();
         outputBuffer.setCasl2PaintView(getApplicationContext());
         paintView = outputBuffer.getCasl2PaintView();

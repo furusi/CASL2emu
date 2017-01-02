@@ -22,7 +22,7 @@ public class BaseActivity extends AppCompatActivity {
     private boolean activityVisible=false;
     Casl2Memory memory;
     Casl2Register register;
-    Casl2Emulator emulator;
+    Casl2EmulatorAndroid emulator;
     ArrayList<String> stringArrayList;
     ArrayAdapter<String> arrayAdapter;
     BroadcastReceiver receiver;
@@ -35,8 +35,12 @@ public class BaseActivity extends AppCompatActivity {
          */
         memory = Casl2Memory.getInstance();
         register = Casl2Register.getInstance();
-        emulator = Casl2Emulator.getInstance(getApplicationContext());
-
+        try {
+            emulator = (Casl2EmulatorAndroid) Casl2Emulator.getInstance("Casl2EmulatorAndroid");
+            emulator.initializeInstanceAndroid(getApplicationContext());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
 
         IntentFilter filter;
