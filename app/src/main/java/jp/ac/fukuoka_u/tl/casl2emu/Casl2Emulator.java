@@ -36,7 +36,12 @@ public class Casl2Emulator {
    public static Casl2Emulator getInstance(String classname) throws ClassNotFoundException{
        synchronized (_lock){
 
-          Class cls = Class.forName(classname);
+           Class cls=null;
+           try{
+               cls = Class.forName(classname);
+           }catch (ClassNotFoundException e){
+               e.printStackTrace();
+           }
            if(instance==null){
                try {
                    Casl2Emulator obj =(Casl2Emulator)cls.newInstance();
