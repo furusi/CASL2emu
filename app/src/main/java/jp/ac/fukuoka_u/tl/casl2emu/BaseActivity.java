@@ -35,8 +35,12 @@ public class BaseActivity extends AppCompatActivity {
          */
         memory = Casl2Memory.getInstance();
         register = Casl2Register.getInstance();
-        emulator = Casl2Emulator.getInstance(getApplicationContext());
-
+        try {
+            emulator = Casl2Emulator.getInstance("jp.ac.fukuoka_u.tl.casl2emu.Casl2EmulatorAndroid");
+            Casl2EmulatorAndroid.initializeInstanceAndroid(getApplicationContext());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
 
         IntentFilter filter;
