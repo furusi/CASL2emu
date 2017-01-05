@@ -23,7 +23,7 @@ public class OutputScreen extends BaseActivity {
 
 
     OutputBuffer outputBuffer;
-    Casl2Emulator emulator;
+    //Casl2Emulator emulator;
     Casl2PaintView paintView;
     IntentFilter filter;
     RelativeLayout relativeLayout;
@@ -35,11 +35,6 @@ public class OutputScreen extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_output_screen);
-        try {
-            emulator = Casl2Emulator.getInstance("Casl2EmulatorAndroid");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
         outputBuffer = OutputBuffer.getInstance();
         outputBuffer.setCasl2PaintView(getApplicationContext());
         paintView = outputBuffer.getCasl2PaintView();

@@ -16,17 +16,14 @@ import java.util.Random;
  */
 
 public class Casl2EmulatorAndroid extends Casl2Emulator {
-    Handler handler;
+    Handler handler=null;
     private static JetPlayer jetPlayer=JetPlayer.getJetPlayer();
-    private static Context context;
+    private static Context context=null;
 
 
     static Intent broadcastIntent= new Intent();
 
 
-    private Casl2EmulatorAndroid() {
-        super();
-    }
 
     static public void initializeInstanceAndroid(Context context1) {
         if(context==null) {
@@ -39,7 +36,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
 
 
     @Override
-    void opSVC(char cpc, short[] sr) {
+    public void opSVC(char cpc, short[] sr) {
                 int wordCount;
         char[] instArray;
         char jikkou;
@@ -360,6 +357,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
 
     @Override
     public void run(final int interval) {
+        super.run(interval);
         if(handler==null){
 
             runflag = true;

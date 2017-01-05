@@ -1,13 +1,13 @@
 package jp.ac.fukuoka_u.tl.casl2emu;
 
 
-
+import java.util.HashMap;
 
 /**
  * Created by furusho on 2016/07/09.
  */
 public class Casl2Emulator {
-    protected static Casl2Emulator instance = null;
+    private static HashMap _classnameToInstance = new HashMap();
     private static Object _lock = new Object();
     Casl2Memory memory = Casl2Memory.getInstance();
     static OutputBuffer outputBuffer = OutputBuffer.getInstance();
@@ -18,10 +18,11 @@ public class Casl2Emulator {
 
     protected Casl2Emulator() {
         synchronized (_lock){
-            if(instance!=null){
-                throw new RuntimeException("Already created: " + instance.getClass().getName());
+            String classname = this.getClass().getName();
+            if(_classnameToInstance.get(classname)!=null){
+                throw new RuntimeException("Already created: " + classname);
             }
-            instance = this;
+            _classnameToInstance.put(classname,this);
         }
     }
 
@@ -29,32 +30,28 @@ public class Casl2Emulator {
     /*
     サブクラスでnewする
      */
-    static public void initializeInstance(){
-        instance = new Casl2Emulator();
+    static public void initializeInstance(String classname){
+        _classnameToInstance.remove(classname);
+
     }
 
-   public static Casl2Emulator getInstance(String classname) throws ClassNotFoundException{
+   public static Casl2Emulator getInstance(String classname) {
        synchronized (_lock){
+           Casl2Emulator obj=(Casl2Emulator)_classnameToInstance.get(classname);
 
-           Class cls=null;
-           try{
-               cls = Class.forName(classname);
-           }catch (ClassNotFoundException e){
-               e.printStackTrace();
+           if(obj==null){
+              try{
+                  Class cls = Class.forName(classname);
+                  obj = (Casl2Emulator)cls.newInstance();
+              } catch (ClassNotFoundException e) {
+                  e.printStackTrace();
+              } catch (InstantiationException e) {
+                  e.printStackTrace();
+              } catch (IllegalAccessException e) {
+                  e.printStackTrace();
+              }
            }
-           if(instance==null){
-               try {
-                   Casl2Emulator obj =(Casl2Emulator)cls.newInstance();
-               } catch (InstantiationException e) {
-                   throw new RuntimeException(classname + "cannot be instantiated.");
-               } catch (IllegalAccessException e) {
-                   throw new RuntimeException(classname + "cannot be accessed.");
-               }
-           }else if(!instance.getClass().isAssignableFrom(cls)){
-
-               throw new ClassCastException(classname);
-           }
-           return instance;
+           return obj;
        }
    }
 
@@ -589,7 +586,7 @@ public class Casl2Emulator {
     protected void showText(String txt) {
     }
 
-    void opSVC(char cpc, short[] sr) {
+    public void opSVC(char cpc, short[] sr) {
 
     }
 

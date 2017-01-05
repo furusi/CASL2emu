@@ -430,7 +430,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 editor.putString("password",mPassword);
                 editor.commit();
                 Casl2Register.initializeInstance();
-                Casl2Emulator.initializeInstance();
+                Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.Casl2EmulatorAndroid");
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
             } else if (mEmail.toUpperCase().equals("TLGUEST")){
                 finish();
@@ -440,7 +440,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 editor.putString("password",mPassword);
                 editor.commit();
                 Casl2Register.initializeInstance();
-                Casl2Emulator.initializeInstance();
+                Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.Casl2EmulatorAndroid");
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
 
             }
