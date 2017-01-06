@@ -1035,7 +1035,7 @@ public class Casl2Emulator {
     public void run(final int interval){
         if(handler==null){
 
-            runflag = true;
+            this.setRunflag(true);
             handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
