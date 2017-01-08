@@ -389,14 +389,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         e.printStackTrace();
                     }
 
-                    for (int i = 0; i < 8; i++)
-                        register.setGr(Chars.fromBytes(loaddata[2 * i], loaddata[2 * i + 1]), i);
-                    register.setPc(Chars.fromBytes(loaddata[8 * 2], loaddata[8 * 2 + 1]));
-                    register.setSp(Chars.fromBytes(loaddata[9 * 2], loaddata[9 * 2 + 1]));
-                    for (int i = 0; i < 3; i++)
-                        register.setFr(Chars.fromBytes(loaddata[2 * (10 + i)], loaddata[2 * (10 + i) + 1]), i);
-                    for (int i = 0; i < 65536; i++)
-                        memory.setMemoryWithoutNotifying(Chars.fromBytes(loaddata[2 * (13 + i)], loaddata[2 * (13 + i) + 1]), i);
+                    register.setDatafromBinary(loaddata);
+                    memory.setDatafromBinary(loaddata);
                     localSetMemoryAdapter(memory.getMemory(),0);
                     logWriter.recordLogData("load,"+loadfilename);
 
