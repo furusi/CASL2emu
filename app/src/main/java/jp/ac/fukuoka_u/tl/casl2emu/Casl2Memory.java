@@ -2,16 +2,8 @@ package jp.ac.fukuoka_u.tl.casl2emu;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.databinding.BindingAdapter;
-import android.util.Log;
 
-import com.google.common.collect.Lists;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Observable;
 
 /**
  * Created by furusho on 2016/07/09.
@@ -87,6 +79,13 @@ public class Casl2Memory extends BaseObservable{
     }
     public void setMemoryWithoutNotifying(char data, int position) {
         memory[position]=data;
+    }
+
+    public void setDatafromBinary(byte[] loaddata){
+
+        for (int i = 0; i < 65536; i++) {
+            this.setMemoryWithoutNotifying((char) ((char)(loaddata[2 * (13 + i)]<<8)+loaddata[2 * (13 + i) + 1]), i);
+        }
     }
 
 
