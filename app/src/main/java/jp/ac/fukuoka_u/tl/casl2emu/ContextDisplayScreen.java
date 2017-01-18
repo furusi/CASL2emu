@@ -466,6 +466,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 OutputBuffer.getInstance().setData("");
                 OutputBuffer.getInstance().clearDrawObjectArray();
                 break;
+            case R.id.register_initialize:
+                register.initializeRegister();
+                break;
             case R.id.action_jump:
                 final Casl2EditText memory_position = new Casl2EditText(getApplicationContext(),1);
                 memory_position.setTextColor(Color.BLACK);

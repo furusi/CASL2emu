@@ -77,10 +77,11 @@ public class Casl2Register extends BaseObservable{
     }
     public void initializeRegister(){
 
-        pc=0x0000;
-        sp=0xFEFF;
+        setPc((char) 0x0000);
+        setSp((char) 0xFEFF);
         Arrays.fill(gr,(char)0);
-        Arrays.fill(fr,(char)0);
+        setGr(new char[]{0, 0, 0, 0, 0, 0, 0, 0});
+        setFr(new char[]{0,0,0});
         notifyPropertyChanged(BR.fr);
     }
     public void setFr(char data,int position) {

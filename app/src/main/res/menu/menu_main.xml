@@ -18,12 +18,16 @@
         android:title="@string/menu_teishutu"
         android:orderInCategory="104"/>
     <item
+        android:id="@+id/register_initialize"
+        android:title="レジスタを初期化"
+        android:orderInCategory="105"/>
+    <item
         android:id="@+id/output_initialize"
         android:title="@string/output_initialize"
-        android:orderInCategory="105"/>
+        android:orderInCategory="106"/>
     <item
         android:id="@+id/execution_interval"
         android:title="実行間隔の設定"
-        android:orderInCategory="106"
+        android:orderInCategory="107"
         />
 </menu>
