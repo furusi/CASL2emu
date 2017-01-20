@@ -114,9 +114,9 @@ public class BaseActivity extends AppCompatActivity {
                                                 break;
                                         }
                                         if(emulator.isInterruptflag()){
-                                            //emulator.setRunflag(true);
+                                            emulator.setRunflag(true);
                                             emulator.setInterruptflag(false);
-                                            //emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey), 1000));
+                                            emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey), 1000));
                                         }
 
                                     }else {
