@@ -88,16 +88,21 @@ public class Casl2Register extends BaseObservable{
         this.fr[position] = data;
         notifyPropertyChanged(BR.fr);
     }
+
     public void setDatafromBinary(byte[] loaddata){
 
         for (int i = 0; i < 8; i++) {
             this.setGr((char) ((char)(loaddata[2 * i]<<8)+loaddata[2 * i + 1]), i);
         }
-        this.setPc((char) ((char)(loaddata[8 * 2]<<8)+loaddata[8 * 2 + 1]));
-        this.setSp((char) ((char)(loaddata[9 * 2]<<8)+loaddata[9 * 2 + 1]));
+        this.setPc(convertBytetoChar(loaddata, 8 * 2));
+        this.setSp(convertBytetoChar(loaddata, 9 * 2));
         for (int i = 0; i < 3; i++) {
-            this.setFr((char) ((char) (loaddata[2 * (10 + i)] << 8) + loaddata[2 * (10 + i) + 1]), i);
+            this.setFr(convertBytetoChar(loaddata,2 * (10 + i)), i);
         }
+    }
+
+    protected char convertBytetoChar(byte[] loaddata, int position) {
+        return (char) ((char)(loaddata[position]<<8)+(char)(loaddata[position + 1]&0x00FF));
     }
 
 }

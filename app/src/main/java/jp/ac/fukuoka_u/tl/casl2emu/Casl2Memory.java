@@ -80,12 +80,15 @@ public class Casl2Memory extends BaseObservable{
     public void setMemoryWithoutNotifying(char data, int position) {
         memory[position]=data;
     }
-
     public void setDatafromBinary(byte[] loaddata){
 
         for (int i = 0; i < 65536; i++) {
-            this.setMemoryWithoutNotifying((char) ((char)(loaddata[2 * (13 + i)]<<8)+loaddata[2 * (13 + i) + 1]), i);
+            this.setMemoryWithoutNotifying(convertBytetoChar(loaddata,2 * (13 + i)), i);
         }
+    }
+
+    protected char convertBytetoChar(byte[] loaddata, int position) {
+        return (char) ((char)(loaddata[position]<<8)+(char)(loaddata[position + 1]&0x00FF));
     }
 
 
