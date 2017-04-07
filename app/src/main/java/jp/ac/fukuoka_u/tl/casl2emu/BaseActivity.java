@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 public class BaseActivity extends AppCompatActivity {
 
     private boolean activityVisible=false;
-    Casl2Memory memory;
     Casl2Register register;
     Casl2Emulator emulator;
     ArrayList<String> stringArrayList;
@@ -33,7 +32,6 @@ public class BaseActivity extends AppCompatActivity {
         /**
          *
          */
-        memory = Casl2Memory.getInstance();
         register = Casl2Register.getInstance();
         emulator = Casl2Emulator.getInstance("jp.ac.fukuoka_u.tl.casl2emu.Casl2EmulatorAndroid");
         Casl2EmulatorAndroid.initializeInstanceAndroid(getApplicationContext());
@@ -138,7 +136,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void refreshMemory(char[] data, char position) {
-        memory.setMemoryArray(data, position);
+        emulator.memory.refreshMemory(data,position);
     }
 
     /**

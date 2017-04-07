@@ -90,6 +90,9 @@ public class Casl2Memory extends BaseObservable{
     protected char convertBytetoChar(byte[] loaddata, int position) {
         return (char) ((char)(loaddata[position]<<8)+(char)(loaddata[position + 1]&0x00FF));
     }
+    public void refreshMemory(char[] data, char position) {
+        setMemoryArray(data, position);
+    }
 
 
 }
