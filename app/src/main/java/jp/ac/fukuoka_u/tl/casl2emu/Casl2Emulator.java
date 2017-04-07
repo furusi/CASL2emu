@@ -767,4 +767,40 @@ public class Casl2Emulator {
     public void waitEmu(){
     }
 
+    public char getMemory(int position) {
+        return memory.getMemory(position);
+    }
+
+    public void setMemoryArray(char[] chars, int i) {
+       memory.setMemoryArray(chars,i);
+    }
+
+    public void deleteMemoryArray(char[] zero, int i) {
+       memory.deleteMemoryArray(zero,i);
+    }
+
+    public void insertMemoryArray(char[] zero, int i) {
+        memory.insertMemoryArray(zero, i);
+    }
+
+    public char[] getMemory() {
+        return memory.getMemory();
+
+    }
+
+    public void setMemory(char[] tmp) {
+        memory.setMemory(tmp);
+    }
+
+    public void setDatafromBinary(byte[] loaddata) {
+        memory.setDatafromBinary(loaddata);
+    }
+
+    public void setMemory(char c, char address) {
+        memory.setMemory(c,address);
+    }
+
+    public void refreshMemory(char[] data, char position) {
+        memory.refreshMemory(data,position);
+    }
 }

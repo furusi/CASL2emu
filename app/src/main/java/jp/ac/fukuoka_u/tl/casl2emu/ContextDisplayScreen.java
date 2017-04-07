@@ -112,7 +112,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         Matcher matcher = pattern.matcher(upperedString);
                         if (matcher.matches()) {
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
-                            memory.setMemoryArray(chars, rownum*4);
+                            emulator.setMemoryArray(chars, rownum*4);
                             refreshMemoryPane(rownum,0);
 
                         }else {
@@ -133,20 +133,20 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             case 0://通常の更新
                 stringArrayList.remove(rownum);
                 arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                        memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
-                        memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
+                        emulator.getMemory(4*rownum) & 0xFFFF, emulator.getMemory(4*rownum+1) & 0xFFFF,
+                        emulator.getMemory(4*rownum+2) & 0xFFFF, emulator.getMemory(4*rownum+3) & 0xFFFF),rownum);
                 break;
             case 1://挿入の更新
                 arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                        memory.getMemory(4*rownum) & 0xFFFF, memory.getMemory(4*rownum+1) & 0xFFFF,
-                        memory.getMemory(4*rownum+2) & 0xFFFF, memory.getMemory(4*rownum+3) & 0xFFFF),rownum);
+                        emulator.getMemory(4*rownum) & 0xFFFF, emulator.getMemory(4*rownum+1) & 0xFFFF,
+                        emulator.getMemory(4*rownum+2) & 0xFFFF, emulator.getMemory(4*rownum+3) & 0xFFFF),rownum);
                 stringArrayList.remove(arrayAdapter.getCount()-1);
                 break;
             case 2://削除の更新
                 stringArrayList.remove(rownum);
                 arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                        memory.getMemory(0xFFFC) & 0xFFFF, memory.getMemory(0xFFFD) & 0xFFFF,
-                        memory.getMemory(0xFFFE) & 0xFFFF, memory.getMemory(0xFFFF) & 0xFFFF),arrayAdapter.getCount()-1);
+                        emulator.getMemory(0xFFFC) & 0xFFFF, emulator.getMemory(0xFFFD) & 0xFFFF,
+                        emulator.getMemory(0xFFFE) & 0xFFFF, emulator.getMemory(0xFFFF) & 0xFFFF),arrayAdapter.getCount()-1);
                 break;
         }
         arrayAdapter.notifyDataSetChanged();
@@ -181,11 +181,11 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         switch(item.getItemId()) {
             //TODO:削除機能を追加
             case R.id.action_pop:
-                memory.deleteMemoryArray(zero, info.position*4);
+                emulator.deleteMemoryArray(zero, info.position*4);
                 refreshMemoryPane(info.position,2);
                 break;
             case R.id.action_insert:
-                memory.insertMemoryArray(zero, info.position*4);
+                emulator.insertMemoryArray(zero, info.position*4);
                 refreshMemoryPane(info.position,1);
                 break;
             //TODO:複数行選択機能を追加
@@ -202,7 +202,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 Matcher matcher = pattern.matcher(text);
                 if (matcher.matches()) {
                     char[] chars = Casl2EditText.getHexChars(text," ");
-                    memory.setMemoryArray(chars, info.position*4);
+                    emulator.setMemoryArray(chars, info.position*4);
                     refreshMemoryPane(info.position,0);
 
                 }else {
@@ -287,11 +287,11 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.zf.setOnClickListener(showWordDialog(binding,12));
         //String initialString = "8314 1592 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
         char[]tmp = Casl2EditText.getHexChars(initialString," ");
-        memory.setMemory(tmp);
+        emulator.setMemory(tmp);
 
 
         listView = binding.memoryList;
-        localSetMemoryAdapter(memory.getMemory(),0);
+        localSetMemoryAdapter(emulator.getMemory(),0);
         listView.setOnItemClickListener(showTextEditDialog);
 
         registerForContextMenu(listView);
@@ -390,8 +390,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     }
 
                     register.setDatafromBinary(loaddata);
-                    memory.setDatafromBinary(loaddata);
-                    localSetMemoryAdapter(memory.getMemory(),0);
+                    emulator.setDatafromBinary(loaddata);
+                    localSetMemoryAdapter(emulator.getMemory(),0);
                     logWriter.recordLogData("load,"+loadfilename);
 
                 }
@@ -544,7 +544,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                 //入力した文字をトースト出力する
                                 String save_filename = editView.getText().toString();
                                 char[] casl2data;
-                                casl2data = Chars.concat(ArrayUtils.add(ArrayUtils.add(register.getGr(),register.getPc()),register.getSp()),register.getFr(),memory.getMemory());
+                                casl2data = Chars.concat(ArrayUtils.add(ArrayUtils.add(register.getGr(),register.getPc()),register.getSp()),register.getFr(),emulator.getMemory());
                                 byte[]savedata = toBytes(casl2data);
                                 FileOutputStream fileOutputStream;
 

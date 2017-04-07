@@ -75,7 +75,7 @@ public class OutputScreen extends BaseActivity {
             @Override
             public void onClick(View v) {
                 char address = outputBuffer.getButtonconfig(0).getInputAddress();
-                memory.setMemory((char) 1,address);
+                emulator.setMemory((char) 1,address);
                 intent.putExtra(getString(R.string.BUTTON_INPUT_ADDRESS),address);
                 getApplicationContext().sendBroadcast(intent);
             }
@@ -86,7 +86,7 @@ public class OutputScreen extends BaseActivity {
             @Override
             public void onClick(View v) {
                 char address = outputBuffer.getButtonconfig(1).getInputAddress();
-                memory.setMemory((char) 1,address);
+                emulator.setMemory((char) 1,address);
                 intent.putExtra(getString(R.string.BUTTON_INPUT_ADDRESS),address);
                 getApplicationContext().sendBroadcast(intent);
             }
@@ -97,7 +97,7 @@ public class OutputScreen extends BaseActivity {
             @Override
             public void onClick(View v) {
                 char address = outputBuffer.getButtonconfig(2).getInputAddress();
-                memory.setMemory((char) 1,address);
+                emulator.setMemory((char) 1,address);
                 intent.putExtra(getString(R.string.BUTTON_INPUT_ADDRESS),address);
                 getApplicationContext().sendBroadcast(intent);
             }
@@ -108,7 +108,7 @@ public class OutputScreen extends BaseActivity {
             @Override
             public void onClick(View v) {
                 char address = outputBuffer.getButtonconfig(3).getInputAddress();
-                memory.setMemory((char) 1,address);
+                emulator.setMemory((char) 1,address);
                 intent.putExtra(getString(R.string.BUTTON_INPUT_ADDRESS),address);
                 getApplicationContext().sendBroadcast(intent);
             }

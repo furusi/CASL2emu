@@ -136,7 +136,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void refreshMemory(char[] data, char position) {
-        emulator.memory.refreshMemory(data,position);
+        emulator.refreshMemory(data,position);
     }
 
     /**
