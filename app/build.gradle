@@ -38,7 +38,7 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'frankiesardo:icepick:3.2.0'
-    provided 'frankiesardo:icepick-processor:3.2.0'
+    annotationProcessor 'frankiesardo:icepick-processor:3.2.0'
     compile 'commons-lang:commons-lang:2.6'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
