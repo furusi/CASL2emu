@@ -49,7 +49,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
         char cmember;//データに基づいて処理する
         wordCount = 2;
         instArray = memory.getMemoryArray(register.getPc(), wordCount);
-        jikkou = getJikkouAddress(instArray);
+        jikkou = getEffectiveAddress();
         char memory_position;
         char count;
         char[] subarray;
@@ -360,7 +360,6 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
 
     @Override
     public void run(final int interval) {
-        super.run(interval);
         if(handler==null){
 
             runflag = true;
