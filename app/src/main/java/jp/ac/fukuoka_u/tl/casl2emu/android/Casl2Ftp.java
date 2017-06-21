@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
 import android.content.ContextWrapper;

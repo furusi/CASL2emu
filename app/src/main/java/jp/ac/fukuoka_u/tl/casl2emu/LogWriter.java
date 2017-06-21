@@ -1,27 +1,22 @@
 package jp.ac.fukuoka_u.tl.casl2emu;
 
-import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.format.DateFormat;
 
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import jp.ac.fukuoka_u.tl.casl2emu.android.Casl2Ftp;
 
 /**
  * Created by furusho on 2016/11/09.

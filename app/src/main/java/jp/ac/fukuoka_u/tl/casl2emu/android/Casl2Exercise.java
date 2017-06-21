@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 /**
  * Created by furusho on 2016/11/16.

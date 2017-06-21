@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
 import android.databinding.ObservableArrayList;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Observable;
+
+import jp.ac.fukuoka_u.tl.casl2emu.R;
 
 /**
  * Created by furus on 2016/08/15.

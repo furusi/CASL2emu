@@ -1,28 +1,11 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.app.IntentService;
-import android.app.ProgressDialog;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Environment;
 
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
-import org.apache.commons.net.ntp.NTPUDPClient;
-import org.apache.commons.net.ntp.TimeInfo;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by furusho on 2016/09/02.

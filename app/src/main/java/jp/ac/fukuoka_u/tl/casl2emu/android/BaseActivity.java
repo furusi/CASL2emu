@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +17,10 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jp.ac.fukuoka_u.tl.casl2emu.Casl2Emulator;
+import jp.ac.fukuoka_u.tl.casl2emu.Casl2Register;
+import jp.ac.fukuoka_u.tl.casl2emu.R;
+
 public class BaseActivity extends AppCompatActivity {
 
     private boolean activityVisible=false;
@@ -33,7 +37,7 @@ public class BaseActivity extends AppCompatActivity {
          *
          */
         register = Casl2Register.getInstance();
-        emulator = Casl2Emulator.getInstance("jp.ac.fukuoka_u.tl.casl2emu.Casl2EmulatorAndroid");
+        emulator = Casl2Emulator.getInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
         Casl2EmulatorAndroid.initializeInstanceAndroid(getApplicationContext());
 
 

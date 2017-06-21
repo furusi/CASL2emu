@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,8 +14,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import jp.ac.fukuoka_u.tl.casl2emu.R;
 import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityOutputScreenBinding;
 
 

@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Casl2PaintView extends View {
 

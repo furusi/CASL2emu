@@ -1,14 +1,11 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by furusho on 16/08/24.
@@ -16,11 +13,11 @@ import java.util.HashMap;
 
 public class OutputBuffer extends BaseObservable{
 
-    private String data="CASL2Emu is ready.\n";
-    private static OutputBuffer instance = new OutputBuffer();
-    private Casl2PaintView casl2PaintView;
-    private ArrayList<Casl2Figure> drawObjectArray = new ArrayList<Casl2Figure>();
-    private ArrayList<Casl2AsyncInputConfig> buttonconfig;
+    protected String data="CASL2Emu is ready.\n";
+    protected static OutputBuffer instance = new OutputBuffer();
+    protected Casl2PaintView casl2PaintView;
+    protected ArrayList<Casl2Figure> drawObjectArray = new ArrayList<Casl2Figure>();
+    protected ArrayList<Casl2AsyncInputConfig> buttonconfig;
 
     private OutputBuffer() {
 

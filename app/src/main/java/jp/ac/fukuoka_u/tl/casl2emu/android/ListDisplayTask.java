@@ -1,6 +1,5 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 
 import java.util.ArrayList;

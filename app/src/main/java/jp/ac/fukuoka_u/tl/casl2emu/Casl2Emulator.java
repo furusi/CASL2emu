@@ -3,18 +3,20 @@ package jp.ac.fukuoka_u.tl.casl2emu;
 
 import java.util.HashMap;
 
+import jp.ac.fukuoka_u.tl.casl2emu.android.OutputBuffer;
+
 /**
  * Created by furusho on 2016/07/09.
  */
 public class Casl2Emulator {
     private static HashMap _classnameToInstance = new HashMap();
     private static Object _lock = new Object();
-    Casl2Memory memory = Casl2Memory.getInstance();
-    static OutputBuffer outputBuffer = OutputBuffer.getInstance();
-    Casl2Register register = Casl2Register.getInstance();
+    protected Casl2Memory memory = Casl2Memory.getInstance();
+    protected static OutputBuffer outputBuffer = OutputBuffer.getInstance();
+    protected Casl2Register register = Casl2Register.getInstance();
     char[] fr = new char[3];
     boolean interruptflag =false;
-    boolean runflag = false;
+    protected boolean runflag = false;
 
     protected Casl2Emulator() {
         synchronized (_lock){

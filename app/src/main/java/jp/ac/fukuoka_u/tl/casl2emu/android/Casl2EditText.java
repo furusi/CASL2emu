@@ -1,17 +1,18 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.method.DigitsKeyListener;
-import android.widget.EditText;
+
+import jp.ac.fukuoka_u.tl.casl2emu.R;
 
 /**
  * Created by furusho on 16/09/14.
  */
 
 
-class Casl2EditText extends EditText {
+public class Casl2EditText extends android.support.v7.widget.AppCompatEditText {
     public Casl2EditText(Context context, int i) {
         super(context);
         this.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);

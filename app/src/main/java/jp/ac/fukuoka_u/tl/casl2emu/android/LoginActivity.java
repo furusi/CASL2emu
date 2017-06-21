@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -35,12 +35,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.InetSocketAddress;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import jp.ac.fukuoka_u.tl.casl2emu.Casl2Emulator;
+import jp.ac.fukuoka_u.tl.casl2emu.Casl2Register;
+import jp.ac.fukuoka_u.tl.casl2emu.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -430,7 +433,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 editor.putString("password",mPassword);
                 editor.commit();
                 Casl2Register.initializeInstance();
-                Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.Casl2EmulatorAndroid");
+                Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
             } else if (mEmail.toUpperCase().equals("TLGUEST")){
                 finish();
@@ -440,7 +443,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 editor.putString("password",mPassword);
                 editor.commit();
                 Casl2Register.initializeInstance();
-                Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.Casl2EmulatorAndroid");
+                Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
 
             }

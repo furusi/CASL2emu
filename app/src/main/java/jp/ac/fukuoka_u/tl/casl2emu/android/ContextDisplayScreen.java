@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -25,7 +25,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -55,6 +54,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import icepick.Icepick;
+import jp.ac.fukuoka_u.tl.casl2emu.Casl2Register;
+import jp.ac.fukuoka_u.tl.casl2emu.LogWriter;
+import jp.ac.fukuoka_u.tl.casl2emu.R;
 import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 
 import static android.R.layout.simple_list_item_1;

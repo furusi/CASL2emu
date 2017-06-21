@@ -1,4 +1,4 @@
-package jp.ac.fukuoka_u.tl.casl2emu;
+package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Random;
+
+import jp.ac.fukuoka_u.tl.casl2emu.Casl2Emulator;
+import jp.ac.fukuoka_u.tl.casl2emu.R;
 
 /**
  * Created by furusho on 2017/01/01.
