@@ -3,7 +3,10 @@ package jp.ac.fukuoka_u.tl.casl2emu.android;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.media.AudioAttributes;
 import android.media.JetPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Handler;
 import android.widget.Button;
 import android.widget.Toast;
@@ -22,6 +25,8 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
     Handler handler=null;
     private static JetPlayer jetPlayer=JetPlayer.getJetPlayer();
     private static Context context=null;
+    private static SoundPool soundPool = null;
+    private static AudioAttributes attr = null;
 
 
     static Intent broadcastIntent= new Intent();
@@ -34,7 +39,17 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
             jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
             broadcastIntent.setAction(context.getString(R.string.action_view_refresh));
             outputBuffer.setCasl2PaintView(context);
+            initializeSoundPool();
         }
+    }
+
+    protected static void initializeSoundPool() {
+        attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build();
+        soundPool = new SoundPool.Builder().setAudioAttributes(attr)
+                .setMaxStreams(6)
+                .build();
     }
 
 
@@ -204,38 +219,22 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 memory_position = register.getGr()[7];
                 count = register.getGr()[6];
                 subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
-                int ontei=9;
-                switch(memory_position){
-                    case 60:
-                        ontei = 0;
-                        break;
-                    case 62:
-                        ontei = 1;
-                        break;
-                    case 64:
-                        ontei = 2;
-                        break;
-                    case 65:
-                        ontei = 3;
-                        break;
-                    case 67:
-                        ontei = 4;
-                        break;
-                    case 69:
-                        ontei = 5;
-                        break;
-                    case 71:
-                        ontei = 6;
-                        break;
-                    default:
-                        ontei = memory_position;
-                }
+                int sndId = context.getResources().getIdentifier(String.format("s%03d",(int)memory_position),"raw",context.getPackageName());
+                final int soundOne = soundPool.load(context,sndId,1);
+                soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                        soundPool.play(soundOne, 1.0f,1.0f,0,0,1);
+                    }
+                });
+                /*
                 jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
                 jetPlayer.clearQueue();
                 if(ontei<7){
                     jetPlayer.queueJetSegment(ontei, -1, 0, 0, 0, (byte) 0);
                     jetPlayer.play();
                 }
+                */
                 break;
             case 0xFF20://浮動小数点数演算
                 //先頭アドレス:gr7
