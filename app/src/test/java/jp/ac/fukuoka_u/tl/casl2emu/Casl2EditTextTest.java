@@ -6,6 +6,8 @@ import android.test.InstrumentationTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
+import jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EditText;
+
 
 /**
  * Created by furusho on 2016/10/07.

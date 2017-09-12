@@ -18,22 +18,22 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".OutputScreen">
+        <activity android:name=".android.OutputScreen">
             <intent-filter>
                 <action android:name="jp.ac.fukuoka_u.tl.casl2emu.output"/>
             </intent-filter>
         </activity>
         <activity
             android:configChanges="orientation|screenSize"
-            android:name=".ContextDisplayScreen">
+            android:name=".android.ContextDisplayScreen">
         </activity>
-        <activity android:name=".BaseActivity"/>
+        <activity android:name=".android.BaseActivity"/>
 
-        <service android:name=".DataSendTask"/>
+        <service android:name=".android.DataSendTask"/>
 
         <activity
             android:configChanges="orientation|screenSize"
-            android:name=".LoginActivity" >
+            android:name=".android.LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

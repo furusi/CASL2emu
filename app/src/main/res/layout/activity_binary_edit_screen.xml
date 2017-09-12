@@ -6,7 +6,7 @@
         <import type="java.util.ArrayList"/>
         <variable
             name="contextDisplayScreen"
-            type="jp.ac.fukuoka_u.tl.casl2emu.ContextDisplayScreen">
+            type="jp.ac.fukuoka_u.tl.casl2emu.android.ContextDisplayScreen">
         </variable>
         <variable name="casl2Register" type="jp.ac.fukuoka_u.tl.casl2emu.Casl2Register"/>
         <variable
@@ -22,7 +22,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="jp.ac.fukuoka_u.tl.casl2emu.ContextDisplayScreen">
+    tools:context="jp.ac.fukuoka_u.tl.casl2emu.android.ContextDisplayScreen">
 
 
     <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
