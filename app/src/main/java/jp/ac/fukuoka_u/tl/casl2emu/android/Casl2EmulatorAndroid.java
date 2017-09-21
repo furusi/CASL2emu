@@ -220,6 +220,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 count = register.getGr()[6];
                 subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
                 int sndId = context.getResources().getIdentifier(String.format("s%03d",(int)memory_position),"raw",context.getPackageName());
+                try {
                 final int soundOne = soundPool.load(context,sndId,1);
                 soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
                     @Override
@@ -227,6 +228,9 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                         soundPool.play(soundOne, 1.0f,1.0f,0,0,1);
                     }
                 });
+
+                }catch (Exception e) {
+                }
                 /*
                 jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
                 jetPlayer.clearQueue();
