@@ -16,11 +16,11 @@ android {
         maven { url "https://clojars.org/repo/" }
     }
     defaultConfig {
-        applicationId "com.example.furusho.casl2emu"
+        applicationId "jp.ac.fukuoka_u.tl.casl2emu"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 39
-        versionName "1.3.1"
+        versionCode 40
+        versionName "1.3.2"
         signingConfig signingConfigs.config
     }
     buildTypes {
