@@ -42,8 +42,6 @@ public class OutputScreen extends BaseActivity {
         relativeLayout = (RelativeLayout) findViewById(R.id.out_relativelayout);
         final ActivityOutputScreenBinding binding =
                 DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
-        //binding.output.setText("Casl2emu is LEADY");
-        //outputBuffer.setData("CASL2Emu is ready!!!!");
         binding.setOutputbuffer(outputBuffer);
         outputBuffer.setCasl2PaintView(getApplicationContext());
         addContentView(paintView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -59,7 +57,6 @@ public class OutputScreen extends BaseActivity {
             @Override
             public void onClick(View v) {
                 emulator.stepOver();
-                //paintView.invalidate();
             }
         });
         binding.waitbuttonoutput.setOnClickListener(new View.OnClickListener() {
