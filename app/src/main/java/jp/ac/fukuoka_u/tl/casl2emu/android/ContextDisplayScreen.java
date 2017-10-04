@@ -435,7 +435,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         final SharedPreferences preferences;
         switch(item.getItemId()){
             case R.id.execution_interval:
-                final Casl2EditText text = new Casl2EditText(getApplicationContext(),3);
+                final Casl2EditText text = new Casl2EditText(ContextDisplayScreen.this,3);
                 text.setInputType(InputType.TYPE_CLASS_NUMBER);
                 preferences = PreferenceManager.getDefaultSharedPreferences(this);
                 text.setText(Integer.toString(preferences.getInt(getString(R.string.intervalkey),1000)));
@@ -466,7 +466,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 register.initializeRegister();
                 break;
             case R.id.action_jump:
-                final Casl2EditText memory_position = new Casl2EditText(getApplicationContext(),1);
+                final Casl2EditText memory_position = new Casl2EditText(ContextDisplayScreen.this,1);
                 memory_position.setTextColor(Color.BLACK);
                 new AlertDialog.Builder(ContextDisplayScreen.this)
 
