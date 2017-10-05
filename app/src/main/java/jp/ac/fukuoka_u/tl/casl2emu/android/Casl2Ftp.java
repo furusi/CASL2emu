@@ -32,8 +32,8 @@ public class Casl2Ftp extends ContextWrapper {
             super(base);
         }
 
-        public boolean putData(InetSocketAddress remoteserver,
-                              String userid, String passwd, boolean passive, String remotefile, String localFile,int kadaiNum) {
+        public boolean putData(InetSocketAddress remoteserver, String userid, String passwd,
+                               boolean passive, String remotefile, String localFile,int kadaiNum) {
             int reply = 0;
             boolean isLogin = false;
             if(myFTPClient==null) myFTPClient = new FTPClient();
@@ -51,7 +51,8 @@ public class Casl2Ftp extends ContextWrapper {
                 }//ファイル送信
                 myFTPClient.setDataTimeout(15000);
                 myFTPClient.setSoTimeout(15000);
-                String s_date = android.text.format.DateFormat.format("yyyyMMddkkmmss",uploaddate).toString();
+                String s_date =
+                        android.text.format.DateFormat.format("yyyyMMddkkmmss",uploaddate).toString();
                 //FileInputStream fileInputStream = this.openFileInput(localFile);
                 FileInputStream fileInputStream = new FileInputStream(new File(localFile));
                 myFTPClient.storeFile("~/"+s_date+remotefile, fileInputStream);
@@ -60,8 +61,10 @@ public class Casl2Ftp extends ContextWrapper {
                     throw new Exception("Send Status:" + String.valueOf(reply));
                 }else{
                     Date date = getDate();
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-                    editor.putString(userid+"-"+kadaiNum, DateFormat.format("yyyy年MM月dd日kk時mm分",date).toString());
+                    SharedPreferences.Editor editor = PreferenceManager.
+                            getDefaultSharedPreferences(getApplicationContext()).edit();
+                    editor.putString(userid+"-"+kadaiNum,
+                            DateFormat.format("yyyy年MM月dd日kk時mm分",date).toString());
                     editor.commit();
                 }
                 fileInputStream.close();
