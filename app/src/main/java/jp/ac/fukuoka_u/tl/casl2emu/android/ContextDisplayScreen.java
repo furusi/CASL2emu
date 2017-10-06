@@ -53,7 +53,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import icepick.Icepick;
+//import icepick.Icepick;
 import jp.ac.fukuoka_u.tl.casl2emu.Casl2Register;
 import jp.ac.fukuoka_u.tl.casl2emu.LogWriter;
 import jp.ac.fukuoka_u.tl.casl2emu.R;
@@ -219,7 +219,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_binary_edit_screen);
-        Icepick.restoreInstanceState(this,savedInstanceState);
+//        Icepick.restoreInstanceState(this,savedInstanceState);
 
         logWriter=new LogWriter(getApplicationContext());
         register = Casl2Register.getInstance();
@@ -616,7 +616,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this,outState);
+//        Icepick.saveInstanceState(this,outState);
     }
 
 
