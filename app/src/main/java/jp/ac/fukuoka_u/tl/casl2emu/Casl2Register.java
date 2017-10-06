@@ -92,7 +92,7 @@ public class Casl2Register extends BaseObservable{
     public void setDatafromBinary(byte[] loaddata){
 
         for (int i = 0; i < 8; i++) {
-            this.setGr((char) ((char)(loaddata[2 * i]<<8)+loaddata[2 * i + 1]), i);
+            this.setGr((char) ((char)(loaddata[2 * i]<<8)+(loaddata[2 * i + 1]&0x00FF)), i);
         }
         this.setPc(convertBytetoChar(loaddata, 8 * 2));
         this.setSp(convertBytetoChar(loaddata, 9 * 2));
