@@ -6,7 +6,6 @@ import android.graphics.Rect;
 import android.media.AudioAttributes;
 import android.media.JetPlayer;
 import android.media.SoundPool;
-import android.os.Build;
 import android.os.Handler;
 import android.widget.Button;
 import android.widget.Toast;
@@ -249,9 +248,9 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 char op = register.getGr()[6];
                 subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
                 char[] a_kasu = Arrays.copyOfRange(subarray,0,2);
-                double a = getFloat(subarray[2], a_kasu);
+                double a = getFloatFromCommet(subarray[2], a_kasu);
                 char[] b_kasu = Arrays.copyOfRange(subarray,3,5);
-                double b = getFloat(subarray[5], b_kasu);
+                double b = getFloatFromCommet(subarray[5], b_kasu);
                 char r_position = (char) (memory_position+6);
                 float r;
                 switch (op){
@@ -271,13 +270,13 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                         r=(float)checkFloatRange(Math.pow(a,b));
                         break;
                     case 0x5://正弦
-                        r=(float)checkFloatRange(Math.sin((a/180)*Math.PI));
+                        r=(float)checkFloatRange(Math.sin(Math.toRadians(a)));
                         break;
                     case 0x6://余弦
-                        r=(float)checkFloatRange(Math.cos((a/180)*Math.PI));
+                        r=(float)checkFloatRange(Math.cos(Math.toRadians(a)));
                         break;
                     case 0x7://正接
-                        r=(float)checkFloatRange(Math.tan((a/180)*Math.PI));
+                        r=(float)checkFloatRange(Math.tan(Math.toRadians(a)));
                         break;
                     default:
                         r=(float)0;
@@ -286,17 +285,22 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 char[] r_array = getFloatArray(r);
                 memory.setMemoryArray(r_array,r_position);
                 break;
-            case 0xFF22://浮動小数点数変換
+            case 0xFF21:
+                memory_position = register.getGr()[7];
+                r1 = register.getGr()[6];
+                memory.setMemoryArray(getFloatArray(r1),memory_position);
+                break;
+            case 0xFF22://浮動小数点数から16進数への変換
                 //先頭アドレス:gr7
                 //変換後代入先アドレス:gr6
-                //仮数部は4*7=28ビットで表す(2word)。符号は-の時F。指数部は1word使う。
+                //仮数部は4*7=28ビットで表す(2word)。符号は-の時FXXX。指数部は1word使う。
                 //メモリアドレスgr6
                 memory_position = register.getGr()[7];
                 char tr_positon = register.getGr()[6];
                 subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
                 char[] a_kasu1 = Arrays.copyOfRange(subarray,0,2);
-                float a1 = (float) getFloat(subarray[2], a_kasu1);
-                memory.setMemory((char) (a1/1),tr_positon);
+                float a1 = (float) getFloatFromCommet(subarray[2], a_kasu1);
+                register.setGr((char) (a1/1),6);
                 break;
             case 0xFF14://rand
                 memory_position = register.getGr()[7];

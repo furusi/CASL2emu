@@ -643,7 +643,7 @@ public abstract class Casl2Emulator {
      * @param c 3バイト分のデータの先頭位置
      * @return
      */
-    protected double getFloat(char c, char[] a_kasu) {
+    protected double getFloatFromCommet(char c, char[] a_kasu) {
         int[] _array = new int[7];
         int sign=1;
         if((a_kasu[0] >> 12) == 0xF){
