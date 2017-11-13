@@ -1,17 +1,23 @@
 package jp.ac.fukuoka_u.tl.casl2emu.android;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -23,6 +29,7 @@ import jp.ac.fukuoka_u.tl.casl2emu.R;
 
 public class BaseActivity extends AppCompatActivity {
 
+    protected static final int REQUEST_WRITE_STORAGE = 112;
     private boolean activityVisible=false;
     Casl2Register register;
     Casl2Emulator emulator;
@@ -171,5 +178,19 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
+    }
+
+    protected void makeDir(String dirname) {
+        File dir = new File(dirname);
+        boolean hasPermission = (ContextCompat.checkSelfPermission(BaseActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        if (!hasPermission) {
+            ActivityCompat.requestPermissions(BaseActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_STORAGE);
+        }
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
     }
 }
