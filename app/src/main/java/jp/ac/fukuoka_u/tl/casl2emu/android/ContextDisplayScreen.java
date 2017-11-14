@@ -571,6 +571,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
                                     fileOutputStream = new FileOutputStream(file);
                                     fileOutputStream.write(savedata);
+                                    fileOutputStream.flush();
+                                    fileOutputStream.close();
+
                                     logWriter.recordLogData("save,"+save_filename);
                                     SharedPreferences.Editor editor = preferences.edit();
                                     editor.putString("LastSavedFileName",save_filename);
