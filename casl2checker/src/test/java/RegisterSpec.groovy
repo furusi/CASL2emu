@@ -7,7 +7,7 @@ import spock.lang.Specification
 class RegisterSpec extends Specification{
     def "getgp check"(){
         setup:
-        def reg=new Casl2Register();
+        def reg=new Casl2Register()
         reg.setGr((char)v,0)
 
         expect:

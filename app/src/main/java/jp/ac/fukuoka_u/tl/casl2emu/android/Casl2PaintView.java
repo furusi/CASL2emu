@@ -18,14 +18,14 @@ public class Casl2PaintView extends View {
     }
 
     public void setDrawObjectArray(ArrayList<Casl2Figure> drawObjectArray) {
-        this.drawObjectArray = drawObjectArray;
+        Casl2PaintView.drawObjectArray = drawObjectArray;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         //canvas.drawRect(100,100,300,300,paint);
-        ArrayList<Casl2Figure> figureArrayList = this.drawObjectArray;
+        ArrayList<Casl2Figure> figureArrayList = drawObjectArray;
 
         if(figureArrayList!=null) {
             for (Casl2Figure f : figureArrayList) {

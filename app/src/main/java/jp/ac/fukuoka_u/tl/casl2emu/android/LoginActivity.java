@@ -361,7 +361,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             super.onPostExecute(o);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             if(preferences.contains("LastLoginDate")){
-                Date date = (Date)o;
+                Date date = o;
                 SimpleDateFormat s = new SimpleDateFormat("yyyyMMdd");
                 Date olddate = null;
                 Log.d("Lastlogin",s.toString());

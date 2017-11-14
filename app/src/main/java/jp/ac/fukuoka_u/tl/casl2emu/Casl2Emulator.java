@@ -657,8 +657,8 @@ public abstract class Casl2Emulator {
         _array[5]= (a_kasu[1]&0x00F0)>>4;
         _array[6]= a_kasu[1]&0x000F;
         short a_sisu = (short)c;
-        double flt = (double) ((_array[0]*0.1+_array[1]*0.01+_array[2]*0.001+_array[3]*0.0001+
-                _array[4]*0.00001+_array[5]*0.000001+_array[6]*0.0000001)*sign*(Math.pow(10,a_sisu)));
+        double flt = (_array[0]*0.1+_array[1]*0.01+_array[2]*0.001+_array[3]*0.0001+
+                _array[4]*0.00001+_array[5]*0.000001+_array[6]*0.0000001)*sign*(Math.pow(10,a_sisu));
         return flt;
     }
 
