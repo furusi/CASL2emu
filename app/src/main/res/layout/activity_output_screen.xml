@@ -37,32 +37,32 @@
             android:id="@+id/output"
             android:textColor="@color/material_grey_50" />
     </ScrollView>
+
     <LinearLayout
+        android:id="@+id/ButtonLayoutoutput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/ButtonLayoutoutput">
+        android:layout_alignParentBottom="true">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_step_over_button"
             android:id="@+id/stepbuttonoutput"
-            />
-
-        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_run_button"
-            android:id="@+id/runbuttonoutput" />
+            android:text="@string/text_step_over_button" />
 
         <Button
-            android:text="@string/button_stp"
+            android:id="@+id/runbuttonoutput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/text_run_button" />
+
+        <Button
             android:id="@+id/waitbuttonoutput"
-            android:textColor="#000000"
-            android:background="?attr/colorAccent" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorAccent"
+            android:text="@string/button_stp"
+            android:textColor="#000000" />
 
     </LinearLayout>
     <LinearLayout
