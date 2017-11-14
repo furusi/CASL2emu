@@ -70,6 +70,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     Casl2Exercise exercise =null;
     LogWriter logWriter;
 
+    private String[] registerName =
+            {"GR0","GR1","GR2","GR3","GR4","GR5","GR6","GR7","PR","SP","OF","SF","ZF"};
 
     private final AdapterView.OnItemClickListener showTextEditDialog = new AdapterView.OnItemClickListener(){
 
@@ -103,7 +105,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(R.layout.input_text_dialog)
-                .setTitle("メモリを編集: "+String.format(Locale.US,"0x%04X",rownum*4 & 0xFFFF)+" - "+String.format(Locale.US,"0x%04X",rownum*4+3& 0xFFFF))
+                .setTitle("メモリを編集 : "+String.format(Locale.US,"0x%04X",rownum*4 & 0xFFFF)+" - "+String.format(Locale.US,"0x%04X",rownum*4+3& 0xFFFF))
                 //setViewにてビューを設定します。
                 .setView(editView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -692,7 +694,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 new AlertDialog.Builder(ContextDisplayScreen.this)
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(R.layout.input_text_dialog)
-                        .setTitle("レジスタを編集")
+                        .setTitle("レジスタを編集 : "+registerName[id])
                         //setViewにてビューを設定します。
                         .setView(casl2EditText)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
