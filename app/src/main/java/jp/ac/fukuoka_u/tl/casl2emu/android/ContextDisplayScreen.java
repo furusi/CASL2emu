@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -38,6 +39,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.primitives.Chars;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -325,7 +327,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             public boolean onLongClick(View v) {
                 emulator.waitEmu();
                 register.setPc((char) 0x0000);
-                Toast.makeText(ContextDisplayScreen.this,"PRを0x0000にしました。",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ContextDisplayScreen.this,"PRを0x0000にしました。",Toast.LENGTH_SHORT).show();
+                new MaterialDialog.Builder(ContextDisplayScreen.this).
+                        title("test title").content("prを初期化しました。")
+                        .positiveText("OK")
+                        .positiveColor(0)
+                        .cancelable(false)
+                        .show();
                 return true;
             }
         });
