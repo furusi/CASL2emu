@@ -23,27 +23,24 @@ import jp.ac.fukuoka_u.tl.casl2emu.R;
 public class Casl2EmulatorAndroid extends Casl2Emulator {
     Handler handler=null;
     private static JetPlayer jetPlayer=JetPlayer.getJetPlayer();
-    private static Context context=null;
+    private Context context=null;
     private static SoundPool soundPool = null;
-    private static AudioAttributes attr = null;
 
 
     static Intent broadcastIntent= new Intent();
 
 
 
-    static public void initializeInstanceAndroid(Context context1) {
-        if(context==null) {
+    void initializeInstanceAndroid(Context context1) {
             context = context1;
             jetPlayer.loadJetFile(context.getResources().openRawResourceFd(R.raw.doremifa));
             broadcastIntent.setAction(context.getString(R.string.action_view_refresh));
             outputBuffer.setCasl2PaintView(context);
             initializeSoundPool();
-        }
     }
 
     protected static void initializeSoundPool() {
-        attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
+        AudioAttributes attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                 .build();
         soundPool = new SoundPool.Builder().setAudioAttributes(attr)

@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private boolean activityVisible=false;
     Casl2Register register;
-    Casl2Emulator emulator;
+    Casl2EmulatorAndroid emulator;
     ArrayList<String> stringArrayList;
     ArrayAdapter<String> arrayAdapter;
     BroadcastReceiver receiver;
@@ -37,8 +37,8 @@ public class BaseActivity extends AppCompatActivity {
          *
          */
         register = Casl2Register.getInstance();
-        emulator = Casl2Emulator.getInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
-        Casl2EmulatorAndroid.initializeInstanceAndroid(getApplicationContext());
+        emulator = (Casl2EmulatorAndroid) Casl2Emulator.getInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
+        emulator.initializeInstanceAndroid(getApplicationContext());
 
 
         IntentFilter filter;

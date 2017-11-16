@@ -10,7 +10,7 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion 25
+    compileSdkVersion 27
     buildToolsVersion '26.0.2'
     repositories {
         maven { url "https://clojars.org/repo/" }
@@ -51,12 +51,13 @@ dependencies {
     annotationProcessor 'com.android.databinding:compiler:3.0.0'
     compile 'commons-net:commons-net:3.3'
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.4.0'
+    compile 'com.android.support:appcompat-v7:27.0.0'
     compile 'com.google.guava:guava:23.0-android'
-    compile 'com.android.support:design:25.4.0'
-    compile 'com.android.support:support-v4:25.4.0'
+    compile 'com.android.support:design:27.0.0'
+    compile 'com.android.support:support-v4:27.0.0'
     compile 'commons-lang:commons-lang:2.6'
     compile 'org.jetbrains.kotlin:kotlin-stdlib:1.1.4-3'
+    compile 'com.afollestad.material-dialogs:core:0.9.5.0'
 }
 repositories {
     mavenCentral()
