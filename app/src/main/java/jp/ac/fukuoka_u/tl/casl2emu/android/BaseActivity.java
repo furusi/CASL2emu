@@ -29,6 +29,7 @@ public class BaseActivity extends AppCompatActivity {
     ArrayList<String> stringArrayList;
     ArrayAdapter<String> arrayAdapter;
     BroadcastReceiver receiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

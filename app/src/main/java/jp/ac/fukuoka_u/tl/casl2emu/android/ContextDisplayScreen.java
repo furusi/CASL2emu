@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -57,7 +56,6 @@ import java.util.regex.Pattern;
 
 //import icepick.Icepick;
 import jp.ac.fukuoka_u.tl.casl2emu.Casl2Register;
-import jp.ac.fukuoka_u.tl.casl2emu.LogWriter;
 import jp.ac.fukuoka_u.tl.casl2emu.R;
 import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityBinaryEditScreenBinding;
 
@@ -70,7 +68,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     private static final int REQUEST_WRITE_STORAGE = 112;
     private BroadcastReceiver refreshReceiver;
     Casl2Exercise exercise =null;
-    LogWriter logWriter;
+    Casl2LogWriter Casl2LogWriter;
 
     private String[] registerName =
             {"GR0","GR1","GR2","GR3","GR4","GR5","GR6","GR7","PR","SP","OF","SF","ZF"};
@@ -225,7 +223,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         setContentView(R.layout.activity_binary_edit_screen);
 //        Icepick.restoreInstanceState(this,savedInstanceState);
 
-        logWriter=new LogWriter(getApplicationContext());
+        Casl2LogWriter =new Casl2LogWriter();
         register = Casl2Register.getInstance();
         boolean hasPermission = (ContextCompat.checkSelfPermission(ContextDisplayScreen.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
@@ -404,7 +402,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     register.setDatafromBinary(loaddata);
                     emulator.setDatafromBinary(loaddata);
                     localSetMemoryAdapter(emulator.getMemory(),0);
-                    logWriter.recordLogData("load,"+loadfilename);
+                    // TODO: 2017/11/17 ロギング処理実装
+                    //Casl2LogWriter.recordLogData("load,"+loadfilename);
 
                 }
 
@@ -584,7 +583,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                     fileOutputStream.flush();
                                     fileOutputStream.close();
 
-                                    logWriter.recordLogData("save,"+save_filename);
+                                    // TODO: 2017/11/17 ロギング処理実装
+                                    //Casl2LogWriter.recordLogData("save,"+save_filename);
                                     SharedPreferences.Editor editor = preferences.edit();
                                     editor.putString("LastSavedFileName",save_filename);
                                     editor.commit();
