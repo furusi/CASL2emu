@@ -118,6 +118,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
                             emulator.setMemoryArray(chars, rownum*4);
                             refreshMemoryPane(rownum,0);
+                            logging("memory_editing:"+upperedString);
 
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
@@ -183,7 +184,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 String.valueOf(listView.getItemAtPosition(info.position)));
         char[] zero = {0x0000,0x0000,0x0000,0x0000};
         switch(item.getItemId()) {
-            //TODO:削除機能を追加
             case R.id.action_pop:
                 emulator.deleteMemoryArray(zero, info.position*4);
                 refreshMemoryPane(info.position,2);
@@ -304,6 +304,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             @Override
             public void onClick(View v) {
                 emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
+                logging("Run");
                 startListTask(new char[0],0);
             }
         });
@@ -311,6 +312,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             @Override
             public void onClick(View v) {
                 emulator.stepOver();
+                logging("StepOver");
                 startListTask(new char[0],0);
             }
         });
@@ -402,8 +404,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     register.setDatafromBinary(loaddata);
                     emulator.setDatafromBinary(loaddata);
                     localSetMemoryAdapter(emulator.getMemory(),0);
-                    // TODO: 2017/11/17 ロギング処理実装
-                    //Casl2LogWriter.recordLogData("load,"+loadfilename);
+                    logging("load:"+loadfilename);
 
                 }
 
@@ -583,8 +584,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                     fileOutputStream.flush();
                                     fileOutputStream.close();
 
-                                    // TODO: 2017/11/17 ロギング処理実装
-                                    //Casl2LogWriter.recordLogData("save,"+save_filename);
+                                    logging("save,"+save_filename);
                                     SharedPreferences.Editor editor = preferences.edit();
                                     editor.putString("LastSavedFileName",save_filename);
                                     editor.commit();
@@ -772,6 +772,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                             register.setFr((char) Integer.parseInt(upperedString,16),2 );
                                             break;
                                     }
+                                    logging("register_editing["+registerName[id]+"]:"+upperedString);
                                 } else {
                                     Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
                                 }

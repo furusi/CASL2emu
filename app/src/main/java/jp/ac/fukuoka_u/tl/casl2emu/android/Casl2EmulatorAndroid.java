@@ -351,9 +351,10 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
     }
 
     @Override
-    public void stepOver() {
-        super.stepOver();
+    public int stepOver() {
+        int r = super.stepOver();
         context.sendBroadcast(broadcastIntent);
+        return r;
     }
 
     @Override
@@ -374,7 +375,6 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
 
                     stepOver();
 
-                    //TODO:連続実行回数の記録
                     if(handler!=null) {
                         handler.postDelayed(this, interval);
                     }

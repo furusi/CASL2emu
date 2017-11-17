@@ -173,4 +173,9 @@ public class BaseActivity extends AppCompatActivity {
         super.onDestroy();
         unregisterReceiver(receiver);
     }
+
+    protected void logging(String data){
+        startService(new Intent(getApplicationContext(),Casl2LogWriter.class)
+                .putExtra("log",data));
+    }
 }

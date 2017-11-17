@@ -75,7 +75,7 @@ public abstract class Casl2Emulator {
         this.interruptflag = interruptflag;
     }
 
-    public void stepOver(){
+    public int stepOver(){
         //pcの指すメモリの中身をを見る
         char cpc = register.getPc(); char mem1 = memory.getMemory(cpc);
         fr[0]=0; fr[1]=0; fr[2]=0;
@@ -582,7 +582,7 @@ public abstract class Casl2Emulator {
                 //Toast("不正な命令です。");
         }
 
-        //TODO:ステップ実行回数の記録
+        return 0;
     }
 
     protected void showText(String txt) {
