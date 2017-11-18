@@ -17,17 +17,17 @@ import jp.ac.fukuoka_u.tl.casl2emu.Casl2Emulator;
 import jp.ac.fukuoka_u.tl.casl2emu.R;
 
 /**
- * Created by furusho on 2017/01/01.
+ * Android用のエミュレータクラス
  */
 
 public class Casl2EmulatorAndroid extends Casl2Emulator {
-    Handler handler=null;
+    private Handler handler=null;
     private static JetPlayer jetPlayer=JetPlayer.getJetPlayer();
     private Context context=null;
     private static SoundPool soundPool = null;
 
 
-    static Intent broadcastIntent= new Intent();
+    private static Intent broadcastIntent= new Intent();
 
 
 
@@ -39,7 +39,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
             initializeSoundPool();
     }
 
-    protected static void initializeSoundPool() {
+    private static void initializeSoundPool() {
         AudioAttributes attr = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                 .build();
@@ -352,6 +352,9 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
 
     @Override
     public int stepOver() {
+        int opCode = getOPCode();
+        context.startService(new Intent(context,Casl2LogWriter.class)
+                .putExtra("log","StepOver:"+String.format("%04X",opCode)));
         int r = super.stepOver();
         context.sendBroadcast(broadcastIntent);
         return r;
