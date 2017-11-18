@@ -77,23 +77,28 @@ public class Casl2LogWriter extends IntentService implements AutoCloseable{
     //保存回数を出力.ファイル名も
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        String data = intent.getStringExtra("log");
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-        //ファイル名の決定
-        //日付を取得してファイル名へ
-        date = new Date(System.currentTimeMillis());
-        String s_date = android.text.format.DateFormat.format("yyyyMMddkkmmss",date).toString();
-        if(date!=null){
-            File file = new File(dirname,userid+save_filename);
-            try(FileWriter fileWriter = new FileWriter(file,true);
-                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-                bufferedWriter.write(s_date+","+data+"\n");
-            } catch (IOException e) {
-                e.printStackTrace();
+        writeLog(intent);
+    }
+
+    private void writeLog(@Nullable Intent intent) {
+        if (intent != null) {
+            String data  = intent.getStringExtra("log");
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+            //ファイル名の決定
+            //日付を取得してファイル名へ
+            date = new Date(System.currentTimeMillis());
+            String s_date = DateFormat.format("yyyyMMddkkmmss",date).toString();
+            if(date!=null){
+                File file = new File(dirname,userid+save_filename);
+                try(FileWriter fileWriter = new FileWriter(file,true);
+                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+                    bufferedWriter.write(s_date+","+data+"\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
     }
 }
