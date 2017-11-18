@@ -95,7 +95,7 @@ public abstract class Casl2Emulator {
         int r_before;
         char data;
 
-        switch (mem1 & 0xff00) {
+        switch (getOPCode()) {
             case 0x0000: // NOP
             //データに基づいて処理する
                 wordCount=1;
@@ -583,6 +583,10 @@ public abstract class Casl2Emulator {
         }
 
         return 0;
+    }
+
+    protected int getOPCode() {
+        return memory.getMemory(register.getPc()) & 0xff00;
     }
 
     protected void showText(String txt) {
