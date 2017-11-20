@@ -355,7 +355,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
         int opCode = getOPCode();
         // TODO: 2017/11/20 2バイト分記録する（2バイト使う命令のみ)
         context.startService(new Intent(context,Casl2LogWriter.class)
-                .putExtra("log",new StringBuffer("StepOver:") .append(String.format("%04X",opCode))
+                .putExtra("log",new StringBuilder("StepOver:") .append(String.format("%04X",opCode))
                         .toString()));
         int r = super.stepOver();
         context.sendBroadcast(broadcastIntent);
