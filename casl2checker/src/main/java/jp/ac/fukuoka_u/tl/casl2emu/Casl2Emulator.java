@@ -579,7 +579,6 @@ public abstract class Casl2Emulator {
                 //Toast("不正な命令です。");
         }
 
-        //TODO:ステップ実行回数の記録
     }
 
     protected void showText(String txt) {

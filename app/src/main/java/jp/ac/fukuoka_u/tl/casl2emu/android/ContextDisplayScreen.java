@@ -312,7 +312,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             @Override
             public void onClick(View v) {
                 emulator.stepOver();
-                logging("StepOver");
                 startListTask(new char[0],0);
             }
         });
