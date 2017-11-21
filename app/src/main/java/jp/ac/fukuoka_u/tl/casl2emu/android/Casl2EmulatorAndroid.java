@@ -59,7 +59,6 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
         char r1;
         char cmember;//データに基づいて処理する
         wordCount = 2;
-        instArray = memory.getMemoryArray(register.getPc(), wordCount);
         jikkou = getEffectiveAddress();
         char memory_position;
         char count;
@@ -107,7 +106,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 //文字数分のデータを読み取りStringに変換。
                 subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
                 byte[] chardataStr = new byte[subarray.length];
-                byte chardata = 0;
+                byte chardata;
                 for(int i =0;i<subarray.length;i++){
 
                     chardata = (byte) (subarray[i]&0x00FF);
@@ -213,8 +212,6 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
             case 0xFF40://音を鳴らす
                 //先頭アドレス:gr7 データ数:gr6
                 memory_position = register.getGr()[7];
-                count = register.getGr()[6];
-                subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+count);
                 int sndId = context.getResources().getIdentifier(String.format("s%03d",(int)memory_position),"raw",context.getPackageName());
                 try {
                 final int soundOne = soundPool.load(context,sndId,1);
@@ -300,7 +297,6 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 register.setGr((char) (a1/1),6);
                 break;
             case 0xFF14://rand
-                memory_position = register.getGr()[7];
                 short random_max = Short.MAX_VALUE;
                 short random_min = Short.MIN_VALUE;
                 Random random = new Random(System.currentTimeMillis());
@@ -355,8 +351,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
         int opCode = getOPCode();
         // TODO: 2017/11/20 2バイト分記録する（2バイト使う命令のみ)
         context.startService(new Intent(context,Casl2LogWriter.class)
-                .putExtra("log",new StringBuilder("StepOver:") .append(String.format("%04X",opCode))
-                        .toString()));
+                .putExtra("log","StepOver:"+String.format("%04X",opCode)));
         int r = super.stepOver();
         context.sendBroadcast(broadcastIntent);
         return r;

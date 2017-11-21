@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -38,6 +39,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.primitives.Chars;
 
@@ -412,6 +414,22 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        new MaterialDialog.Builder(ContextDisplayScreen.this).
+                title("Conform").content("Casl2Emuを終了しますか？")
+                .positiveText("OK")
+                .positiveColor(0)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        finish();
+                    }
+                })
+                .show();
     }
 
     private void startDataSendTask(Intent data, SharedPreferences sharedPreferences) {
