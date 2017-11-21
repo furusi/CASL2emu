@@ -19,8 +19,8 @@ android {
         applicationId "jp.ac.fukuoka_u.tl.casl2emu"
         minSdkVersion 22
         targetSdkVersion 22
-        versionCode 44
-        versionName "1.3.6"
+        versionCode 45
+        versionName "1.3.7"
         signingConfig signingConfigs.config
     }
     buildTypes {
