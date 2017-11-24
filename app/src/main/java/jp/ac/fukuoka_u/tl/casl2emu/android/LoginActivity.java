@@ -3,24 +3,21 @@ package jp.ac.fukuoka_u.tl.casl2emu.android;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -58,12 +55,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known user names and passwords.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
@@ -80,13 +71,13 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         setContentView(R.layout.activity_login);
         // Set up the login form.
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
         if(preferences.contains("userid")){
             mEmailView.setText(preferences.getString("userid",""));
         }
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         if(preferences.contains("password")){
             mPasswordView.setText(preferences.getString("password",""));
         }
@@ -101,8 +92,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        Button guestButton = (Button) findViewById(R.id.guest_button);
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        Button guestButton = findViewById(R.id.guest_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,7 +107,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.remove("userid");
                     editor.remove("password");
-                    editor.commit();
+                    editor.apply();
                     mEmailView.setText("");
                     mPasswordView.setText("");
                     Toast.makeText(LoginActivity.this,"ログイン情報を消去しました。",Toast.LENGTH_SHORT).show();
@@ -245,32 +236,25 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     @Override
@@ -324,7 +308,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         };
 
         int ADDRESS = 0;
-        int IS_PRIMARY = 1;
     }
 
     private class VerifyLoginTimeTask extends AsyncTask<Void,Void,Date>{
@@ -350,8 +333,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         @Override
         protected Date doInBackground(Void... params) {
             Casl2Ftp ftp = new Casl2Ftp(getApplicationContext());
-            Date date = ftp.getDate();
-            return date;
+            return ftp.getDate();
         }
 
 
@@ -377,7 +359,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.remove("userid");
                     editor.remove("password");
-                    editor.commit();
+                    editor.apply();
                     Toast.makeText(LoginActivity.this,"ログイン情報を消去しました。",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -407,9 +389,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 String remoteserver = getString(R.string.server_address);                 //FTPサーバーアドレス
                 int remoteport = 21;    //FTPサーバーポート
                 String userid = mEmail.toUpperCase();                       //ログインユーザID
-                String passwd = mPassword;                       //ログインパスワード
                 Casl2Ftp ftp = new Casl2Ftp(getApplicationContext());
-                result = ftp.login(new InetSocketAddress(remoteserver, remoteport), userid, passwd);
+                result = ftp.login(new InetSocketAddress(remoteserver, remoteport), userid, mPassword);
             } catch (InterruptedException e) {
                 return false;
             } catch (Exception e) {
@@ -431,7 +412,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("userid",mEmail.toUpperCase());
                 editor.putString("password",mPassword);
-                editor.commit();
+                editor.apply();
                 Casl2Register.initializeInstance();
                 Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
                 logging("action","login");
@@ -442,7 +423,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("userid",mEmail.toUpperCase());
                 editor.putString("password",mPassword);
-                editor.commit();
+                editor.apply();
                 Casl2Register.initializeInstance();
                 Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));

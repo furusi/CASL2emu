@@ -9,12 +9,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +34,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-        /**
-         *
-         */
         register = Casl2Register.getInstance();
         emulator = (Casl2EmulatorAndroid) Casl2Emulator.getInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
         emulator.initializeInstanceAndroid(getApplicationContext());
@@ -112,10 +105,7 @@ public class BaseActivity extends AppCompatActivity {
                                             case 0xFF02:
                                                 if(chars.length>=input.length) {
                                                     Arrays.fill(chars, (char) 0x0);
-                                                    for (int i = 0; i < input.length; i++) {
-
-                                                        chars[i] = input[i];
-                                                    }
+                                                    System.arraycopy(input, 0, chars, 0, input.length);
                                                 }
                                                 refreshMemory(chars, position);
                                                 break;
