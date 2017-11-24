@@ -32,9 +32,7 @@ public class Casl2Memory extends BaseObservable{
     }
     public char[] getMemoryArray(int start, int count) {
         char[]tmp=new char[count];
-        for(int i = 0; i <count;i++){
-            tmp[i]=memory[i+start];
-        }
+        System.arraycopy(memory, 0 + start, tmp, 0, count);
         return tmp;
     }
     public char getMemory(int position) {
@@ -43,30 +41,22 @@ public class Casl2Memory extends BaseObservable{
 
     public void setMemory(char[] data) {
         Arrays.fill(memory,'\0');
-        for(int i = 0; i <data.length;i++){
-            memory[i]=data[i];
-        }
+        System.arraycopy(data, 0, memory, 0, data.length);
     }
     public void deleteMemoryArray(char[] data, int position){
 
         //コピーの必要な部分はpositionから65535-dataまで
-        for(int i=position;i<65535-data.length;i++){
-            memory[i]=memory[i+data.length];
-        }
+        System.arraycopy(memory, position + data.length, memory, position, 65535 - data.length - position);
         setMemoryArray(data,65535-data.length);
     }
     public void insertMemoryArray(char[] data, int position){
 
         //コピーの必要な部分はpositionから65535-dataまで
-        for(int i=65535-data.length;i>=position;i--){
-           memory[i+data.length]=memory[i];
-        }
+        System.arraycopy(memory, position, memory, position + data.length, 65535 - data.length + 1 - position);
         setMemoryArray(data,position);
     }
     public void setMemoryArray(char[] data, int position) {
-        for(int i = 0; i <data.length;i++){
-            memory[i+position]=data[i];
-        }
+        System.arraycopy(data, 0, memory, 0 + position, data.length);
         notifyPropertyChanged(BR.casl2Memory);
     }
     public void setMemory(char data, int position) {
