@@ -36,7 +36,7 @@ public class Casl2Application extends Application {
     public enum AppStatus {
         BACKGROUND,                // app is background
         RETURNED_TO_FOREGROUND,    // app returned to foreground(or first launch)
-        FOREGROUND;                // app is foreground
+        FOREGROUND                // app is foreground
     }
 
     public class MyActivityLifecycleCallbacks implements ActivityLifecycleCallbacks {

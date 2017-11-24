@@ -6,10 +6,10 @@ package jp.ac.fukuoka_u.tl.casl2emu.android;
  */
 
 public class Casl2Figure {
-    int type;
-    Object prop;
+    private int type;
+    private Object prop;
     int color;
-    float width;
+    private float width;
 
     public float getWidth() {
         return width;

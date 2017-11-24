@@ -39,7 +39,7 @@ public class OutputScreen extends BaseActivity {
         outputBuffer.setCasl2PaintView(getApplicationContext());
         paintView = outputBuffer.getCasl2PaintView();
         handler = new Handler();
-        relativeLayout = (RelativeLayout) findViewById(R.id.out_relativelayout);
+        relativeLayout = findViewById(R.id.out_relativelayout);
         final ActivityOutputScreenBinding binding =
                 DataBindingUtil.setContentView(this,R.layout.activity_output_screen);
         binding.setOutputbuffer(outputBuffer);
@@ -125,7 +125,7 @@ public class OutputScreen extends BaseActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(intent.getAction().equals(getString(jp.ac.fukuoka_u.tl.casl2emu.R.string.action_view_refresh))){
-                    TextView output = (TextView)findViewById(R.id.output);
+                    TextView output = findViewById(R.id.output);
                     output.setText(outputBuffer.getData());
                     output.invalidate();
                 }

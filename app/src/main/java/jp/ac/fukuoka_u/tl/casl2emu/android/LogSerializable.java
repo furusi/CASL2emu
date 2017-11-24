@@ -1,15 +1,13 @@
 package jp.ac.fukuoka_u.tl.casl2emu.android;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 
 /**
- * Created by furusho on 2017/11/24.
+ * 行動履歴用のクラス
+ *
  */
 public class LogSerializable implements Serializable {
 
