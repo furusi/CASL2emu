@@ -434,7 +434,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 editor.commit();
                 Casl2Register.initializeInstance();
                 Casl2Emulator.initializeInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
-                logging("login");
+                logging("login","");
                 startActivity(new Intent(getApplicationContext(),ContextDisplayScreen.class));
             } else if (mEmail.toUpperCase().equals("TLGUEST")){
                 finish();

@@ -9,8 +9,12 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -174,8 +178,10 @@ public class BaseActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
-    protected void logging(String data){
+    protected void logging(String name,String value){
+        LogSerializable log;
+            log = new LogSerializable(name,value);
         startService(new Intent(getApplicationContext(),Casl2LogWriter.class)
-                .putExtra("log",data));
+                .putExtra("log",log));
     }
 }

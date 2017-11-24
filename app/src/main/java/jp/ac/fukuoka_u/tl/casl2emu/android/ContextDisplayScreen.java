@@ -70,7 +70,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     private static final int REQUEST_WRITE_STORAGE = 112;
     private BroadcastReceiver refreshReceiver;
     Casl2Exercise exercise =null;
-    Casl2LogWriter Casl2LogWriter;
+    Casl2LogWriter casl2LogWriter;
 
     private String[] registerName =
             {"GR0","GR1","GR2","GR3","GR4","GR5","GR6","GR7","PR","SP","OF","SF","ZF"};
@@ -120,7 +120,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
                             emulator.setMemoryArray(chars, rownum*4);
                             refreshMemoryPane(rownum,0);
-                            logging("memory_editing:"+upperedString);
+                            logging("memory_editing:",upperedString);
 
                         }else {
                             Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
@@ -225,7 +225,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         setContentView(R.layout.activity_binary_edit_screen);
 //        Icepick.restoreInstanceState(this,savedInstanceState);
 
-        Casl2LogWriter =new Casl2LogWriter();
+        casl2LogWriter =new Casl2LogWriter();
         register = Casl2Register.getInstance();
         boolean hasPermission = (ContextCompat.checkSelfPermission(ContextDisplayScreen.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
@@ -306,7 +306,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             @Override
             public void onClick(View v) {
                 emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
-                logging("Run");
+                logging("Run","");
                 startListTask(new char[0],0);
             }
         });
@@ -405,7 +405,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     register.setDatafromBinary(loaddata);
                     emulator.setDatafromBinary(loaddata);
                     localSetMemoryAdapter(emulator.getMemory(),0);
-                    logging("load:"+loadfilename);
+                    logging("load:",loadfilename);
 
                 }
 
@@ -601,7 +601,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                     fileOutputStream.flush();
                                     fileOutputStream.close();
 
-                                    logging("save,"+save_filename);
+                                    logging("save,",save_filename);
                                     SharedPreferences.Editor editor = preferences.edit();
                                     editor.putString("LastSavedFileName",save_filename);
                                     editor.commit();
@@ -789,7 +789,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                             register.setFr((char) Integer.parseInt(upperedString,16),2 );
                                             break;
                                     }
-                                    logging("register_editing["+registerName[id]+"]:"+upperedString);
+                                    logging("register_editing["+registerName[id]+"]:",upperedString);
                                 } else {
                                     Toast.makeText(ContextDisplayScreen.this, "適切な文字列を入力してください", Toast.LENGTH_LONG).show();
                                 }

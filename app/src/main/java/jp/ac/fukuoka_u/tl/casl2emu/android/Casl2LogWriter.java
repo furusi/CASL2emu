@@ -14,6 +14,9 @@ import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -80,9 +83,10 @@ public class Casl2LogWriter extends IntentService implements AutoCloseable{
         writeLog(intent);
     }
 
-    private void writeLog(@Nullable Intent intent) {
-        if (intent != null) {
-            String data  = intent.getStringExtra("log");
+    private void writeLog(@Nullable Intent intent)  {
+        if (intent != null && intent.hasExtra("log")) {
+            LogSerializable data  = (LogSerializable) intent.getSerializableExtra("log");
+            JSONObject json = new JSONObject();
             if(!dir.exists()){
                 dir.mkdirs();
             }
@@ -90,11 +94,18 @@ public class Casl2LogWriter extends IntentService implements AutoCloseable{
             //日付を取得してファイル名へ
             date = new Date(System.currentTimeMillis());
             String s_date = DateFormat.format("yyyyMMddkkmmss",date).toString();
+            try {
+                json.put("date",s_date);
+                json.put("data",data.data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             if(date!=null){
                 File file = new File(dirname,userid+save_filename);
                 try(FileWriter fileWriter = new FileWriter(file,true);
                     BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-                    bufferedWriter.write(s_date+","+data+"\n");
+                    //bufferedWriter.write(s_date+","+data+"\n");
+                    bufferedWriter.write(json.toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
