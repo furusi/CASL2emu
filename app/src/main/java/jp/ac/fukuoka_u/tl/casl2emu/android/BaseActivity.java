@@ -179,7 +179,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void logging(String name,String value){
-        LogSerializable log;
+        LogSerializable  log;
             log = new LogSerializable(name,value);
         startService(new Intent(getApplicationContext(),Casl2LogWriter.class)
                 .putExtra("log",log));

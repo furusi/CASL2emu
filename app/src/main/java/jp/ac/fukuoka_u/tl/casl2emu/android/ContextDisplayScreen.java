@@ -120,6 +120,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
                             emulator.setMemoryArray(chars, rownum*4);
                             refreshMemoryPane(rownum,0);
+                            // TODO: 2017/11/24 編集場所の記録
                             logging("memory_editing:",upperedString);
 
                         }else {
@@ -306,7 +307,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             @Override
             public void onClick(View v) {
                 emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey),1000));
-                logging("Run","");
+                logging("action","Run");
                 startListTask(new char[0],0);
             }
         });

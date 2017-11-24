@@ -55,7 +55,7 @@ public class Casl2Application extends Application {
                 // running activity is 1,
                 // app must be returned from background just now (or first launch)
                 mAppStatus = AppStatus.RETURNED_TO_FOREGROUND;
-                startService(new Intent(getApplicationContext(),Casl2LogWriter.class).putExtra("log","return to foreground"));
+                logging("activity","return to foreground");
             } else if (running > 1) {
                 // 2 or more running activities,
                 // should be foreground already.
@@ -77,7 +77,7 @@ public class Casl2Application extends Application {
                 // no active activity
                 // app goes to background
                 mAppStatus = AppStatus.BACKGROUND;
-                startService(new Intent(getApplicationContext(),Casl2LogWriter.class).putExtra("log","go to background"));
+                logging("activity","go to background");
 
             }
         }
@@ -88,6 +88,13 @@ public class Casl2Application extends Application {
 
         @Override
         public void onActivityDestroyed(Activity activity) {
+        }
+
+        protected void logging(String name,String value){
+            LogSerializable log;
+            log = new LogSerializable(name,value);
+            startService(new Intent(getApplicationContext(),Casl2LogWriter.class)
+                    .putExtra("log",log));
         }
     }
 }

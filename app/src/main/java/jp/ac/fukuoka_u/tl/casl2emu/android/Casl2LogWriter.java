@@ -85,6 +85,7 @@ public class Casl2LogWriter extends IntentService implements AutoCloseable{
 
     private void writeLog(@Nullable Intent intent)  {
         if (intent != null && intent.hasExtra("log")) {
+            //LogSerializable data  = (LogSerializable) intent.getSerializableExtra("log");
             LogSerializable data  = (LogSerializable) intent.getSerializableExtra("log");
             JSONObject json = new JSONObject();
             if(!dir.exists()){
@@ -96,7 +97,7 @@ public class Casl2LogWriter extends IntentService implements AutoCloseable{
             String s_date = DateFormat.format("yyyyMMddkkmmss",date).toString();
             try {
                 json.put("date",s_date);
-                json.put("data",data.data);
+                json.put("data",new JSONObject(data.data));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -11,16 +11,16 @@ import java.io.Serializable;
 /**
  * Created by furusho on 2017/11/24.
  */
-
 public class LogSerializable implements Serializable {
 
-    public JSONObject data;
+    public String data;
 
-    public LogSerializable(String name,String value) {
+    public LogSerializable(String name, String value) {
         try {
-            this.data = new JSONObject().put(name,value);
+            data = new JSONObject().put(name,value).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
 }
