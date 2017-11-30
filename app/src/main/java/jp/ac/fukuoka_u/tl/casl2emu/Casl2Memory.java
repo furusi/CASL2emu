@@ -49,15 +49,15 @@ public class Casl2Memory extends BaseObservable{
     public void deleteMemoryArray(char[] data, int position){
 
         //コピーの必要な部分はpositionから65535-dataまで
-        for(int i=position;i<65535-data.length;i++){
+        for(int i=position;i<COMET2_MEMORY_SIZE_MAX -1 -data.length;i++){
             memory[i]=memory[i+data.length];
         }
-        setMemoryArray(data,65535-data.length);
+        setMemoryArray(data,COMET2_MEMORY_SIZE_MAX -1 -data.length);
     }
     public void insertMemoryArray(char[] data, int position){
 
         //コピーの必要な部分はpositionから65535-dataまで
-        for(int i=65535-data.length;i>=position;i--){
+        for(int i=COMET2_MEMORY_SIZE_MAX -1 - data.length;i>=position;i--){
            memory[i+data.length]=memory[i];
         }
         setMemoryArray(data,position);
@@ -81,7 +81,7 @@ public class Casl2Memory extends BaseObservable{
     }
     public void setDatafromBinary(byte[] loaddata){
 
-        for (int i = 0; i < 65536; i++) {
+        for (int i = 0; i < COMET2_MEMORY_SIZE_MAX; i++) {
             this.setMemoryWithoutNotifying(convertBytetoChar(loaddata,2 * (13 + i)), i);
         }
     }
