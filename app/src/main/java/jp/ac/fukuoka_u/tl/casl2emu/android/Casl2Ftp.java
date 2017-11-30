@@ -102,7 +102,14 @@ public class Casl2Ftp extends ContextWrapper {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(),"アップロード成功",Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"アップロード成功",Toast.LENGTH_LONG).show();
+
+                    new MaterialDialog.Builder(getApplicationContext()).
+                            title("アップロード成功").content("課題のアップロードに成功しました。")
+                            .positiveText("OK")
+                            .positiveColor(0)
+                            .cancelable(false)
+                            .show();
                 }
             });
             return true;
