@@ -43,11 +43,8 @@ public class Casl2Memory extends BaseObservable{
         return memory[position];
     }
 
-    public void setMemory(char[] data) {
+    public void clearMemory() {
         Arrays.fill(memory,'\0');
-        for(int i = 0; i <data.length;i++){
-            memory[i]=data[i];
-        }
     }
     public void deleteMemoryArray(char[] data, int position){
 

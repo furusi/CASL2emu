@@ -4,7 +4,8 @@
     <string name="text_step_over_button">ステップ実行</string>
     <string name="text_run_button">連続実行</string>
     <string name="short_zerofill">0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000</string>
-    <string name="memory_row_pattern">\\w\\w\\w\\w \\w\\w\\w\\w \\w\\w\\w\\w \\w\\w\\w\\w</string>
+    <string name="memory_row_pattern_1">\\w\\w\\w\\w</string>
+    <string name="memory_row_pattern_4">\\w\\w\\w\\w \\w\\w\\w\\w \\w\\w\\w\\w \\w\\w\\w\\w</string>
     <string name="svc_input_pattern">(\\w\\w\\w\\w )*\\w\\w\\w\\w</string>
     <string name="word_pattern">\\w\\w\\w\\w</string>
     <string name="word_pattern_wo_space">\\w\\w\\w\\w</string>
@@ -58,4 +59,7 @@
     <string name="BUTTON_INPUT_ADDRESS">button_input_address</string>
     <string name="input_length">input_length</string>
     <string name="ValueType">ValueType</string>
+    <string name="HEX_REGEX_1">%04X</string>
+    <string name="HEX_REGEX_4">%04X %04X %04X %04X</string>
+    <string name="COMET2_MEMORY_SIZE_MAX">65536</string>
 </resources>
