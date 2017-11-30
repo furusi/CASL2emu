@@ -10,12 +10,14 @@ import java.util.Arrays;
  */
 public class Casl2Memory extends BaseObservable{
 
+    public static final int COMET2_MEMORY_SIZE_MAX = 65536;
+
     static Casl2Memory instance = new Casl2Memory();
     @Bindable
-    char[] memory = new char[65536];
+    char[] memory = new char[COMET2_MEMORY_SIZE_MAX];
 
     private Casl2Memory(){
-        Arrays.fill(memory,'0');
+        clearMemory();
     }
 
 
@@ -69,7 +71,7 @@ public class Casl2Memory extends BaseObservable{
         }
         notifyPropertyChanged(BR.casl2Memory);
     }
-    public void setMemory(char data, int position) {
+    public void clearMemory(char data, int position) {
         memory[position]=data;
         notifyPropertyChanged(BR.casl2Memory);
     }

@@ -288,8 +288,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.sf.setOnClickListener(showWordDialog(binding,11));
         binding.zf.setOnClickListener(showWordDialog(binding,12));
         //String initialString = "8314 1592 F000 FF01 0001 0064 0064 0064 0001 0002 00C8 00C8 0190 0190 0000"+" "+getString(R.string.short_zerofill);
-        char[]tmp = Casl2EditText.getHexChars(initialString," ");
-        emulator.setMemory(tmp);
+        emulator.clearMemory();
 
 
         listView = binding.memoryList;

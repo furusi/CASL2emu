@@ -117,7 +117,7 @@ public abstract class Casl2Emulator {
                 //実行アドレスを取得
                 char setaddr = getEffectiveAddress();
                 r1_position = getGrNumber(instArray);
-                memory.setMemory(register.getGr()[r1_position],setaddr);
+                memory.clearMemory(register.getGr()[r1_position],setaddr);
                 register.setPc((char)(cpc+wordCount));
                 break;
             case 0x1200://LAD
@@ -524,7 +524,7 @@ public abstract class Casl2Emulator {
                 data = register.getSp();
                 register.setSp((char) (data-1));
                 //SPの指すアドレスへ実行アドレスを入れる
-                memory.setMemory(effective,register.getSp());
+                memory.clearMemory(effective,register.getSp());
                 register.setPc((char) (cpc + wordCount));
                 break;
             case 0x7100://POP
@@ -554,7 +554,7 @@ public abstract class Casl2Emulator {
                 data = register.getSp();
                 register.setSp((char) (data-1));
                 //SPの指すアドレスへPCを入れる
-                memory.setMemory(register.getPc(),register.getSp());
+                memory.clearMemory(register.getPc(),register.getSp());
                 //PCへ実行アドレスを入れる
                 register.setPc(effective);
                 break;
@@ -800,16 +800,16 @@ public abstract class Casl2Emulator {
 
     }
 
-    public void setMemory(char[] tmp) {
-        memory.setMemory(tmp);
+    public void clearMemory() {
+        memory.clearMemory();
     }
 
     public void setDatafromBinary(byte[] loaddata) {
         memory.setDatafromBinary(loaddata);
     }
 
-    public void setMemory(char c, char address) {
-        memory.setMemory(c,address);
+    public void clearMemory(char c, char address) {
+        memory.clearMemory(c,address);
     }
 
     public void refreshMemory(char[] data, char position) {
