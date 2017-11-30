@@ -67,7 +67,6 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
     ListView listView;
     Casl2Register register;
-    private static final int REQUEST_WRITE_STORAGE = 112;
     private BroadcastReceiver refreshReceiver;
     Casl2Exercise exercise =null;
     Casl2LogWriter casl2LogWriter;
@@ -584,17 +583,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                     String dirname =Environment.getExternalStorageDirectory().getPath()+
                                             getString(R.string.app_directory_name)+
                                             "/"+ sharedPreferences.getString("userid","null");
-                                    File dir = new File(dirname);
-                                    boolean hasPermission = (ContextCompat.checkSelfPermission(ContextDisplayScreen.this,
-                                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-                                    if (!hasPermission) {
-                                        ActivityCompat.requestPermissions(ContextDisplayScreen.this,
-                                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                                REQUEST_WRITE_STORAGE);
-                                    }
-                                    if(!dir.exists()){
-                                        dir.mkdirs();
-                                    }
+                                    makeDir(dirname);
                                     File file = new File(dirname,save_filename);
 
                                     fileOutputStream = new FileOutputStream(file);
