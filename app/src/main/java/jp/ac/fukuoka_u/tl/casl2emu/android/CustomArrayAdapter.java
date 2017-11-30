@@ -50,13 +50,30 @@ public class CustomArrayAdapter extends ArrayAdapter<String> {
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView= layoutInflater.inflate(R.layout.column_row,parent,false);
-        //View view= super.getView(position, convertView, parent);
-        //1TextView textView = (TextView)convertView.findViewById(R.id.rowbody);
-        ((TextView)convertView.findViewById(R.id.rowbody)).setTypeface(tf);
-        ((TextView)convertView.findViewById(R.id.rowbody)).setText(arry.get(position));
-        ((TextView)convertView.findViewById(R.id.rownumber)).setText(String.format(Locale.US,"0x%04X",position*4&0xFFFF));
 
-        return convertView;
+        View v = convertView;
+        ViewHolder viewholder;
+        if(convertView == null){
+
+            viewholder = new ViewHolder();
+            v = layoutInflater.inflate(R.layout.column_row,parent,false);
+            //View view= super.getView(position, convertView, parent);
+            //1TextView textView = (TextView)convertView.findViewById(R.id.rowbody);
+            viewholder.t = (TextView)v.findViewById(R.id.rowbody);
+            viewholder.t.setTypeface(tf);
+            viewholder.t.setTextSize((float) 10.0);
+            viewholder.t.setText(arry.get(position));
+
+            v.setTag(viewholder);
+        }else {
+            viewholder = (ViewHolder) v.getTag();
+        }
+
+
+        return v;
+    }
+
+    static class ViewHolder{
+        TextView t;
     }
 }

@@ -34,7 +34,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,7 +63,7 @@ import static android.R.layout.simple_list_item_1;
 
 public class ContextDisplayScreen extends BaseActivity implements LoaderCallbacks,Runnable{
 
-    ListView listView;
+    GridView listView;
     Casl2Register register;
     private static final int REQUEST_WRITE_STORAGE = 112;
     private BroadcastReceiver refreshReceiver;
@@ -103,18 +103,18 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(R.layout.input_text_dialog)
-                .setTitle("メモリを編集: "+String.format(Locale.US,"0x%04X",rownum*4 & 0xFFFF)+" - "+String.format(Locale.US,"0x%04X",rownum*4+3& 0xFFFF))
+                .setTitle("メモリを編集: "+String.format(Locale.US,"0x%04X",rownum & 0xFFFF))
                 //setViewにてビューを設定します。
                 .setView(editView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         //入力した文字をトースト出力する
                         String upperedString =editView.getText().toString().toUpperCase();
-                        Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
+                        Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern_1));
                         Matcher matcher = pattern.matcher(upperedString);
                         if (matcher.matches()) {
                             char[] chars = Casl2EditText.getHexChars(upperedString," ");
-                            emulator.setMemoryArray(chars, rownum*4);
+                            emulator.setMemoryArray(chars, rownum);
                             refreshMemoryPane(rownum,0);
 
                         }else {
@@ -134,31 +134,29 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         switch(refreshMode){
             case 0://通常の更新
                 stringArrayList.remove(rownum);
-                arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
-                        emulator.getMemory(4*rownum) & 0xFFFF, emulator.getMemory(4*rownum+1) & 0xFFFF,
-                        emulator.getMemory(4*rownum+2) & 0xFFFF, emulator.getMemory(4*rownum+3) & 0xFFFF),rownum);
+                arrayAdapter.insert(String.format(Locale.US ,getString(R.string.HEX_REGEX_1), emulator.getMemory(rownum) & 0xFFFF),rownum);
                 break;
             case 1://挿入の更新
-                arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                arrayAdapter.insert(String.format(Locale.US ,getString(R.string.HEX_REGEX_4),
                         emulator.getMemory(4*rownum) & 0xFFFF, emulator.getMemory(4*rownum+1) & 0xFFFF,
                         emulator.getMemory(4*rownum+2) & 0xFFFF, emulator.getMemory(4*rownum+3) & 0xFFFF),rownum);
                 stringArrayList.remove(arrayAdapter.getCount()-1);
                 break;
             case 2://削除の更新
                 stringArrayList.remove(rownum);
-                arrayAdapter.insert(String.format(Locale.US ,"%04X %04X %04X %04X",
+                arrayAdapter.insert(String.format(Locale.US ,getString(R.string.HEX_REGEX_4),
                         emulator.getMemory(0xFFFC) & 0xFFFF, emulator.getMemory(0xFFFD) & 0xFFFF,
                         emulator.getMemory(0xFFFE) & 0xFFFF, emulator.getMemory(0xFFFF) & 0xFFFF),arrayAdapter.getCount()-1);
                 break;
         }
+
         arrayAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void refreshMemory(char[] data, char position) {
         super.refreshMemory(data, position);
-        char memoryRowPosition = (char) ((position/4)*4);
-        refreshMemoryPane(memoryRowPosition,0);
+        refreshMemoryPane(position,0);
 
     }
 
@@ -200,7 +198,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             case R.id.action_paste:
                 clipData = clipboardManager.getPrimaryClip();
                 String text = (String) clipData.getItemAt(0).getText();
-                Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern));
+                Pattern pattern = Pattern.compile(getString(R.string.memory_row_pattern_4));
                 Matcher matcher = pattern.matcher(text);
                 if (matcher.matches()) {
                     char[] chars = Casl2EditText.getHexChars(text," ");
@@ -291,7 +289,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         emulator.clearMemory();
 
 
-        listView = binding.memoryList;
+        listView = binding.memory.memoryLayout;
         localSetMemoryAdapter(emulator.getMemory(),0);
         listView.setOnItemClickListener(showTextEditDialog);
 
@@ -808,10 +806,8 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
         if(arrayAdapter == null) {
             stringArrayList = (ArrayList<String>)data;
-            arrayAdapter = new CustomArrayAdapter(listView.getContext(),
-                    simple_list_item_1,
-                    stringArrayList,
-                    Typeface.MONOSPACE);
+            arrayAdapter = new CustomArrayAdapter(listView.getContext(), simple_list_item_1,
+                    stringArrayList, Typeface.MONOSPACE);
             listView.setAdapter(arrayAdapter);
         }else {
             arrayAdapter.clear();

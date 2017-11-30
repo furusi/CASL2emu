@@ -21,10 +21,8 @@ public class ListDisplayTask extends SimpleTaskLoader {
     @Override
     public ArrayList<String> loadInBackground() {
         ArrayList<String> stringArrayList = new ArrayList<String>();
-        for(int i = position; i< chars.length/4; i++){
-            stringArrayList.add(String.format(Locale.US ,"%04X %04X %04X %04X",
-                chars[4*i] & 0xFFFF, chars[4*i+1] & 0xFFFF, chars[4*i+2] & 0xFFFF, chars[4*i+3] &
-                0xFFFF));
+        for(int i = position; i< chars.length; i++){
+            stringArrayList.add(String.format(Locale.US ,"%04X", chars[i] & 0xFFFF));
         }
         return stringArrayList;
     }
