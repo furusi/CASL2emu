@@ -7,7 +7,7 @@
         android:id="@+id/memory_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="5" />
+        android:numColumns="7" />
 
 </LinearLayout>
 </layout>

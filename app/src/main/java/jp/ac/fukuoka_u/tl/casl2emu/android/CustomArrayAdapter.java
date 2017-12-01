@@ -51,26 +51,25 @@ public class CustomArrayAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View v = convertView;
         ViewHolder viewholder;
         if(convertView == null){
 
             viewholder = new ViewHolder();
-            v = layoutInflater.inflate(R.layout.column_row,parent,false);
+            convertView = layoutInflater.inflate(R.layout.column_row,parent,false);
             //View view= super.getView(position, convertView, parent);
             //1TextView textView = (TextView)convertView.findViewById(R.id.rowbody);
-            viewholder.t = (TextView)v.findViewById(R.id.rowbody);
+            viewholder.t = (TextView)convertView.findViewById(R.id.rowbody);
             viewholder.t.setTypeface(tf);
-            viewholder.t.setTextSize((float) 10.0);
             viewholder.t.setText(arry.get(position));
 
-            v.setTag(viewholder);
+            convertView.setTag(viewholder);
         }else {
-            viewholder = (ViewHolder) v.getTag();
+            viewholder = (ViewHolder) convertView.getTag();
         }
 
+        viewholder.t.setText(arry.get(position));
 
-        return v;
+        return convertView;
     }
 
     static class ViewHolder{

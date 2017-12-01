@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:textAlignment="center"
+            android:textSize="14dp"
             android:id="@+id/rowbody" />
 
 </LinearLayout>
