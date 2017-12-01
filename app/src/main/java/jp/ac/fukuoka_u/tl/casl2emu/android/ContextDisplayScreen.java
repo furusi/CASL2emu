@@ -289,7 +289,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         emulator.clearMemory();
 
 
-        listView = binding.memory.memoryLayout;
+        listView = binding.memory.memoryGrid;
         localSetMemoryAdapter(emulator.getMemory(),0);
         listView.setOnItemClickListener(showTextEditDialog);
 

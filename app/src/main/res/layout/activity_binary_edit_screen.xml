@@ -297,6 +297,7 @@
 
     </GridLayout>
     <LinearLayout
+        android:id="@+id/memory_layout"
         android:background="@color/material_grey_100"
         android:layout_marginTop="@dimen/text_margin"
         android:layout_below="@id/gridLayout"
