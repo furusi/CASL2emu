@@ -577,6 +577,7 @@ public abstract class Casl2Emulator {
                 break;
             default:
                 //Toast("不正な命令です。");
+                waitEmu();
         }
 
     }

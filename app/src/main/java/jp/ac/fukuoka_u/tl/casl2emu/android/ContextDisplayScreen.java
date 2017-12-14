@@ -330,7 +330,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 register.setPc((char) 0x0000);
                 //Toast.makeText(ContextDisplayScreen.this,"PRを0x0000にしました。",Toast.LENGTH_SHORT).show();
                 new MaterialDialog.Builder(ContextDisplayScreen.this).
-                        title("test title").content("prを初期化しました。")
+                        title("PR初期化").content("PRを＃0000に変更しました。")
                         .positiveText("OK")
                         .positiveColor(0)
                         .cancelable(false)
