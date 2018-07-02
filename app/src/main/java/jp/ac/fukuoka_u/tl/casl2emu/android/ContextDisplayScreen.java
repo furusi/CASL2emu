@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 import jp.ac.fukuoka_u.tl.casl2emu.Casl2Register;
 import jp.ac.fukuoka_u.tl.casl2emu.LogWriter;
 import jp.ac.fukuoka_u.tl.casl2emu.R;
-import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityBinaryEditScreenBinding;
+import jp.ac.fukuoka_u.tl.casl2emu.databinding.ActivityContextDisplayScreenBinding;
 
 import static android.R.layout.simple_list_item_1;
 
@@ -216,7 +216,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_binary_edit_screen);
+        setContentView(R.layout.activity_context_display_screen);
 //        Icepick.restoreInstanceState(this,savedInstanceState);
 
         logWriter=new LogWriter(getApplicationContext());
@@ -229,7 +229,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                     REQUEST_WRITE_STORAGE);
         }
 
-        final ActivityBinaryEditScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_binary_edit_screen);
+        final ActivityContextDisplayScreenBinding binding = DataBindingUtil.setContentView(this,R.layout.activity_context_display_screen);
         char[] initialState;
         String initialString;
         //OUTデモ
@@ -617,7 +617,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
     }
 
 
-    private View.OnLongClickListener jumpAddress(final ActivityBinaryEditScreenBinding binding, final int id) {
+    private View.OnLongClickListener jumpAddress(final ActivityContextDisplayScreenBinding binding, final int id) {
 
         return new View.OnLongClickListener() {
             @Override
@@ -658,7 +658,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             }
         };
     }
-    private View.OnClickListener showWordDialog(final ActivityBinaryEditScreenBinding binding, final int id) {
+    private View.OnClickListener showWordDialog(final ActivityContextDisplayScreenBinding binding, final int id) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
