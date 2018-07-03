@@ -63,7 +63,7 @@ import static android.R.layout.simple_list_item_1;
 
 public class ContextDisplayScreen extends BaseActivity implements LoaderCallbacks,Runnable{
 
-    GridView listView;
+    GridView memoryView;
     Casl2Register register;
     private static final int REQUEST_WRITE_STORAGE = 112;
     private BroadcastReceiver refreshReceiver;
@@ -75,7 +75,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String msg = String.valueOf(listView.getItemAtPosition(position));
+            String msg = String.valueOf(memoryView.getItemAtPosition(position));
             showTextDialog(msg,position);
         }
 
@@ -176,7 +176,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                 .getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clipData;
         ClipData.Item memorystring = new ClipData.Item(
-                String.valueOf(listView.getItemAtPosition(info.position)));
+                String.valueOf(memoryView.getItemAtPosition(info.position)));
         char[] zero = {0x0000,0x0000,0x0000,0x0000};
         switch(item.getItemId()) {
             //TODO:削除機能を追加
@@ -289,11 +289,11 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         emulator.clearMemory();
 
 
-        listView = binding.memory.memoryGrid;
+        memoryView = binding.memory.memoryGrid;
         localSetMemoryAdapter(emulator.getMemory(),0);
-        listView.setOnItemClickListener(showTextEditDialog);
+        memoryView.setOnItemClickListener(showTextEditDialog);
 
-        registerForContextMenu(listView);
+        registerForContextMenu(memoryView);
 
         binding.runbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -476,7 +476,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                                 //入力した文字をトースト出力する
                                 String position = memory_position.getText().toString();
                                 if(position.matches("\\w\\w\\w\\w")) {
-                                    listView.setSelection(Integer.parseInt(position, 16) / 4);
+                                    memoryView.setSelection(Integer.parseInt(position, 16) / 4);
                                 }else{
                                     Toast.makeText(ContextDisplayScreen.this,"適切な文字列を入力してください",Toast.LENGTH_SHORT).show();
                                 }
@@ -624,34 +624,34 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
             public boolean onLongClick(View v) {
                 switch (id){
                     case 0:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr0.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.gr0.getText()), 16) / 4);
                         break;
                     case 1:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr1.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.gr1.getText()), 16) / 4);
                         break;
                     case 2:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr2.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.gr2.getText()), 16) / 4);
                         break;
                     case 3:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr3.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.gr3.getText()), 16) / 4);
                         break;
                     case 4:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr4.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.gr4.getText()), 16) / 4);
                         break;
                     case 5:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr5.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.gr5.getText()), 16) / 4);
                         break;
                     case 6:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr6.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.gr6.getText()), 16) / 4);
                         break;
                     case 7:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.gr7.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.gr7.getText()), 16) / 4);
                         break;
                     case 8:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.pc.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.pc.getText()), 16) / 4);
                         break;
                     case 9:
-                        listView.setSelection(Integer.parseInt(String.valueOf(binding.sp.getText()), 16) / 4);
+                        memoryView.setSelection(Integer.parseInt(String.valueOf(binding.sp.getText()), 16) / 4);
                         break;
                 }
                 return true;
@@ -806,9 +806,9 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
 
         if(arrayAdapter == null) {
             stringArrayList = (ArrayList<String>)data;
-            arrayAdapter = new CustomArrayAdapter(listView.getContext(), simple_list_item_1,
+            arrayAdapter = new CustomArrayAdapter(memoryView.getContext(), simple_list_item_1,
                     stringArrayList, Typeface.MONOSPACE);
-            listView.setAdapter(arrayAdapter);
+            memoryView.setAdapter(arrayAdapter);
         }else {
             arrayAdapter.clear();
             arrayAdapter.addAll((ArrayList<String>)data);
