@@ -138,7 +138,7 @@ public class Casl2Ftp extends ContextWrapper {
     public boolean login(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
         int reply;
 
-        if(userid == "tlguest"){return true;}
+        if(userid.equals("TLGUEST")){return true;}
         if(myFTPClient==null)
             myFTPClient=new FTPClient();
         myFTPClient.setConnectTimeout(5000);
