@@ -51,9 +51,10 @@ public class DataSendTask extends IntentService{
         Casl2Ftp ftp = new Casl2Ftp(myContext);
         boolean result = ftp.putData(new InetSocketAddress(remoteserver,remoteport), userid, passwd, passive, remotefile, localFile,kadaiNum);
         if(result){
+            LogSerializable l = new LogSerializable("log",new StringBuilder("Submit:").append(String.format("%d",kadaiNum+1))
+                    .toString());
             startService(new Intent(this,Casl2LogWriter.class)
-                    .putExtra("log",new StringBuilder("Submit:") .append(String.format("%d",kadaiNum+1))
-                            .toString()));
+                    .putExtra("log",l));
 
         }
         ftp = null;
