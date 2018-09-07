@@ -44,7 +44,7 @@ public class Casl2Ftp extends ContextWrapper {
 
 
             try {
-                isLogin = login(remoteserver, userid, passwd);
+                isLogin = ftpLogin(remoteserver, userid, passwd);
                 //転送モード
                 if (passive) {
                     myFTPClient.enterLocalPassiveMode(); //パッシブモード
@@ -135,7 +135,12 @@ public class Casl2Ftp extends ContextWrapper {
         return date;
     }
 
-    public boolean login(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
+    public boolean appLogin(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
+        if(userid.equals("TLGUEST")) return true;
+        else                         return ftpLogin(remoteserver,userid,passwd);
+    }
+
+    public boolean ftpLogin(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
         int reply;
 
         if(userid.equals("TLGUEST")){return true;}

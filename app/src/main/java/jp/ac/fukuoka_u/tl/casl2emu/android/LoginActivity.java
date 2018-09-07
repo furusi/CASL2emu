@@ -390,7 +390,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 int remoteport = 21;    //FTPサーバーポート
                 String userid = mEmail.toUpperCase();                       //ログインユーザID
                 Casl2Ftp ftp = new Casl2Ftp(getApplicationContext());
-                result = ftp.login(new InetSocketAddress(remoteserver, remoteport), userid, mPassword);
+                result = ftp.appLogin(new InetSocketAddress(remoteserver, remoteport), userid, mPassword);
             } catch (InterruptedException e) {
                 return false;
             } catch (Exception e) {
