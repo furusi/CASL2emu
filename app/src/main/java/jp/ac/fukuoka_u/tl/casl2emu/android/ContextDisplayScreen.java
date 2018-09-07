@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -677,6 +678,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
                         listView.setSelection(Integer.parseInt(String.valueOf(binding.sp.getText()), 16) / 4);
                         break;
                 }
+                Snackbar.make(findViewById(android.R.id.content),"指定した番地にジャンプしました．",Snackbar.LENGTH_LONG).show();
                 return true;
             }
         };
