@@ -2,6 +2,7 @@ package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,6 +24,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Date;
+
+import jp.ac.fukuoka_u.tl.casl2emu.R;
 
 /**
  * Created by furusho on 2016/09/26.
@@ -99,19 +102,8 @@ public class Casl2Ftp extends ContextWrapper {
                 }
                 myFTPClient = null;
             }
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    //Toast.makeText(getApplicationContext(),"アップロード成功",Toast.LENGTH_LONG).show();
-
-                    new MaterialDialog.Builder(getApplicationContext()).
-                            title("アップロード成功").content("課題のアップロードに成功しました。")
-                            .positiveText("OK")
-                            .positiveColor(0)
-                            .cancelable(false)
-                            .show();
-                }
-            });
+            Intent auIntent = new Intent(getString(R.string.assginment_upload_complete));
+            getApplicationContext().sendBroadcast(auIntent);
             return true;
         }
 
@@ -143,7 +135,6 @@ public class Casl2Ftp extends ContextWrapper {
     public boolean ftpLogin(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
         int reply;
 
-        if(userid.equals("TLGUEST")){return true;}
         if(myFTPClient==null)
             myFTPClient=new FTPClient();
         myFTPClient.setConnectTimeout(5000);

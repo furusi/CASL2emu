@@ -58,4 +58,5 @@
     <string name="BUTTON_INPUT_ADDRESS">button_input_address</string>
     <string name="input_length">input_length</string>
     <string name="ValueType">ValueType</string>
+    <string name="assginment_upload_complete">ASSIGNMENT_UPLOAD_COMPLETE</string>
 </resources>
