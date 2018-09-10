@@ -19,6 +19,7 @@ import org.apache.commons.net.ntp.TimeInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -39,14 +40,14 @@ public class Casl2Ftp extends ContextWrapper {
 
         public boolean putData(InetSocketAddress remoteserver, String userid, String passwd,
                                boolean passive, String remotefile, String localFile,int kadaiNum) {
-            int reply = 0;
             boolean isLogin = false;
             if(myFTPClient==null) myFTPClient = new FTPClient();
             Date uploaddate = getDate();
             Handler handler = new Handler(Looper.getMainLooper());
+            String s_date =
+                    android.text.format.DateFormat.format("yyyyMMddkkmmss",uploaddate).toString();
 
-
-            try {
+            try (FileInputStream fileInputStream = new FileInputStream(new File(localFile))){
                 isLogin = ftpLogin(remoteserver, userid, passwd);
                 //転送モード
                 if (passive) {
@@ -56,38 +57,27 @@ public class Casl2Ftp extends ContextWrapper {
                 }//ファイル送信
                 myFTPClient.setDataTimeout(15000);
                 myFTPClient.setSoTimeout(15000);
-                String s_date =
-                        android.text.format.DateFormat.format("yyyyMMddkkmmss",uploaddate).toString();
+
                 //FileInputStream fileInputStream = this.openFileInput(localFile);
-                FileInputStream fileInputStream = new FileInputStream(new File(localFile));
+
                 myFTPClient.storeFile("~/"+s_date+remotefile, fileInputStream);
-                reply = myFTPClient.getReplyCode();
+                int reply = myFTPClient.getReplyCode();
                 if (!FTPReply.isPositiveCompletion(reply)) {
-                    throw new Exception("Send Status:" + String.valueOf(reply));
+                    showToastMessage(handler,"FTPサーバからの応答が不正です．");
+
                 }else{
                     Date date = getDate();
                     SharedPreferences.Editor editor = PreferenceManager.
                             getDefaultSharedPreferences(getApplicationContext()).edit();
                     editor.putString(userid+"-"+kadaiNum,
                             DateFormat.format("yyyy年MM月dd日kk時mm分",date).toString());
-                    editor.commit();
+                    editor.apply();
                 }
-                fileInputStream.close();
-                fileInputStream = null;
-                //ログアウト
-                myFTPClient.logout();
-                isLogin = false;
-                //切断
-                myFTPClient.disconnect();
-            } catch (Exception e) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),"アップロードに失敗しました。再度実行してください。",Toast.LENGTH_LONG).show();
-                    }
-                });
+
+            } catch (Exception e){
+                showToastMessage(handler,e.getMessage());
                 return false;
-            } finally {
+            }finally {
                 if (isLogin) {
                     try {
                         myFTPClient.logout();
@@ -107,6 +97,15 @@ public class Casl2Ftp extends ContextWrapper {
             return true;
         }
 
+    private void showToastMessage(Handler handler, final String str) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     public Date getDate() {
         Date date = null;
         NTPUDPClient ntpudpClient = null;
@@ -116,8 +115,6 @@ public class Casl2Ftp extends ContextWrapper {
             ntpudpClient.open();
             timeInfo = ntpudpClient.getTime(InetAddress.getByName("ntp.nict.jp"));
             date = new Date(timeInfo.getReturnTime());
-        } catch (SocketException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
@@ -128,8 +125,7 @@ public class Casl2Ftp extends ContextWrapper {
     }
 
     public boolean appLogin(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
-        if(userid.equals("TLGUEST")) return true;
-        else                         return ftpLogin(remoteserver,userid,passwd);
+        return userid.equals("TLGUEST") || ftpLogin(remoteserver, userid, passwd);
     }
 
     public boolean ftpLogin(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
@@ -155,7 +151,7 @@ public class Casl2Ftp extends ContextWrapper {
         if(date !=null){
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
             editor.putString("LastLoginDate", DateFormat.format("yyyyMMdd",date).toString());
-            editor.commit();
+            editor.apply();
             return true;
 
         }
