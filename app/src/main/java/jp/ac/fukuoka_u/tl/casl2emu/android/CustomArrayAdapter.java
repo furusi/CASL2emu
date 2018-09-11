@@ -57,8 +57,8 @@ public class CustomArrayAdapter extends ArrayAdapter<String> {
             viewholder = new ViewHolder();
             convertView = layoutInflater.inflate(R.layout.column_row,parent,false);
             //View view= super.getView(position, convertView, parent);
-            //1TextView textView = (TextView)convertView.findViewById(R.id.rowbody);
-            viewholder.t = (TextView)convertView.findViewById(R.id.rowbody);
+            //TextView textView = (TextView)convertView.findViewById(R.id.rowbody);
+            viewholder.t = convertView.findViewById(R.id.rowbody);
             viewholder.t.setTypeface(tf);
             viewholder.t.setText(arry.get(position));
 

@@ -62,4 +62,7 @@
     <string name="HEX_REGEX_1">%04X</string>
     <string name="HEX_REGEX_4">%04X %04X %04X %04X</string>
     <string name="COMET2_MEMORY_SIZE_MAX">65536</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

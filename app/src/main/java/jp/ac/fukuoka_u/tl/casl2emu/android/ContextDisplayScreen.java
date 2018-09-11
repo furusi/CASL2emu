@@ -791,14 +791,15 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
      * @return Return a new Loader instance that is ready to start loading.
      */
     @Override
-    public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
+    public Loader onCreateLoader(int id, Bundle args) {
         char[]cs = new char[0];
         int i = 0;
         if(args!=null){
             cs = args.getCharArray("cs");
             i = args.getInt("position");
         }
-        return new ListDisplayTask(this,cs,i);
+        //return new ListDisplayTask(this,cs,i);
+        return new Loader(this);
     }
 
     @Override
