@@ -28,7 +28,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:listitem="@tools:sample/first_names"/>
+                tools:listitem="@tools:sample/first_names"
+                android:listSelector="@android:drawable/list_selector_background"/>
 
 
         </android.support.constraint.ConstraintLayout>

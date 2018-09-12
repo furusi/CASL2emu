@@ -815,6 +815,10 @@ public abstract class Casl2Emulator {
     public void refreshMemory(char[] data, char position) {
         memory.refreshMemory(data,position);
     }
+
+    public void updateMemory(char c, int position){
+        memory.updateMemory(c,position);
+    }
 }
 
 

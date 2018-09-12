@@ -16,7 +16,7 @@ public class Casl2Memory extends BaseObservable{
     @Bindable
     char[] memory = new char[COMET2_MEMORY_SIZE_MAX];
 
-    private Casl2Memory(){
+    protected Casl2Memory(){
         clearMemory();
     }
 
@@ -93,5 +93,8 @@ public class Casl2Memory extends BaseObservable{
         setMemoryArray(data, position);
     }
 
+    public void updateMemory(char c,int position){
+        memory[position]= (char) ((memory[position]<<4)+c);
+    }
 
 }

@@ -1,7 +1,7 @@
 package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,19 +10,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import jp.ac.fukuoka_u.tl.casl2emu.Casl2Emulator;
 import jp.ac.fukuoka_u.tl.casl2emu.R;
-import jp.ac.fukuoka_u.tl.casl2emu.databinding.FragmentCasl2MemoryBinding;
 
 import static android.R.layout.simple_list_item_1;
+import static android.support.constraint.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +41,10 @@ public class Casl2MemoryFragment extends Fragment implements LoaderManager.Loade
     private OnFragmentInteractionListener mListener;
     private Casl2Emulator emulator;
     private GridView memoryView;
+    private int posFocus = -1;
+    ArrayList<String> stringArrayList;
+    private View lastFocusedView;
+    private int inputCount = 0;
 
 
     public Casl2MemoryFragment() {
@@ -48,18 +55,12 @@ public class Casl2MemoryFragment extends Fragment implements LoaderManager.Loade
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment Casl2MemoryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Casl2MemoryFragment newInstance(String param1, String param2) {
-        Casl2MemoryFragment fragment = new Casl2MemoryFragment();
-        Bundle args = new Bundle();
-        /*args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);*/
-        fragment.setArguments(args);
-        return fragment;
+    public static Casl2MemoryFragment newInstance() {
+
+        return new Casl2MemoryFragment();
     }
 
     @Override
@@ -75,14 +76,33 @@ public class Casl2MemoryFragment extends Fragment implements LoaderManager.Loade
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_casl2_memory, container, false);
-        final FragmentCasl2MemoryBinding binding = DataBindingUtil.inflate(inflater,R.layout.fragment_casl2_memory,container,false);
-        memoryView = view.findViewById(R.id.memory_grid2);
-        memoryView.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         emulator = Casl2EmulatorAndroid.getInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
 
+        View view = inflater.inflate(R.layout.fragment_casl2_memory, container, false);
+        memoryView = view.findViewById(R.id.memory_grid2);
+        memoryView.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+
         setMemoryAdapter(showMemory(),0);
+        AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "setOnItemClickListener() - pos:" + String.valueOf(i));
+
+                changeFocus(view, i);
+            }
+        };
+        memoryView.setOnItemClickListener(onItemClickListener);
         return view;
+    }
+
+    private void changeFocus(View view, int i) {
+        inputCount = 0;
+        if(lastFocusedView!=null){//選択していたセルの色を戻す
+            lastFocusedView.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        }
+        view.setBackgroundColor(Color.GREEN);
+        lastFocusedView = view;
+        posFocus = i;
     }
 
     private char[] showMemory() {
@@ -136,7 +156,7 @@ public class Casl2MemoryFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(@NonNull Loader loader, Object data) {
         if(arrayAdapter == null) {
-            ArrayList<String> stringArrayList = (ArrayList<String>) data;
+            stringArrayList = (ArrayList<String>) data;
             arrayAdapter = new CustomArrayAdapter(memoryView.getContext(), simple_list_item_1,
                     stringArrayList, Typeface.MONOSPACE);
             memoryView.setAdapter(arrayAdapter);
@@ -170,5 +190,53 @@ public class Casl2MemoryFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    public  void onKeycodeSent(String str){
+        updateMemory(posFocus,str);
+    }
+
+    private void updateMemory(int pos, String str) {
+        Log.d(TAG,"アクティビティからイベントが来た");
+        //emulator.setMemoryArray(new char[]{'1','2','3','4'},0);
+
+        if(pos>-1) {
+            char c = str.charAt(0);
+            if (c < 60) {
+                c -= 48;
+            } else {
+                c -= 55;
+            }
+            emulator.updateMemory(c, pos);
+            refreshMemoryPane(pos, 0);
+            inputCount++;
+            if(inputCount % 4 == 0){
+                changeFocus(memoryView.getChildAt(posFocus+1),posFocus+1);
+            }
+
+        }
+
+    }
+    private void refreshMemoryPane(int rownum,int refreshMode) {
+        switch(refreshMode){
+            case 0://通常の更新
+                stringArrayList.remove(rownum);
+                arrayAdapter.insert(String.format(Locale.US ,getString(R.string.HEX_REGEX_1), emulator.getMemory(rownum) & 0xFFFF),rownum);
+                break;
+            case 1://挿入の更新
+                arrayAdapter.insert(String.format(Locale.US ,getString(R.string.HEX_REGEX_4),
+                        emulator.getMemory(4*rownum) & 0xFFFF, emulator.getMemory(4*rownum+1) & 0xFFFF,
+                        emulator.getMemory(4*rownum+2) & 0xFFFF, emulator.getMemory(4*rownum+3) & 0xFFFF),rownum);
+                stringArrayList.remove(arrayAdapter.getCount()-1);
+                break;
+            case 2://削除の更新
+                stringArrayList.remove(rownum);
+                arrayAdapter.insert(String.format(Locale.US ,getString(R.string.HEX_REGEX_4),
+                        emulator.getMemory(0xFFFC) & 0xFFFF, emulator.getMemory(0xFFFD) & 0xFFFF,
+                        emulator.getMemory(0xFFFE) & 0xFFFF, emulator.getMemory(0xFFFF) & 0xFFFF),arrayAdapter.getCount()-1);
+                break;
+        }
+
+        arrayAdapter.notifyDataSetChanged();
     }
 }

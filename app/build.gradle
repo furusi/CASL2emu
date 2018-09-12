@@ -58,6 +58,7 @@ dependencies {
     implementation 'commons-lang:commons-lang:2.6'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.2.30'
     implementation 'com.android.support.constraint:constraint-layout:1.1.1'
+    implementation 'com.android.support:gridlayout-v7:27.1.1'
 }
 repositories {
     google()
