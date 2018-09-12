@@ -10,7 +10,7 @@
         <fragment
             android:id="@+id/fragment"
             android:name="jp.ac.fukuoka_u.tl.casl2emu.android.Casl2RegisterFragment"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="1dp"
             android:layout_marginStart="1dp"

@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -87,11 +88,36 @@ public class Casl2MemoryFragment extends Fragment implements LoaderManager.Loade
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(TAG, "setOnItemClickListener() - pos:" + String.valueOf(i));
-
+                Casl2ContextActivity a = (Casl2ContextActivity) getActivity();
+                a.focusedFragment = 2;
                 changeFocus(view, i);
             }
         };
+
         memoryView.setOnItemClickListener(onItemClickListener);
+        AdapterView.OnTouchListener onTouchListener = new View.OnTouchListener() {
+            private int oldY;
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                switch (motionEvent.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        oldY = view.getScrollY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if(oldY != view.getScrollY()){
+                            changeFocus(lastFocusedView,-1);
+                        }
+                        break;
+                        default:
+                            break;
+                }
+                return false;
+            }
+
+        };
+
+        memoryView.setOnTouchListener(onTouchListener);
         return view;
     }
 
@@ -100,9 +126,14 @@ public class Casl2MemoryFragment extends Fragment implements LoaderManager.Loade
         if(lastFocusedView!=null){//選択していたセルの色を戻す
             lastFocusedView.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         }
-        view.setBackgroundColor(Color.GREEN);
-        lastFocusedView = view;
-        posFocus = i;
+        if(i>-1){
+            view.setBackgroundColor(Color.GREEN);
+            lastFocusedView = view;
+            posFocus = i;
+        }else{
+            lastFocusedView = null;
+            posFocus = -1;
+        }
     }
 
     private char[] showMemory() {

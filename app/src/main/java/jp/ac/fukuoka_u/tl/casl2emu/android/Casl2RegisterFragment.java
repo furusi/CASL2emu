@@ -1,6 +1,7 @@
 package jp.ac.fukuoka_u.tl.casl2emu.android;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import jp.ac.fukuoka_u.tl.casl2emu.Casl2Emulator;
 import jp.ac.fukuoka_u.tl.casl2emu.R;
+import jp.ac.fukuoka_u.tl.casl2emu.databinding.FragmentCasl2RegisterBinding;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +24,11 @@ import jp.ac.fukuoka_u.tl.casl2emu.R;
 public class Casl2RegisterFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+    private Casl2Emulator emulator;
+    private View registerView;
+    private FragmentCasl2RegisterBinding binding;
+
+
 
     public Casl2RegisterFragment() {
         // Required empty public constructor
@@ -47,8 +55,13 @@ public class Casl2RegisterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        emulator = Casl2EmulatorAndroid.getInstance("jp.ac.fukuoka_u.tl.casl2emu.android.Casl2EmulatorAndroid");
+        binding = DataBindingUtil.inflate(inflater,
+                R.layout.fragment_casl2_register,container,false);
+//        View view = inflater.inflate(R.layout.fragment_casl2_register,container,false);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_casl2_register, container, false);
+        return binding.getRoot();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -88,5 +101,11 @@ public class Casl2RegisterFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void onRegisterFragmentInteraction(String str);
+    }
+
+
+    public void onAreaTouchListener(int i) {
+
     }
 }

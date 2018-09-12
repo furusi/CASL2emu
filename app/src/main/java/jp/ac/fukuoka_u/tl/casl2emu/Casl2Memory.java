@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class Casl2Memory extends BaseObservable{
 
     public static final int COMET2_MEMORY_SIZE_MAX = 65536;
+    MemoryUpdateInterface listener = null;
 
     static Casl2Memory instance = new Casl2Memory();
     @Bindable
@@ -95,6 +96,9 @@ public class Casl2Memory extends BaseObservable{
 
     public void updateMemory(char c,int position){
         memory[position]= (char) ((memory[position]<<4)+c);
+        if(listener!=null){
+            listener.onUpdateMemory(memory[position],position);
+        }
     }
 
 }

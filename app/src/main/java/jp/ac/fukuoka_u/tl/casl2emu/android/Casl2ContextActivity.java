@@ -17,7 +17,8 @@ import static android.support.constraint.Constraints.TAG;
 public class Casl2ContextActivity extends BaseActivity implements Casl2RegisterFragment.OnFragmentInteractionListener, Casl2MemoryFragment.OnFragmentInteractionListener,Casl2KeypadFragment.OnFragmentInteractionListener{
 
     ActivityCasl2ContextBinding binding;
-    Casl2MemoryFragment fragment;
+    Casl2MemoryFragment mFragment;
+    int focusedFragment = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +32,23 @@ public class Casl2ContextActivity extends BaseActivity implements Casl2RegisterF
 
     }
 
+    @Override
+    public void onRegisterFragmentInteraction(String str) {
+
+    }
 
     public void onFragmentInteraction(String str) {
+        //ここでフォーカスを管理する．1がレジスタ，2がメモリ，0はフォーカスなし
+        checkFocus();
         Log.d(TAG,str+"を受け取った");
-        if(fragment==null) {
-            fragment = (Casl2MemoryFragment)getSupportFragmentManager()
+        if(mFragment==null) {
+            mFragment = (Casl2MemoryFragment)getSupportFragmentManager()
                     .findFragmentById(R.id.fragment_memory);
         }
-        fragment.onKeycodeSent(str);
+        mFragment.onKeycodeSent(str);
+    }
+
+    private void checkFocus() {
+
     }
 }
