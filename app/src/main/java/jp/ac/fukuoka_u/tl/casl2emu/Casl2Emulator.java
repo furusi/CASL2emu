@@ -632,7 +632,7 @@ public abstract class Casl2Emulator {
         char[] r_array = new char[3];
         char[] _r={48,48,48,48,48,48,48,48,48};
         char[] cs = String.valueOf(r).toCharArray();
-        for(int i=0;i<cs.length;i++){
+         for(int i=0;i<_r.length;i++){
             _r[i]=cs[i];
         }
         //'0'=48,'1'=49   '1'-48=1
