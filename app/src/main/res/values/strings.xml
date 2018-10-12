@@ -26,7 +26,7 @@
     <string name="dummytext">0123456789</string>
     <string name="jump_dialog_text">"番地を入力(0000-FFFF): "</string>
     <string name="menu_teishutu">課題を提出</string>
-    <string name="default_file_name">data.cl2</string>
+    <string name="default_file_name">filename.bin</string>
     <string name="boundary">*****</string>
     <string name="twohyphens">--</string>
     <string name="crlf">\r\n</string>
@@ -47,7 +47,7 @@
     </string>
     <string name="action_view_refresh">VIEW_REFRESH</string>
     <string name="action_memory_refresh">MEMORY_REFRESH</string>
-    <string name="output_initialize">実行画面を初期化</string>
+    <string name="output_initialize">出力画面を初期化</string>
     <string name="action_svc_input">SVC_INPUT</string>
     <string name="memory_position">memory_position</string>
     <string name="intervalkey">execution_interval</string>
@@ -59,4 +59,5 @@
     <string name="input_length">input_length</string>
     <string name="ValueType">ValueType</string>
     <string name="assginment_upload_complete">ASSIGNMENT_UPLOAD_COMPLETE</string>
+    <string name="outputscreen">出力画面</string>
 </resources>
