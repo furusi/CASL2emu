@@ -78,24 +78,23 @@ public class Casl2Ftp extends ContextWrapper {
                 showToastMessage(handler,e.getMessage());
                 return false;
             }finally {
-                if (isLogin) {
-                    try {
-                        myFTPClient.logout();
-                    } catch (IOException ignored) {
-                    }
-                }
-                if (myFTPClient.isConnected()) {
-                    try {
-                        myFTPClient.disconnect();
-                    } catch (IOException ignored) {
-                    }
-                }
-                myFTPClient = null;
+                logout();
             }
             Intent auIntent = new Intent(getString(R.string.assginment_upload_complete));
             getApplicationContext().sendBroadcast(auIntent);
             return true;
         }
+
+    private void logout() {
+        try {
+            myFTPClient.logout();
+            myFTPClient.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            myFTPClient = null;
+        }
+    }
 
     private void showToastMessage(Handler handler, final String str) {
         handler.post(new Runnable() {
@@ -147,14 +146,17 @@ public class Casl2Ftp extends ContextWrapper {
         if (!myFTPClient.login(userid, passwd)) {
             throw new Exception("Invalid user/password");
         }
+
+        logout();
+
         Date date = getDate();
         if(date !=null){
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
             editor.putString("LastLoginDate", DateFormat.format("yyyyMMdd",date).toString());
             editor.apply();
             return true;
-
         }
+
         //myFTPClient.logout();
         return false;
     }
