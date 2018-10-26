@@ -68,7 +68,6 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
         switch(jikkou){
             case 0xFF00://符号付き値input
                 if(isRunflag()){
-                    setRunflag(false);
                     setInterruptflag(true);
                 }
                 memory_position = 7;
@@ -78,7 +77,6 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 break;
             case 0xFF01://符号なし値input
                 if(isRunflag()){
-                    setRunflag(false);
                     setInterruptflag(true);
                 }
                 memory_position = 7;
@@ -88,7 +86,6 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 break;
             case 0xFF02://input
                 if(isRunflag()){
-                    setRunflag(false);
                     setInterruptflag(true);
                 }
                 memory_position = register.getGr()[7];
@@ -283,12 +280,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 char[] r_array = getFloatArray(r);
                 memory.setMemoryArray(r_array,r_position);
                 break;
-            case 0xFF21:
-                memory_position = register.getGr()[7];
-                r1 = register.getGr()[6];
-                memory.setMemoryArray(getFloatArray(r1),memory_position);
-                break;
-            case 0xFF22://浮動小数点数から16進数への変換
+            case 0xFF21://浮動小数点数の整数部分を16進数への変換
                 //先頭アドレス:gr7
                 //変換後代入先アドレス:gr6
                 //仮数部は4*7=28ビットで表す(2word)。符号は-の時FXXX。指数部は1word使う。
@@ -298,7 +290,12 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
                 char[] a_kasu1 = Arrays.copyOfRange(subarray,0,2);
                 float a1 = (float) getFloatFromCommet(subarray[2], a_kasu1);
-                register.setGr((char) (a1/1),6);
+                register.setGr((char) (a1/1),tr_positon);
+                break;
+            case 0xFF22:
+                memory_position = register.getGr()[7];
+                r1 = register.getGr()[6];
+                memory.setMemoryArray(getFloatArray(r1),memory_position);
                 break;
             case 0xFF14://rand
                 short random_max = Short.MAX_VALUE;
@@ -373,7 +370,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
     public void run(final int interval) {
         if(handler==null){
 
-            runflag = true;
+            setRunflag(true);
             handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override

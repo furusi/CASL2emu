@@ -118,8 +118,7 @@ public class BaseActivity extends AppCompatActivity {
                                                     refreshMemory(chars, position);
                                                     break;
                                             }
-                                            if (emulator.isInterruptflag()) {
-                                                emulator.setRunflag(true);
+                                            if (emulator.isInterruptflag() && emulator.isRunflag()) {
                                                 emulator.setInterruptflag(false);
                                                 emulator.run(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt(getString(R.string.intervalkey), 1000));
                                             }

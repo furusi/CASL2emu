@@ -321,13 +321,13 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         binding.waitbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                emulator.waitEmu();
+                emulator.stop();
             }
         });
         binding.waitbutton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                emulator.waitEmu();
+                emulator.stop();
                 register.setPc((char) 0x0000);
                 //Toast.makeText(ContextDisplayScreen.this,"PRを0x0000にしました。",Toast.LENGTH_SHORT).show();
                 new MaterialDialog.Builder(ContextDisplayScreen.this).

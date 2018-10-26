@@ -62,7 +62,7 @@ public class OutputScreen extends BaseActivity {
         binding.waitbuttonoutput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                emulator.waitEmu();
+                emulator.stop();
             }
         });
         final Intent intent = new Intent(getString(R.string.action_memory_refresh));
