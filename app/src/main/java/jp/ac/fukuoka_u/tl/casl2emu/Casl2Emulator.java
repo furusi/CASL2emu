@@ -70,8 +70,14 @@ public abstract class Casl2Emulator {
         this.runflag = runflag;
     }
 
+    /**
+     * 連続実行を停止する
+     */
+    public void stop(){
+        setRunflag(false);
+        waitEmu();
+    }
     public void setInterruptflag(boolean interruptflag) {
-        runflag = false;
         this.interruptflag = interruptflag;
     }
 
