@@ -47,7 +47,7 @@ public class CustomArrayAdapter extends ArrayAdapter<String> {
         //1TextView textView = (TextView)convertView.findViewById(R.id.rowbody);
         ((TextView)convertView.findViewById(R.id.rowbody)).setTypeface(tf);
         ((TextView)convertView.findViewById(R.id.rowbody)).setText(arry.get(position));
-        ((TextView)convertView.findViewById(R.id.rownumber)).setText(String.format(Locale.US,"0x%04X",position*4&0xFFFF));
+        ((TextView)convertView.findViewById(R.id.rownumber)).setText(String.format(Locale.US,"#%04X",position*4&0xFFFF));
 
         return convertView;
     }

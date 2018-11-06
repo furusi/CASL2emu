@@ -107,7 +107,7 @@ public class ContextDisplayScreen extends BaseActivity implements LoaderCallback
         new AlertDialog.Builder(ContextDisplayScreen.this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(R.layout.input_text_dialog)
-                .setTitle("メモリを編集 : "+String.format(Locale.US,"0x%04X",rownum*4 & 0xFFFF)+" - "+String.format(Locale.US,"0x%04X",rownum*4+3& 0xFFFF))
+                .setTitle("メモリを編集 : "+String.format(Locale.US,"#%04X",rownum*4 & 0xFFFF)+" - "+String.format(Locale.US,"#%04X",rownum*4+3& 0xFFFF))
                 //setViewにてビューを設定します。
                 .setView(editView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
