@@ -10,8 +10,6 @@ import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ntp.NTPUDPClient;
@@ -19,11 +17,9 @@ import org.apache.commons.net.ntp.TimeInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
 import java.util.Date;
 
 import jp.ac.fukuoka_u.tl.casl2emu.R;
@@ -78,22 +74,25 @@ public class Casl2Ftp extends ContextWrapper {
                 showToastMessage(handler,e.getMessage());
                 return false;
             }finally {
-                logout();
+                disconnect();
             }
             Intent auIntent = new Intent(getString(R.string.assginment_upload_complete));
             getApplicationContext().sendBroadcast(auIntent);
             return true;
         }
 
-    private void logout() {
-        try {
-            myFTPClient.logout();
-            myFTPClient.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            myFTPClient = null;
+    private void disconnect() {
+        if(myFTPClient != null){
+            try {
+                myFTPClient.logout();
+                myFTPClient.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                myFTPClient = null;
+            }
         }
+
     }
 
     private void showToastMessage(Handler handler, final String str) {
@@ -124,7 +123,10 @@ public class Casl2Ftp extends ContextWrapper {
     }
 
     public boolean appLogin(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
-        return userid.equals("TLGUEST") || ftpLogin(remoteserver, userid, passwd);
+            //IDがtlguestだったらtrue,loginできてももちろんtrue．最終的にftpclientはnullにする．
+        boolean ret = ftpLogin(remoteserver, userid, passwd);
+        disconnect();
+        return userid.equals("TLGUEST") || ret;
     }
 
     public boolean ftpLogin(InetSocketAddress  remoteserver, String userid, String passwd) throws Exception {
@@ -147,8 +149,6 @@ public class Casl2Ftp extends ContextWrapper {
             throw new Exception("Invalid user/password");
         }
 
-        logout();
-
         Date date = getDate();
         if(date !=null){
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
@@ -157,7 +157,7 @@ public class Casl2Ftp extends ContextWrapper {
             return true;
         }
 
-        //myFTPClient.logout();
+        //myFTPClient.disconnect();
         return false;
     }
 }
