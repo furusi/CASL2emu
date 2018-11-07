@@ -191,7 +191,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                         float ey=(short)subarray[4];
                         float[]lp = {sx,sy,ex,ey};
                         color = subarray[5];
-                        width = subarray[6];
+                        width = 2;
                         outputBuffer.addDrawObjectArray(3,lp,color,width);
                         break;
                     case 0://point
@@ -199,7 +199,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                         float y=(short)subarray[2];
                         float[]pp = {x,y};
                         color = subarray[3];
-                        width = subarray[4];
+                        width = 2;
                         outputBuffer.addDrawObjectArray(4,pp,color,width);
                         break;
                     default:
