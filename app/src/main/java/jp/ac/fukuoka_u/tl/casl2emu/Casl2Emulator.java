@@ -652,10 +652,6 @@ public abstract class Casl2Emulator {
          for(int i=0;i<limit;i++){
             _r[i]=cs[i];
         }
-        limit = (_r.length<=cs.length)? _sisu.length:cs_sisu.length;
-        for(int i=0;i<limit;i++){
-            _sisu[i]=cs_sisu[i];
-        }
 
 
         //'0'=48,'1'=49   '1'-48=1
