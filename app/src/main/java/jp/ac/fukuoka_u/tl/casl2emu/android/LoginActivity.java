@@ -10,6 +10,8 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -116,8 +118,10 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        //if(Build.MODEL.matches("^KF.*")||!mEmailView.getText().toString().matches("TLGUEST")){
-        if(Build.MODEL.matches("^KF.*")){
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        //if(Build.MODEL.matches("^KF.*")||!mEmailView.getText().toString().toUpperCase().matches("TLGUEST")){
+        if(Build.MODEL.matches("^KF.*")&& activeNetwork != null){
            VerifyLoginTimeTask loginTimeTask = new VerifyLoginTimeTask();
             loginTimeTask.execute();
         }
