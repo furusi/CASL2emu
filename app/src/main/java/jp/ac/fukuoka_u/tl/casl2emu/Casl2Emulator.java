@@ -28,13 +28,57 @@ public abstract class Casl2Emulator {
         }
     }
 
+    public enum OPCode {
+        NOP((byte)0x00),
+        LD2((byte)0x10),
+        ST((byte)0x11),
+        LAD((byte)0x12),
+        LD1((byte)0x14),
+        ADDA2((byte)0x20),
+        SUBA2((byte)0x21),
+        ADDL2((byte)0x22),
+        SUBL2((byte)0x23),
+        ADDA1((byte)0x24),
+        SUBA1((byte)0x25),
+        ADDL1((byte)0x26),
+        SUBL1((byte)0x27),
+        AND2((byte)0x30),
+        OR2((byte)0x31),
+        XOR2((byte)0x32),
+        AND1((byte)0x34),
+        OR1((byte)0x35),
+        XOR1((byte)0x36),
+        CPA2((byte)0x40),
+        CPL2((byte)0x41),
+        CPA1((byte)0x44),
+        CPL1((byte)0x45),
+        SLA((byte)0x50),
+        SRA((byte)0x51),
+        SLL((byte)0x52),
+        SRL((byte)0x53),
+        JMI((byte)0x61),
+        JNZ((byte)0x62),
+        JZE((byte)0x63),
+        JUMP((byte)0x64),
+        JPL((byte)0x65),
+        JOV((byte)0x66),
+        PUSH((byte)0x70),
+        POP((byte)0x71),
+        CALL((byte)0x80),
+        RET((byte)0x81),
+        SVC((byte)0xF0);
+
+        private final byte opcode;
+        OPCode (byte _opcode){
+            this.opcode = _opcode;
+        }
+    }
 
     /*
-    サブクラスでnewする
-     */
+      サブクラスでnewする
+    */
     static public void initializeInstance(String classname){
         _classnameToInstance.remove(classname);
-
     }
 
    public static Casl2Emulator getInstance(String classname) {
