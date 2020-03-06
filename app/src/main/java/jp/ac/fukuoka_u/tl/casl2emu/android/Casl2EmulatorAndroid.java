@@ -14,7 +14,9 @@ import java.util.Arrays;
 import java.util.Random;
 
 import jp.ac.fukuoka_u.tl.casl2emu.Casl2Emulator;
+import jp.ac.fukuoka_u.tl.casl2emu.Utility;
 import jp.ac.fukuoka_u.tl.casl2emu.R;
+
 
 /**
  * Android用のエミュレータクラス
@@ -239,9 +241,9 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 char op = register.getGr()[6];
                 subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
                 char[] a_kasu = Arrays.copyOfRange(subarray,0,2);
-                double a = getFloatFromCommet(subarray[2], a_kasu);
+                double a = Utility.getFloatValue(subarray[2], a_kasu);
                 char[] b_kasu = Arrays.copyOfRange(subarray,3,5);
-                double b = getFloatFromCommet(subarray[5], b_kasu);
+                double b = Utility.getFloatValue(subarray[5], b_kasu);
                 char r_position = (char) (memory_position+6);
                 float r;
                 switch (op){
@@ -277,7 +279,7 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                         r=(float)0;
                 }
 
-                char[] r_array = getFloatArray(r);
+                char[] r_array = Utility.getFloatArray(r);
                 memory.setMemoryArray(r_array,r_position);
                 break;
             case 0xFF21://浮動小数点数の整数部分を16進数への変換
@@ -289,13 +291,13 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                 char tr_positon = register.getGr()[6];
                 subarray = Arrays.copyOfRange(memory.getMemory(),memory_position,memory_position+6);
                 char[] a_kasu1 = Arrays.copyOfRange(subarray,0,2);
-                float a1 = (float) getFloatFromCommet(subarray[2], a_kasu1);
+                float a1 = (float) Utility.getFloatValue(subarray[2], a_kasu1);
                 register.setGr((char) (a1/1),tr_positon);
                 break;
             case 0xFF22:
                 memory_position = register.getGr()[7];
                 r1 = register.getGr()[6];
-                memory.setMemoryArray(getFloatArray(r1),memory_position);
+                memory.setMemoryArray(Utility.getFloatArray(r1),memory_position);
                 break;
             case 0xFF14://rand
                 short random_max = Short.MAX_VALUE;
