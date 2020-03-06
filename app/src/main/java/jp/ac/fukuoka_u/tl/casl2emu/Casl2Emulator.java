@@ -114,6 +114,10 @@ public abstract class Casl2Emulator {
         this.runflag = runflag;
     }
 
+    public void setInterruptflag(boolean interruptflag) {
+        this.interruptflag = interruptflag;
+    }
+
     /**
      * 連続実行を停止する
      */
@@ -121,9 +125,7 @@ public abstract class Casl2Emulator {
         setRunflag(false);
         waitEmu();
     }
-    public void setInterruptflag(boolean interruptflag) {
-        this.interruptflag = interruptflag;
-    }
+
 
     public int stepOver(){
         //pcの指すメモリの中身をを見る
