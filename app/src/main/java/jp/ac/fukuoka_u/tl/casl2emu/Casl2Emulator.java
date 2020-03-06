@@ -75,12 +75,13 @@ public abstract class Casl2Emulator {
     }
 
     /*
-      サブクラスでnewする
+      サブクラスの名前を指定してでnewする
     */
     static public void initializeInstance(String classname){
         _classnameToInstance.remove(classname);
     }
 
+    /*サブクラスの名前を指定してインスタンスを作成する*/
    public static Casl2Emulator getInstance(String classname) {
        synchronized (_lock){
            Casl2Emulator obj=(Casl2Emulator)_classnameToInstance.get(classname);
@@ -101,11 +102,14 @@ public abstract class Casl2Emulator {
        }
    }
 
-
+   /**
+   中断の状態を返す
+    */
     public boolean isInterruptflag() {
         return interruptflag;
     }
 
+    /*通常実行の有効・無効を返す*/
     public boolean isRunflag() {
         return runflag;
     }
