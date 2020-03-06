@@ -4,6 +4,7 @@ package jp.ac.fukuoka_u.tl.casl2emu;
 import java.util.HashMap;
 
 import jp.ac.fukuoka_u.tl.casl2emu.android.OutputBuffer;
+import static jp.ac.fukuoka_u.tl.casl2emu.Casl2Emulator.OPCode.*;
 
 /**
  * Created by furusho on 2016/07/09.
@@ -29,48 +30,65 @@ public abstract class Casl2Emulator {
     }
 
     public enum OPCode {
-        NOP((byte)0x00),
-        LD2((byte)0x10),
-        ST((byte)0x11),
-        LAD((byte)0x12),
-        LD1((byte)0x14),
-        ADDA2((byte)0x20),
-        SUBA2((byte)0x21),
-        ADDL2((byte)0x22),
-        SUBL2((byte)0x23),
-        ADDA1((byte)0x24),
-        SUBA1((byte)0x25),
-        ADDL1((byte)0x26),
-        SUBL1((byte)0x27),
-        AND2((byte)0x30),
-        OR2((byte)0x31),
-        XOR2((byte)0x32),
-        AND1((byte)0x34),
-        OR1((byte)0x35),
-        XOR1((byte)0x36),
-        CPA2((byte)0x40),
-        CPL2((byte)0x41),
-        CPA1((byte)0x44),
-        CPL1((byte)0x45),
-        SLA((byte)0x50),
-        SRA((byte)0x51),
-        SLL((byte)0x52),
-        SRL((byte)0x53),
-        JMI((byte)0x61),
-        JNZ((byte)0x62),
-        JZE((byte)0x63),
-        JUMP((byte)0x64),
-        JPL((byte)0x65),
-        JOV((byte)0x66),
-        PUSH((byte)0x70),
-        POP((byte)0x71),
-        CALL((byte)0x80),
-        RET((byte)0x81),
-        SVC((byte)0xF0);
+        NOP((byte)0x00, 1),
+        LD2((byte)0x10, 2),
+        ST((byte)0x11, 2),
+        LAD((byte)0x12, 2),
+        LD1((byte)0x14, 1),
+        ADDA2((byte)0x20, 2),
+        SUBA2((byte)0x21, 2),
+        ADDL2((byte)0x22, 2),
+        SUBL2((byte)0x23, 2),
+        ADDA1((byte)0x24, 1),
+        SUBA1((byte)0x25, 1),
+        ADDL1((byte)0x26, 1),
+        SUBL1((byte)0x27, 1),
+        AND2((byte)0x30, 2),
+        OR2((byte)0x31, 2),
+        XOR2((byte)0x32, 2),
+        AND1((byte)0x34, 1),
+        OR1((byte)0x35, 1),
+        XOR1((byte)0x36, 1),
+        CPA2((byte)0x40, 2),
+        CPL2((byte)0x41, 2),
+        CPA1((byte)0x44, 1),
+        CPL1((byte)0x45, 1),
+        SLA((byte)0x50, 2),
+        SRA((byte)0x51, 2),
+        SLL((byte)0x52, 2),
+        SRL((byte)0x53, 2),
+        JMI((byte)0x61, 2),
+        JNZ((byte)0x62, 2),
+        JZE((byte)0x63, 2),
+        JUMP((byte)0x64, 2),
+        JPL((byte)0x65, 2),
+        JOV((byte)0x66, 2),
+        PUSH((byte)0x70, 2),
+        POP((byte)0x71, 1),
+        CALL((byte)0x80, 2),
+        RET((byte)0x81, 1),
+        SVC((byte)0xF0, 2);
 
         private final byte opcode;
-        OPCode (byte _opcode){
+        private final int size;
+        OPCode (final byte _opcode, int _size){
             this.opcode = _opcode;
+            this.size = _size;
+        }
+        public byte getCode (){
+            return opcode;
+        }
+        public int getsize(){
+            return size;
+        }
+
+        static OPCode getEnum(byte _code){
+            for(OPCode o:OPCode.values()){
+                if(o.getCode() == _code){
+                    return o;
+                }
+            }
+            return null;
         }
     }
 
@@ -132,12 +150,8 @@ public abstract class Casl2Emulator {
 
 
     public int stepOver(){
-        //pcの指すメモリの中身をを見る
-        char cpc = register.getPc(); char mem1 = memory.getMemory(cpc);
         fr[0]=0; fr[1]=0; fr[2]=0;
         //pcの命令をみて読み込むデータ数が決まる。
-        int wordCount=0;
-        char[] instArray;
         int r1_position;
         short sans;
         int ians;
@@ -150,140 +164,106 @@ public abstract class Casl2Emulator {
         char spaddr;
         int r_before;
         char data;
+        OPCode o = OPCode.getEnum(getOPCode());
+        int wordCount = o.getsize();
+        char[] instArray = memory.getMemoryArray(register.getPc(),wordCount);
 
-        switch (getOPCode()) {
-            case 0x0000: // NOP
-            //データに基づいて処理する
-                wordCount=1;
-                register.setPc((char)(cpc+wordCount));
+        switch (o) {
+            case NOP: // NOP
+                //データに基づいて処理する
+                register.setPc((char)(register.getPc()+wordCount));
                 break;
-            case 0x1000: // LD
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(),wordCount);
+            case LD2: // LD
                 r2 = getEffectiveAddress();
                 r1_position = getGrNumber(instArray);
                 data = memory.getMemory(r2);
                 register.setGr(data,r1_position);
                 fr[0]=0;//LDのOFは必ず0
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x1100://ST
-            wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case ST://ST
                 //実行アドレスを取得
                 char setaddr = getEffectiveAddress();
                 r1_position = getGrNumber(instArray);
                 memory.setMemory(register.getGr()[r1_position],setaddr);
-                register.setPc((char)(cpc+wordCount));
+                register.setPc((char)(register.getPc()+wordCount));
                 break;
-            case 0x1200://LAD
-            wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
-                r2 = getEffectiveAddress();
+            case LAD://LAD
+                                r2 = getEffectiveAddress();
                 r1_position = getGrNumber(instArray);
                 register.setGr(r2,r1_position);
-                register.setPc((char)(cpc+wordCount));
+                register.setPc((char)(register.getPc()+wordCount));
                 break;
-            case 0x1400://LD
-            wordCount=1;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
-
+            case LD1://LD
                 r1_position = getGrNumber(instArray);
                 int r2_position = getGr2Number(instArray);
                 data = register.getGr()[r2_position];
                 //計算結果はrに入る
                 register.setGr(data,r1_position);
                 fr[0]=0;//LDのOFは必ず0
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x2000://ADDA
-                //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case ADDA2://ADDA
                 //実行アドレスを取得
                 r2 = getEffectiveAddress();
                 //加算数を取得
                 smember = (short) memory.getMemory(r2);
                 //grの中身を取得
                 sr[0] = (short) register.getGr()[getGrNumber(instArray)];
-                adda(cpc, wordCount, instArray, sr[0], smember);
+                adda(register.getPc(), wordCount, instArray, sr[0], smember);
                 break;
-            case 0x2100://SUBA
-                //データに基づいて処理する
-                wordCount=2;
-                    instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case SUBA2://SUBA
                 //xの中身を取得
                 r2 = getEffectiveAddress();
                 //減算数を取得
                 smember = (short) memory.getMemory(r2);
                 //grの中身を取得
                 sr[0] = (short) register.getGr()[getGrNumber(instArray)];
-                suba(cpc, wordCount, instArray, sr[0], smember);
+                suba(register.getPc(), wordCount, instArray, sr[0], smember);
                 break;
-            case 0x2200://ADDL
-                //データに基づいて処理する
-                wordCount=2;
-                    instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case ADDL2://ADDL
                 //実行アドレスを取得
                     r2 = getEffectiveAddress();
                 //grの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 //加算数を取得
                 cmember = memory.getMemory(r2);
-                addl(cpc, wordCount, instArray, r1, cmember);
+                addl(register.getPc(), wordCount, instArray, r1, cmember);
                 break;
-            case 0x2300://SUBL
-                //データに基づいて処理する
-                wordCount=2;
-                    instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case SUBL2://SUBL
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
                 //grの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 //加算数を取得
                 cmember = memory.getMemory(effective);
-                subl(cpc, wordCount, instArray, r1, cmember);
+                subl(register.getPc(), wordCount, instArray, r1, cmember);
                 break;
-            case 0x2400://ADDA
-                //データに基づいて処理する
-                wordCount=1;
-                    instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case ADDA1://ADDA
                 //xの中身を取得
                 sr[0] = (short) register.getGr()[getGrNumber(instArray)];
                 sr[1] = (short) register.getGr()[getGr2Number(instArray)];
-                adda(cpc, wordCount, instArray, sr[0], sr[1]);
+                adda(register.getPc(), wordCount, instArray, sr[0], sr[1]);
                 break;
-            case 0x2500://SUBA
-                //データに基づいて処理する
-                wordCount=1;
-                    instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case SUBA1://SUBA
                 //xの中身を取得
                     sr[0] = (short) register.getGr()[getGrNumber(instArray)];
                     sr[1] = (short) register.getGr()[getGr2Number(instArray)];
-                suba(cpc, wordCount, instArray, sr[0], sr[1]);
+                suba(register.getPc(), wordCount, instArray, sr[0], sr[1]);
                 break;
-            case 0x2600://ADDL
-            //データに基づいて処理する
-                wordCount=1;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case ADDL1://ADDL
             //xの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 r2 = register.getGr()[getGr2Number(instArray)];
-                addl(cpc,wordCount,instArray,r1,r2);
+                addl(register.getPc(),wordCount,instArray,r1,r2);
                 break;
-            case 0x2700://SUBL
-            //データに基づいて処理する
-                wordCount=1;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case SUBL1://SUBL
                 //xの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 r2 = register.getGr()[getGr2Number(instArray)];
-                subl(cpc, wordCount, instArray, r1, r2);
+                subl(register.getPc(), wordCount, instArray, r1, r2);
                 break;
-            case 0x3000://and
-            //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case AND2://and
                 //xの中身を取得
                 effective = getEffectiveAddress();
                 //grの中身を取得
@@ -291,12 +271,9 @@ public abstract class Casl2Emulator {
                 //加算数を取得
                 cmember = memory.getMemory(effective);
                 data = (char) (r1 & cmember);
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x3100://or
-                //データに基づいて処理する
-                wordCount=2;
-                    instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case OR2://or
                 //xの中身を取得
                     effective = getEffectiveAddress();
                 //grの中身を取得
@@ -304,12 +281,9 @@ public abstract class Casl2Emulator {
                 //加算数を取得
                     cmember = memory.getMemory(effective);
                 data = (char) (r1|cmember);
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x3200://xor
-                //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case XOR2://xor
                 //xの中身を取得
                 effective = getEffectiveAddress();
                 //grの中身を取得
@@ -317,32 +291,25 @@ public abstract class Casl2Emulator {
                 //加算数を取得
                 cmember = memory.getMemory(effective);
                 data = (char) (r1 ^ cmember);
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x3400://and
-                //データに基づいて処理する
-                wordCount=1;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
+            case AND1://and
                 //xの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 r2 = register.getGr()[getGr2Number(instArray)];
                 data = (char) (r1 & r2);
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x3500://or
+            case OR1://or
                 //データに基づいて処理する
-                wordCount=1;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 r2 = register.getGr()[getGr2Number(instArray)];
                 data = (char) (r1 | r2);
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x3600://xor
+            case XOR1://xor
                 //データに基づいて処理する
-                wordCount=1;
-                instArray = new char[wordCount];
                 for(int i=0;i<wordCount;i++){
                     instArray[i] = memory.getMemory(register.getPc()+i);
                 }
@@ -350,12 +317,10 @@ public abstract class Casl2Emulator {
                 r1 = register.getGr()[getGrNumber(instArray)];
                 r2 = register.getGr()[getGr2Number(instArray)];
                 data = (char) (r1 ^ r2);
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x4000://CPA
+            case CPA2://CPA
                 //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
                 //加算数を取得
@@ -365,12 +330,10 @@ public abstract class Casl2Emulator {
                 fr[0]=0;
                 getCompareResultA(sr[0], smember);
                 //pcが更新される
-                register.setPc((char)(cpc+wordCount));
+                register.setPc((char)(register.getPc()+wordCount));
                 break;
-            case 0x4100://CPL
+            case CPL2://CPL
                 //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
                 effective = getEffectiveAddress();
                 //grの中身を取得
@@ -380,36 +343,30 @@ public abstract class Casl2Emulator {
                 fr[0]=0;
                 getCompareResultL(r1, cmember);
                 //pcが更新される
-                register.setPc((char)(cpc+wordCount));
+                register.setPc((char)(register.getPc()+wordCount));
                 break;
-            case 0x4400://CPA
+            case CPA1://CPA
                 //データに基づいて処理する
-                wordCount=1;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
                 sr[0] = (short) register.getGr()[getGrNumber(instArray)];
                 sr[1] = (short) register.getGr()[getGr2Number(instArray)];
                 fr[0]=0;
                 getCompareResultA(sr[0], sr[1]);
                 //pcが更新される
-                register.setPc((char)(cpc+wordCount));
+                register.setPc((char)(register.getPc()+wordCount));
                 break;
-            case 0x4500://CPL
+            case CPL1://CPL
                 //データに基づいて処理する
-                wordCount=1;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //xの中身を取得
                 r1 = register.getGr()[getGrNumber(instArray)];
                 r2 = register.getGr()[getGr2Number(instArray)];
                 fr[0]=0;
                 getCompareResultL(r1, r2);
                 //pcが更新される
-                register.setPc((char)(cpc+wordCount));
+                register.setPc((char)(register.getPc()+wordCount));
                 break;
-            case 0x5000://SLA
+            case SLA://SLA
                 //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
                 //加算数を取得
@@ -427,12 +384,10 @@ public abstract class Casl2Emulator {
 
                 //OFは最後に送り出されたビットの値
                 fr[0]= (char) ((r_before>>(15-smember))&0x0001);
-                setRegisterAfterClaculation(cpc,wordCount,instArray, (char) sans);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray, (char) sans);
                 break;
-            case 0x5100://SRA
+            case SRA://SRA
                 //データに基づいて処理する
-                wordCount=2;
-                    instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
                 //加算数を取得
@@ -447,12 +402,10 @@ public abstract class Casl2Emulator {
                 fr[0]= (char) ((r_before>>(smember-1))&0x0001);
 
                 //pcが更新される
-                setRegisterAfterClaculation(cpc,wordCount,instArray, (char) sans);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray, (char) sans);
                 break;
-            case 0x5200://SLL
+            case SLL://SLL
                 //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
                 //加算数を取得
@@ -466,12 +419,10 @@ public abstract class Casl2Emulator {
 
                 //OFは最後に送り出されたビットの値
                 fr[0]= (char) ((r_before>>(15-cmember))&0x0001);
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x5300://SRL
+            case SRL://SRL
                 //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
                 //加算数を取得
@@ -487,12 +438,10 @@ public abstract class Casl2Emulator {
                 fr[0]= (char) ((r_before>>(cmember-1))&0x0001);
 
                 //pcが更新される
-                setRegisterAfterClaculation(cpc,wordCount,instArray,data);
+                setRegisterAfterClaculation(register.getPc(),wordCount,instArray,data);
                 break;
-            case 0x6100://JMI
+            case JMI://JMI
                 //データに基づいて処理する
-                wordCount=2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
 
@@ -500,13 +449,11 @@ public abstract class Casl2Emulator {
                 if(register.getFr()[1]==1){
                     register.setPc(effective);
                 }else {//0ならば次へ進む
-                    register.setPc((char)(cpc+wordCount));
+                    register.setPc((char)(register.getPc()+wordCount));
                 }
                 break;
-            case 0x6200://JNZ
+            case JNZ://JNZ
                 //データに基づいて処理する
-                wordCount = 2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
 
@@ -514,13 +461,11 @@ public abstract class Casl2Emulator {
                 if (register.getFr()[2] == 0) {
                     register.setPc(effective);
                 } else {//1ならば次へ進む
-                    register.setPc((char) (cpc + wordCount));
+                    register.setPc((char) (register.getPc() + wordCount));
                 }
                 break;
-            case 0x6300://JZE
+            case JZE://JZE
                 //データに基づいて処理する
-                wordCount = 2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
 
@@ -528,23 +473,19 @@ public abstract class Casl2Emulator {
                 if (register.getFr()[2] == 1) {
                     register.setPc(effective);
                 } else {//0ならば次へ進む
-                    register.setPc((char) (cpc + wordCount));
+                    register.setPc((char) (register.getPc() + wordCount));
                 }
                 break;
-            case 0x6400://JUMP
+            case JUMP://JUMP
                 //データに基づいて処理する
-                wordCount = 2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
 
                 //無条件で飛ぶ
                 register.setPc(effective);
                 break;
-            case 0x6500://JPL
+            case JPL://JPL
                 //データに基づいて処理する
-                wordCount = 2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
 
@@ -552,13 +493,11 @@ public abstract class Casl2Emulator {
                 if (register.getFr()[1]==0&&register.getFr()[2] == 0) {
                     register.setPc(effective);
                 } else {//0ならば次へ進む
-                    register.setPc((char) (cpc + wordCount));
+                    register.setPc((char) (register.getPc() + wordCount));
                 }
                 break;
-            case 0x6600://JOV
+            case JOV://JOV
                 //データに基づいて処理する
-                wordCount = 2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
 
@@ -566,13 +505,11 @@ public abstract class Casl2Emulator {
                 if (register.getFr()[0] == 1) {
                     register.setPc(effective);
                 } else {//0ならば次へ進む
-                    register.setPc((char) (cpc + wordCount));
+                    register.setPc((char) (register.getPc() + wordCount));
                 }
                 break;
-            case 0x7000://PUSH
+            case PUSH://PUSH
                 //データに基づいて処理する
-                wordCount = 2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
 
@@ -581,13 +518,11 @@ public abstract class Casl2Emulator {
                 register.setSp((char) (data-1));
                 //SPの指すアドレスへ実行アドレスを入れる
                 memory.setMemory(effective,register.getSp());
-                register.setPc((char) (cpc + wordCount));
+                register.setPc((char) (register.getPc() + wordCount));
                 break;
-            case 0x7100://POP
+            case POP://POP
                 //データに基づいて処理する
-                wordCount = 1;
                 if(register.getSp()<0xFEFF) {
-                    instArray = memory.getMemoryArray(register.getPc(), wordCount);
                     //spの指すアドレスを取得
                     spaddr = register.getSp();
                     //そのアドレスが指す値をgrへ格納
@@ -595,14 +530,12 @@ public abstract class Casl2Emulator {
                     //spに1を加算して格納
                     register.setSp((char) (spaddr + 1));
 
-                    register.setPc((char) (cpc + wordCount));
+                    register.setPc((char) (register.getPc() + wordCount));
                 }
                 break;
-            case 0x8000://CALL
+            case CALL://CALL
                 //データに基づいて処理する
-                wordCount = 2;
-                instArray = memory.getMemoryArray(register.getPc(), wordCount);
-                register.setPc((char) (cpc + wordCount));
+                register.setPc((char) (register.getPc() + wordCount));
                 //実行アドレスを取得
                 effective = getEffectiveAddress();
 
@@ -614,9 +547,8 @@ public abstract class Casl2Emulator {
                 //PCへ実行アドレスを入れる
                 register.setPc(effective);
                 break;
-            case 0x8100://RET
+            case RET://RET
                 //データに基づいて処理する
-                wordCount = 1;
                 //spの指すアドレスを取得
                 spaddr = register.getSp();
                 if(spaddr == 0xFEFF){
@@ -631,8 +563,8 @@ public abstract class Casl2Emulator {
                 }
 
                 break;
-            case 0xF000://SVC
-                opSVC(cpc, sr);
+            case SVC://SVC
+                opSVC(register.getPc(), sr);
 
                 break;
             default:
@@ -642,8 +574,8 @@ public abstract class Casl2Emulator {
         return 0;
     }
 
-    protected int getOPCode() {
-        return memory.getMemory(register.getPc()) & 0xff00;
+    protected byte getOPCode() {
+        return (byte)((memory.getMemory(register.getPc()) & 0xff00) >> 8);
     }
 
 
