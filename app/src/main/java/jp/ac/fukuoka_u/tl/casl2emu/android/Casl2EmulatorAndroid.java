@@ -358,13 +358,13 @@ public class Casl2EmulatorAndroid extends Casl2Emulator {
                         "StepOver",String.format("%04X",opCode)
                 )));
         int r = super.stepOver();
+        if(r == 1) showText("RET命令によって停止しました。");
         context.sendBroadcast(broadcastIntent);
         return r;
     }
 
-    @Override
+
     protected void showText(String txt) {
-        super.showText(txt);
         Toast.makeText(context,txt,Toast.LENGTH_SHORT).show();
     }
 

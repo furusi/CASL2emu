@@ -621,7 +621,8 @@ public abstract class Casl2Emulator {
                 spaddr = register.getSp();
                 if(spaddr == 0xFEFF){
                     waitEmu();
-                    showText("RET命令によって停止しました。");
+                    System.out.println("RET命令によって停止しました。");
+                    return 1;
                 }else {
                     //そのアドレスが指す値をPCへ格納
                     register.setPc(memory.getMemory(spaddr));
@@ -645,8 +646,6 @@ public abstract class Casl2Emulator {
         return memory.getMemory(register.getPc()) & 0xff00;
     }
 
-    protected void showText(String txt) {
-    }
 
     public abstract void opSVC(char cpc, short[] sr);
 
@@ -714,7 +713,7 @@ public abstract class Casl2Emulator {
         register.setFr(fr);
 
     }
-
+    /*実効アドレスを取得*/
     public char getEffectiveAddress() {
         char []codestr = memory.getMemoryArray(register.getPc(),2);
         int sihyou = getGr2Number(codestr);
@@ -727,7 +726,7 @@ public abstract class Casl2Emulator {
 
 
     /**
-     * 配列先頭要素の上位２バイトを8バイト分右シフトして返す（GR1に利用されることを想定）
+     * 配列先頭要素の上位8ビットの数値を返す
      * @param cordstr
      * @return
      */
@@ -739,6 +738,8 @@ public abstract class Casl2Emulator {
             return 0;
         }
     }
+
+    /*配列の先頭要素の下位2バイトの数値を返す*/
     private int getGr2Number(char[] cordstr){
         int r2data = cordstr[0] & 0x000F;
         if(r2data >= 0 && r2data < 8){
